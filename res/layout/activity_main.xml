@@ -1,0 +1,91 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splashbg" >
+
+    <RelativeLayout
+        android:id="@+id/relLLogoText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" >
+
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ivLogo"
+            android:layout_centerHorizontal="true"
+            android:text="Connecting People through Calendars."
+            android:textColor="#FFFFFF" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relLButtons"
+        android:layout_width="fill_parent"
+        android:layout_height="170dp"
+        android:layout_below="@id/relLLogoText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/transparentloginbg" >
+
+        <EditText
+            android:id="@+id/etLoginUsername"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:hint="Username/Email"
+            android:textSize="15dip" />
+
+        <EditText
+            android:id="@+id/etLoginPassword"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etLoginUsername"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textSize="15dip" />
+
+        <LinearLayout
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etLoginPassword"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="New User"
+                android:textSize="15dip"
+                android:textColor="@drawable/custom_textcolor" />
+
+            <View
+                android:layout_width="0.7dip"
+                android:layout_height="fill_parent"
+                android:background="#727272" />
+
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="Log-in"
+                android:textSize="15dip"
+                android:textColor="@drawable/custom_textcolor" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

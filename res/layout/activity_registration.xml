@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@drawable/background">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <include layout="@layout/header" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <EditText
+                android:id="@+id/etActName"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:hint="Activity Name" />
+
+            <EditText
+                android:id="@+id/etActLoc"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/etActName"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="Activity Location" />
+
+            <EditText
+                android:id="@+id/etActDesc"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/etActLoc"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:hint="Description"
+                android:inputType="textMultiLine" />
+
+            <TextView
+                android:id="@+id/tvStartDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/etActName"
+                android:layout_below="@id/etActDesc"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:text="Start Date:"
+                android:textSize="20dip" />
+
+            <DatePicker
+                android:id="@+id/dpStartDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvStartDate"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/etActName"
+                android:layout_below="@id/dpStartDate"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:text="Be there by..."
+                android:textSize="20dip" />
+
+            <TimePicker
+                android:id="@+id/tpStartTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvTime"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp" />
+            
+            <CheckBox 
+                android:id="@+id/cbSetActivityPrivate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tpStartTime"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="30dp"
+                android:text="Set as private"/>
+
+            <TextView
+                android:id="@+id/tvFree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cbSetActivityPrivate"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="Feel free to add more. The more the merrier"
+                android:textColor="#555555"
+                android:textSize="12dip" />
+
+            <Button
+                android:id="@+id/btnActRegSubmit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvFree"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/custom_rbutton"
+                android:text="Add Activity"
+                android:textColor="#FFFFFF" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</ScrollView>

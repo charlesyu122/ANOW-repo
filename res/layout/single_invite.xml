@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp" >
+
+    <ImageView
+        android:id="@+id/ivInviteProfPic"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:scaleType="fitCenter" />
+
+    <LinearLayout
+        android:id="@+id/llInviteInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/ivInviteProfPic"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tvInviteeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invites you to"
+            android:textSize="10dip"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/tvInviteEventName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event Name"
+            android:textSize="15dip" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnAttendInvite"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
+        android:text="Attend"
+        android:textSize="10dip"/>
+
+</RelativeLayout>

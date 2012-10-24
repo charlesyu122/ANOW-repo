@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- Header for horizontal orientation of calendar -->
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/headerbg" >
+
+        <ImageView
+            android:id="@+id/ivSmallLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingLeft="10dp"
+            android:src="@drawable/smalllogo" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/ivSmallLogo"
+            android:paddingLeft="10dp"
+            android:text="My Calendar"
+            android:textColor="#FFFFFF"
+            android:textSize="20dip"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnHeaderSetting"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/custom_sethbutton" />
+
+        <Button
+            android:id="@+id/btnHeaderAddActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_toLeftOf="@id/btnHeaderSetting"
+            android:background="@drawable/custom_addehbutton" />
+
+        <Button
+            android:id="@+id/btnHeaderProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_toLeftOf="@id/btnHeaderAddActivity"
+            android:background="@drawable/custom_profhbutton" />
+    </RelativeLayout>
+
+    <!-- End of header -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="3" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" 
+            android:background="@drawable/redrightborder">
+
+            <!-- Calendar xml -->
+
+            <include layout="@layout/custom_calendar" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="2" >
+
+            <TabHost
+                android:id="@android:id/tabhost"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <TabWidget
+                        android:id="@android:id/tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                    </TabWidget>
+
+                    <FrameLayout
+                        android:id="@android:id/tabcontent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+
+                        <LinearLayout
+                            android:id="@+id/Events"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" >
+
+                            <ListView
+                                android:id="@+id/lvEvents"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:listSelector="@drawable/list_item_selector" >
+                            </ListView>
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/NOW"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" >
+
+                            <RelativeLayout
+                                android:id="@+id/relId"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:background="#222222" >
+
+                                <TextView
+                                    android:id="@+id/tvDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerHorizontal="true" />
+                            </RelativeLayout>
+
+                            <ListView
+                                android:id="@+id/lvActivities"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignLeft="@id/relId"
+                                android:layout_below="@id/relId" 
+                                android:listSelector="@drawable/list_item_selector">
+                            </ListView>
+                        </RelativeLayout>
+                    </FrameLayout>
+                </LinearLayout>
+            </TabHost>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
