@@ -13,9 +13,9 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,10 +24,10 @@
         </activity>
         <activity
             android:name=".Registration"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustUnspecified"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,9 +36,9 @@
         </activity>
         <activity
             android:name=".Home"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:label="@string/title_activity_main"
             android:screenOrientation="landscape"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,9 +47,9 @@
         </activity>
         <activity
             android:name=".UserProfile"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,10 +58,10 @@
         </activity>
         <activity
             android:name=".ActivityRegistration"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustUnspecified"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -70,9 +70,9 @@
         </activity>
         <activity
             android:name=".EventProfile"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -81,10 +81,10 @@
         </activity>
         <activity
             android:name=".ActivityProfile"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustUnspecified"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="adjustUnspecified" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -93,9 +93,9 @@
         </activity>
         <activity
             android:name=".Settings"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -104,9 +104,9 @@
         </activity>
         <activity
             android:name=".Participants"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -115,9 +115,9 @@
         </activity>
         <activity
             android:name=".Friends"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -126,9 +126,9 @@
         </activity>
         <activity
             android:name=".Invites"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_main" >
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -136,5 +136,8 @@
             </intent-filter>
         </activity>
     </application>
+
+    <!-- Internet Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
