@@ -34,6 +34,7 @@ public class Home extends TabActivity implements OnClickListener {
 	GridView calendar;
 	String[] dates;
 	TabHost tabHost;
+	String username;
 
 	// Calendar
 	TextView tvCurMonth;
@@ -52,6 +53,7 @@ public class Home extends TabActivity implements OnClickListener {
 	TextView tvDate;
 	Button bAdd;
 	// Header
+	TextView tvHTitle;
 	Button btnProfile, btnSettings, btnAddActivity;
 
 	@Override
@@ -59,6 +61,8 @@ public class Home extends TabActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
+		Intent i = getIntent();
+		this.username = i.getStringExtra("username");
 		this.populateDummy();
 		this.setup();
 	}
@@ -88,6 +92,8 @@ public class Home extends TabActivity implements OnClickListener {
 
 	private void setup() {
 		// Setup Header
+		tvHTitle = (TextView) findViewById(R.id.tvTitle);
+		tvHTitle.setText(username + " Calendar");
 		btnProfile = (Button) findViewById(R.id.btnHeaderProfile);
 		btnSettings = (Button) findViewById(R.id.btnHeaderSetting);
 		btnAddActivity = (Button) findViewById(R.id.btnHeaderAddActivity);

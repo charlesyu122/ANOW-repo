@@ -34,6 +34,7 @@ public class Registration extends Activity{
 	Button regButton;
 	private ProgressDialog pDialog;
 	JSONParser jsonParser = new JSONParser();
+	int successLog; // checks if the user successfully logs in
 	
 	// url to create a new account for user
 	private static String url_create_user = "http://10.0.2.2/ANowPhp/create_user.php";
@@ -54,7 +55,15 @@ public class Registration extends Activity{
 		headerTitle = (TextView)findViewById(R.id.tvTitle);
 		headerButton = (Button)findViewById(R.id.btnHeader);
 		headerTitle.setText("Registration");
-		headerButton.setVisibility(View.INVISIBLE);
+		headerButton.setText("Cancel");
+		
+		headerButton.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				startActivity(new Intent(Registration.this, MainActivity.class));
+			}
+		});
 		
 		// Setup Activity Views
 		etEmail = (EditText)findViewById(R.id.etEmail);
@@ -70,10 +79,10 @@ public class Registration extends Activity{
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				successLog = 0;
 				switch(checkFields()){
 				case 1: 
 					// No missing fields and passwords match
-					Toast.makeText(Registration.this, "You have successfully registered! Please Log-in.", Toast.LENGTH_SHORT).show();
 					new CreateNewUser().execute();
 					break;
 				case 2:
@@ -118,7 +127,7 @@ public class Registration extends Activity{
 			e.printStackTrace();
 		}
 		
-		return hashed;
+		return hashed.substring(0, 39);
 	}
 	
 	// Background Async Task to Create New User
@@ -165,9 +174,7 @@ public class Registration extends Activity{
 				int success = json.getInt(TAG_SUCCESS);
 				if(success == 1){
 					// account successfully created
-					Intent i = new Intent(Registration.this, MainActivity.class);
-					startActivity(i);
-					finish();
+					successLog = 1;
 				}else{
 					//failed to create
 				}
@@ -181,6 +188,12 @@ public class Registration extends Activity{
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			pDialog.dismiss();
+			if(successLog == 1){
+				Toast.makeText(Registration.this, "You have successfully registered! Please Log-in.", Toast.LENGTH_SHORT).show();
+				Intent i = new Intent(Registration.this, MainActivity.class);
+				startActivity(i);
+				finish();
+			}
 		}
 		
 	}
