@@ -27,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
+import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
 public class Home extends TabActivity implements OnClickListener {
@@ -221,7 +222,7 @@ public class Home extends TabActivity implements OnClickListener {
 			startActivity(new Intent(Home.this, UserProfile.class));
 			break;
 		case R.id.btnHeaderAddActivity:
-			startActivity(new Intent(Home.this, ActivityRegistration.class));
+			startActivityForResult((new Intent(Home.this, ActivityRegistration.class)), 1);
 			break;
 		case R.id.btnHeaderSetting:
 			startActivity(new Intent(Home.this, Settings.class));
@@ -246,6 +247,16 @@ public class Home extends TabActivity implements OnClickListener {
 			else
 				this.updateDatesDisplayed(0);
 			break;
+		}
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if(data.getExtras().containsKey("addActivity")){
+			if(data.getBooleanExtra("addActivity", false) == true)
+				Toast.makeText(Home.this, "Activity has been added to your calendar!", Toast.LENGTH_SHORT).show();
 		}
 	}
 	

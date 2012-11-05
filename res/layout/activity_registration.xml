@@ -100,7 +100,7 @@
                 android:layout_below="@id/cbSetActivityPrivate"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
-                android:text="Feel free to add more. The more the merrier"
+                android:text="Feel free to add more. The more the merrier."
                 android:textColor="#555555"
                 android:textSize="12dip" />
 
