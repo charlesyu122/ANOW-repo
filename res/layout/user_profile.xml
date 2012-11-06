@@ -30,9 +30,10 @@
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="0dp"
-                    android:background="@drawable/roundedcorners"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/profpic" />
+                    android:background="@drawable/whiteborder"
+                    android:scaleType="fitXY" />
+                    
+                    
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -46,7 +47,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="right"
-                        android:text="Jullian Sibi"
                         android:textColor="#FFFFFF"
                         android:textSize="18dip"
                         android:textStyle="bold" />
@@ -59,10 +59,10 @@
                         android:visibility="gone" />
 
                     <TextView
+                        android:id="@+id/tvProfUname"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="right"
-                        android:text="jullian.sibi@gmail.com"
                         android:textColor="#FFFFFF"
                         android:textSize="10dip"
                         android:textStyle="italic" />
@@ -83,7 +83,6 @@
                             android:id="@+id/tvEventCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="23"
                             android:textColor="#FFFFFF"
                             android:textSize="15dip" />
                     </LinearLayout>
@@ -157,7 +156,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="August 19, 1992"
                             android:textColor="#FFFFFF"
                             android:textSize="18sp" />
 
@@ -191,7 +189,6 @@
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
                             android:padding="10dp"
-                            android:text="Dancing, singing, programming, eating, refactoring, oppa gangnam style, Apple products, peanuts, krispy kreme, sibi sibi sibi, jullian jullian jullian jullian jullian jullian jullian jullian oppa gangnam style i love you like a love song baby oppa gangnam style i love you like a love song baby oppa gangnam style >:)"
                             android:textColor="#FFFFFF"
                             android:textSize="18sp" />
 

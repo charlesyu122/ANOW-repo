@@ -219,12 +219,14 @@ public class Home extends TabActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.btnHeaderProfile:
-			startActivity(new Intent(Home.this, UserProfile.class));
+			Intent iProfile = new Intent(Home.this, UserProfile.class);
+			iProfile.putExtra("username", username);
+			startActivity(iProfile);
 			break;
 		case R.id.btnHeaderAddActivity:
-			Intent i = new Intent(Home.this, ActivityRegistration.class);
-			i.putExtra("username", username);
-			startActivityForResult(i, 1);
+			Intent iAdd = new Intent(Home.this, ActivityRegistration.class);
+			iAdd.putExtra("username", username);
+			startActivityForResult(iAdd, 1);
 			break;
 		case R.id.btnHeaderSetting:
 			startActivity(new Intent(Home.this, Settings.class));

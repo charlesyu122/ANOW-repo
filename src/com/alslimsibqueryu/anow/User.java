@@ -10,7 +10,8 @@ public class User {
 	public String birthday;
 	public int profPic;
 	
-	//constructor
+	//constructors
+	public User(){}
 	public User(int status, String name, int image){
 		this.status = status;
 		this.name = name;
