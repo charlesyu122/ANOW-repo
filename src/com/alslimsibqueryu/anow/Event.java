@@ -12,17 +12,20 @@ public class Event implements Serializable{
 	public String eventLocation;
 	public String eventDescription;
 	public Integer eventImage;
-	public char type; //E or A --> Commercial or self-activity 
+	public String type; //E or A --> Commercial or self-activity 
 	public Boolean eventPrivacy;
 	
-	//constructors
-	public Event(int id, String name, String tStart, String dStart, String loc, Integer image){
+	// Constructors
+	
+	// Constructor for advertised events 
+	public Event(int id, String name, String tStart, String dStart, String loc, String desc, String type, int image){
 		this.eventId = id;
 		this.eventName = name;
 		this.eventTimeStart = tStart;
 		this.eventDateStart = dStart;
 		this.eventLocation = loc;
-		this.eventDescription = "	This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. This is a very cool event. ";
+		this.eventDescription = desc;
+		this.type = type;
 		this.eventImage = image;
 	}
 	
@@ -50,4 +53,5 @@ public class Event implements Serializable{
 	public Integer getEventImage(){
 		return this.eventImage;
 	}
+
 }

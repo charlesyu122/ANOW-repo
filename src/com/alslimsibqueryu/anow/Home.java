@@ -2,16 +2,24 @@ package com.alslimsibqueryu.anow;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import com.alslimsibqueryu.anow.ActivityRow.AViewHolder;
 import com.alslimsibqueryu.anow.EventRow.EViewHolder;
-
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,10 +52,10 @@ public class Home extends TabActivity implements OnClickListener {
 	DateFormat monthYrFormat = new SimpleDateFormat("MMMM yyyy");
 	DateFormat dateFormat = new SimpleDateFormat("dd");
 	DateFormat monthDateYrFormat = new SimpleDateFormat("MMM dd yyyy");
+	DateFormat yrMonthDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	String todayDate;
 	// Events tab
 	ListView lvEvents;
-	Event[] events;
 	// NOW tab
 	ListView lvActivities;
 	Event[] activities;
@@ -56,12 +64,32 @@ public class Home extends TabActivity implements OnClickListener {
 	// Header
 	TextView tvHTitle;
 	Button btnProfile, btnSettings, btnAddActivity;
+	
+	// Attributes for Database manipulation
+	//Progress Dialog
+	private ProgressDialog pDialog;
+		
+	//Create JSON Parser object
+	JSONParser jParser = new JSONParser();
+	
+	ArrayList<Event> eventsList;
+	
+	//URL to get all product list
+	private static String url_all_events = "http://10.0.2.2/ANowPhp/get_recent_events.php";
+	
+	//products JSONArray
+	JSONArray events = null;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
+		// Initialize
+		eventsList = new ArrayList<Event>();
+		
+		
 		Intent i = getIntent();
 		this.username = i.getStringExtra("username");
 		this.populateDummy();
@@ -69,7 +97,7 @@ public class Home extends TabActivity implements OnClickListener {
 	}
 
 	public void populateDummy() {
-		// Events Dummy
+		/* Events Dummy
 		this.events = new Event[] { 
 				new Event(1, "Starbucks Promo", "2:00pm", "12.01.12", "Ayala Terraces", R.drawable.starbucks),
 				new Event(2,"Ayala Sale", "10:00am", "8.15.2012", "Ayala Cebu", R.drawable.ayala),
@@ -79,11 +107,11 @@ public class Home extends TabActivity implements OnClickListener {
 				new Event(6,"Sunscream 2012", "7:00 am","8.27.12", "Tambuli", R.drawable.summersunscream), 
 				new Event(7,"DS Acquaintance Party", "5:00pm", "8.16.12", "JCenter Mall", R.drawable.ds),
 				new Event(8,"USC Prom", "8:00pm", "12.7.12", "Waterfront", R.drawable.usc) };
-
+		*/
 		// Activities Dummy
 		this.activities = new Event[] {
-				new Event(3,"USC Graduation", "6:00pm", "03.25.13", "USC South Campus",R.drawable.usc),
-				new Event(1, "Starbucks Promo", "2:00pm", "12.01.12", "Ayala Terraces", R.drawable.starbucks),
+				/*new Event(3,"USC Graduation", "6:00pm", "03.25.13", "USC South Campus",R.drawable.usc),
+				new Event(1, "Starbucks Promo", "2:00pm", "12.01.12", "Ayala Terraces", R.drawable.starbucks), */
 				new Event(1, "Android Exam", "12:30pm", "10.10.12", "LB 446"),
 				new Event(2, "Softeng Exam", "8:30pm","10.13.12", "LB 466"),
 				new Event(3, "Project Meeting", "4:00pm", "9.30.12","Starbucks"),
@@ -110,7 +138,7 @@ public class Home extends TabActivity implements OnClickListener {
 		// Get current date
 		curDate = Calendar.getInstance();
 		today = Calendar.getInstance();
-		this.todayDate = monthYrFormat.format(today.getTime());
+		this.todayDate = yrMonthDateFormat.format(today.getTime());
 		tvCurMonth.setText(monthYrFormat.format(curDate.getTime()));
 		this.updateDatesDisplayed(1);
 
@@ -118,9 +146,11 @@ public class Home extends TabActivity implements OnClickListener {
 		btnPrev.setOnClickListener(this);
 
 		// Setup ListViews
+		// Load upcoming events in Background Thread
 		lvEvents = (ListView) findViewById(R.id.lvEvents);
+		Log.d("date passed", todayDate);
+		new LoadAllEvents().execute();
 		lvActivities = (ListView) findViewById(R.id.lvActivities);
-		lvEvents.setAdapter(new EventAdapter(this, events));
 		lvActivities.setAdapter(new EventActivityAdapter(this, activities));
 		lvEvents.setOnItemLongClickListener(eventLongClickListener);
 		lvEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -306,4 +336,85 @@ public class Home extends TabActivity implements OnClickListener {
 			}
 		});
 	}
+
+	/**
+     * Background Async Task to Load all product by making HTTP Request
+     * */
+    class LoadAllEvents extends AsyncTask<String, String, String> {
+
+    	@Override
+    	protected void onPreExecute() {
+    		// TODO Auto-generated method stub
+    		pDialog = new ProgressDialog(Home.this);
+    		pDialog.setMessage("Loading Upcoming Events. Please wait...");
+    		pDialog.setIndeterminate(false);
+    		pDialog.setCancelable(false);
+    		pDialog.show();
+    		super.onPreExecute();
+    	}
+    	
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			// Building parameters
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("today", todayDate));
+			
+			// Getting JSONString from url
+			JSONObject json = jParser.makeHttpRequest(url_all_events, params);
+
+			try{
+				// Check success return
+				int success = json.getInt("success");
+				if(success == 1){
+					// Upcoming events are found
+					// Get array of events
+					events = json.getJSONArray("events");
+					
+					// Loop through all events
+					for(int i=0; i<events.length(); i++){
+						JSONObject c = events.getJSONObject(i);
+						
+						// Store each json item in variable
+						int id = c.getInt("event_id");
+						String name = c.getString("event_name");
+						String tStart = c.getString("time_start");
+						String dStart = c.getString("date_start");
+						String loc = c.getString("location");
+						String desc = c.getString("description");
+						String imgUrl = c.getString("image");
+						int img = getResources().getIdentifier(imgUrl, null, getPackageName());
+						
+						// Create new Event object
+						Event e = new Event(id, name, tStart, dStart, loc, desc, "E", img);
+						
+						// Add event to arraylist of events
+						eventsList.add(e);
+					}
+				} else{
+					// no upcoming events found
+				}
+			}catch(JSONException e){
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			pDialog.dismiss();
+			// Update UI from background thread
+			runOnUiThread(new Runnable() {
+				
+				public void run() {
+					// TODO Auto-generated method stub
+					lvEvents.setAdapter(new EventAdapter(Home.this, eventsList));
+				}
+			});
+		}
+    	
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.alslimsibqueryu.anow;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +16,11 @@ public class EventAdapter extends ArrayAdapter<Event>{
 	private Context context;
 	Event[] values = null;
 	
-	public EventAdapter(Context context, Event[] values) {
-		super(context, R.layout.single_event, values);
+	public EventAdapter(Context context, ArrayList<Event> eventsList) {
+		super(context, R.layout.single_event, eventsList);
 		// TODO Auto-generated constructor stub
 		this.context = context;
-		this.values = values;
+		this.values = eventsList.toArray(new Event[eventsList.size()]);
 	}
 	
 	@Override
