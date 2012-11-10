@@ -136,10 +136,10 @@ public class ActivityRegistration extends Activity{
 			String name = etActName.getText().toString();
 			String location = etActLoc.getText().toString();
 			String description = etActDesc.getText().toString();
-			int day = dpStartDate.getDayOfMonth();
+			int date = dpStartDate.getDayOfMonth();
 			int month = dpStartDate.getMonth() + 1;
 			int year = dpStartDate.getYear();
-			String dateStart = month + "." + day + "." + year;
+			String dateStart = year + "-" + month + "-" + date;
 			int hour = tpStartTime.getCurrentHour();
 			int min = tpStartTime.getCurrentMinute();
 			String timeStart = hour + ":" + min;
