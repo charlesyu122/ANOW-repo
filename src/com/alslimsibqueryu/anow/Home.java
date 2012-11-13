@@ -21,7 +21,6 @@ import android.content.ClipDescription;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -89,7 +88,6 @@ public class Home extends TabActivity implements OnClickListener {
 		// Initialize
 		eventsList = new ArrayList<Event>();
 		
-		
 		Intent i = getIntent();
 		this.username = i.getStringExtra("username");
 		this.populateDummy();
@@ -148,7 +146,6 @@ public class Home extends TabActivity implements OnClickListener {
 		// Setup ListViews
 		// Load upcoming events in Background Thread
 		lvEvents = (ListView) findViewById(R.id.lvEvents);
-		Log.d("date passed", todayDate);
 		new LoadAllEvents().execute();
 		lvActivities = (ListView) findViewById(R.id.lvActivities);
 		lvActivities.setAdapter(new EventActivityAdapter(this, activities));
@@ -266,7 +263,8 @@ public class Home extends TabActivity implements OnClickListener {
 			prevMonth.add(Calendar.MONTH, -1);
 			tvCurMonth.setText(monthYrFormat.format(prevMonth.getTime()));
 			curDate = prevMonth;
-			if (monthYrFormat.format(curDate.getTime()).equals(this.todayDate))
+
+			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
 				this.updateDatesDisplayed(1);
 			else
 				this.updateDatesDisplayed(0);
@@ -276,7 +274,8 @@ public class Home extends TabActivity implements OnClickListener {
 			nextMonth.add(Calendar.MONTH, 1);
 			tvCurMonth.setText(monthYrFormat.format(nextMonth.getTime()));
 			curDate = nextMonth;
-			if (monthYrFormat.format(curDate.getTime()).equals(this.todayDate))
+			
+			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
 				this.updateDatesDisplayed(1);
 			else
 				this.updateDatesDisplayed(0);
@@ -303,7 +302,6 @@ public class Home extends TabActivity implements OnClickListener {
 			String date = dateFormat.format(today.getTime());
 			if(date.charAt(0) == '0')
 				date = Character.toString(date.charAt(1));
-			Log.d("Date today", date);
 			if(current == 1 && date.equals(Integer.toString(ctr)))
 				this.dates[ndx] = Integer.toString(ctr)+"!";
 			else 
@@ -325,7 +323,7 @@ public class Home extends TabActivity implements OnClickListener {
 		prev.add(Calendar.MONTH, -1);
 		int prevDays = prev.getActualMaximum(Calendar.DAY_OF_MONTH);
 		this.updateArrayDates(days, first, prevDays, current);
-		calendar.setAdapter(new DateAdapter(this, dates, tvCurMonth.getText().toString()));
+		calendar.setAdapter(new DateAdapter(this, dates, tvCurMonth.getText().toString(), this.eventsList, username));
 		calendar.setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> parent, View v, int pos,
@@ -380,13 +378,14 @@ public class Home extends TabActivity implements OnClickListener {
 						String name = c.getString("event_name");
 						String tStart = c.getString("time_start");
 						String dStart = c.getString("date_start");
+						String dEnd = c.getString("date_end");
 						String loc = c.getString("location");
 						String desc = c.getString("description");
 						String imgUrl = c.getString("image");
 						int img = getResources().getIdentifier(imgUrl, null, getPackageName());
 						
 						// Create new Event object
-						Event e = new Event(id, name, tStart, dStart, loc, desc, "E", img);
+						Event e = new Event(id, name, tStart, dStart, dEnd, loc, desc, "E", img);
 						
 						// Add event to arraylist of events
 						eventsList.add(e);

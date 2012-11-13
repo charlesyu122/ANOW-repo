@@ -9,6 +9,7 @@ public class Event implements Serializable{
 	public String eventName;
 	public String eventTimeStart;
 	public String eventDateStart;
+	public String eventDateEnd;
 	public String eventLocation;
 	public String eventDescription;
 	public Integer eventImage;
@@ -18,11 +19,12 @@ public class Event implements Serializable{
 	// Constructors
 	
 	// Constructor for advertised events 
-	public Event(int id, String name, String tStart, String dStart, String loc, String desc, String type, int image){
+	public Event(int id, String name, String tStart, String dStart, String dEnd, String loc, String desc, String type, int image){
 		this.eventId = id;
 		this.eventName = name;
 		this.eventTimeStart = tStart;
 		this.eventDateStart = dStart;
+		this.eventDateEnd = dEnd;
 		this.eventLocation = loc;
 		this.eventDescription = desc;
 		this.type = type;

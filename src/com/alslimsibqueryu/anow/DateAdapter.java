@@ -1,5 +1,7 @@
 package com.alslimsibqueryu.anow;
 
+import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
@@ -15,10 +17,10 @@ public class DateAdapter extends BaseAdapter{
 	private String[] gridDates;
 	MyDragEventListener dragListener;
 	
-	public DateAdapter(Context context, String[] dates, String selectedMonth){
+	public DateAdapter(Context context, String[] dates, String selectedMonth, ArrayList<Event>eventList, String username){
 		this.context = context;
 		this.gridDates = dates;
-		dragListener = new MyDragEventListener(context, selectedMonth);
+		dragListener = new MyDragEventListener(context, selectedMonth, eventList, username);
 	}
 
 	public int getCount() {

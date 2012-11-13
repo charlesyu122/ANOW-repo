@@ -34,10 +34,20 @@ public class EventAdapter extends ArrayAdapter<Event>{
 		ImageView iv = (ImageView)rowView.findViewById(R.id.ivEPic);
 		TextView eName = (TextView)rowView.findViewById(R.id.tvEName);
 		TextView eTime = (TextView)rowView.findViewById(R.id.tvEDate);
-			
+		
+		
 		iv.setImageResource(values[position].eventImage);
 		eName.setText(values[position].eventName);
-		eTime.setText(values[position].eventDateStart);
+		if(values[position].eventDateStart.matches(values[position].eventDateEnd))
+			eTime.setText(values[position].eventDateStart);
+		else{
+			String start = values[position].eventDateStart;
+			String end = values[position].eventDateEnd;
+			String delim = "[-]+";
+			String[] sDate = start.split(delim);
+			String[] eDate = end.split(delim);
+			eTime.setText(sDate[1]+"-"+ sDate[2] + " to " + eDate[1]+"-"+ eDate[2]);
+		}
 			
 		rowView.setTag(values[position]);
 		
