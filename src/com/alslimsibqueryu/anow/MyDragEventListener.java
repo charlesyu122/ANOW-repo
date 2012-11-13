@@ -13,6 +13,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
@@ -26,10 +27,13 @@ import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnDragListener;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class MyDragEventListener implements OnDragListener {
+public class MyDragEventListener extends Activity implements OnDragListener {
 	
 	String username;
 	Context context;
@@ -37,6 +41,7 @@ public class MyDragEventListener implements OnDragListener {
 	String selectedMonthName;
 	ArrayList<Event> eventList;
 	int selectedEventId;
+	String privateOption = "N"; // sets the added activity to private
 	
 	// Attributes for Attendance Insertion
 	private ProgressDialog pDialog;
@@ -102,6 +107,19 @@ public class MyDragEventListener implements OnDragListener {
 			//Set-up view for alert view
 			TextView tvAlertEventName = (TextView)confirmView.findViewById(R.id.tvAlertEventName);
 			TextView tvAlertEventDate = (TextView)confirmView.findViewById(R.id.tvAlertEventDate);
+			CheckBox cbAlertPrivacy = (CheckBox)confirmView.findViewById(R.id.cbAlertPrivacy);
+			
+			// Set-up privacy check box for alert
+			cbAlertPrivacy.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+						public void onCheckedChanged(CompoundButton buttonView,
+								boolean isChecked) {
+							// TODO Auto-generated method stub
+							if (isChecked) {
+								privateOption = "Y";
+							}
+						}
+					});
 			
 			//Set the event Id of event dragged
 			this.selectedEventId = eventIdDragged;
@@ -109,8 +127,7 @@ public class MyDragEventListener implements OnDragListener {
 			tvAlertEventName.setText("Attend " + eventNameDragged );
 			tvAlertEventDate.setText("on "+ date + " of "+ this.selectedMonthName);
 			
-			alertEventConfirm.setPositiveButton("Confirm",
-					new DialogInterface.OnClickListener() {
+			alertEventConfirm.setPositiveButton("Confirm",new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
@@ -124,8 +141,7 @@ public class MyDragEventListener implements OnDragListener {
 							((TextView)v.findViewById(R.id.tvDateCell)).setBackgroundDrawable(withEventBg);
 						}
 					});
-			alertEventConfirm.setNegativeButton("Cancel",
-					new DialogInterface.OnClickListener() {
+			alertEventConfirm.setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
@@ -173,6 +189,7 @@ public class MyDragEventListener implements OnDragListener {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("username", username));
 			params.add(new BasicNameValuePair("event_id", Integer.toString(selectedEventId)));
+			params.add(new BasicNameValuePair("private", privateOption));
 			
 			// Getting JSON object
             JSONObject json = jsonParser.makeHttpRequest(url_attend_event, params);
