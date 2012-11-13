@@ -30,7 +30,7 @@ public class ActivityRegistration extends Activity{
 	// Activity Views
 	String username;
 	EditText etActName, etActLoc, etActDesc;
-	DatePicker dpStartDate;
+	DatePicker dpStartDate, dpEndDate;
 	TimePicker tpStartTime;
 	Button btnAddActivity;
 	CheckBox cbSetPrivacy;
@@ -77,6 +77,7 @@ public class ActivityRegistration extends Activity{
 		etActLoc = (EditText)findViewById(R.id.etActLoc);
 		etActDesc = (EditText)findViewById(R.id.etActDesc);
 		dpStartDate = (DatePicker)findViewById(R.id.dpStartDate);
+		dpEndDate = (DatePicker)findViewById(R.id.dpEndDate);
 		tpStartTime = (TimePicker)findViewById(R.id.tpStartTime);
 		btnAddActivity = (Button) findViewById(R.id.btnActRegSubmit);
 		cbSetPrivacy = (CheckBox)findViewById(R.id.cbSetActivityPrivate);
@@ -136,10 +137,17 @@ public class ActivityRegistration extends Activity{
 			String name = etActName.getText().toString();
 			String location = etActLoc.getText().toString();
 			String description = etActDesc.getText().toString();
+			
 			int date = dpStartDate.getDayOfMonth();
 			int month = dpStartDate.getMonth() + 1;
 			int year = dpStartDate.getYear();
 			String dateStart = year + "-" + month + "-" + date;
+			
+			date = dpEndDate.getDayOfMonth();
+			month = dpEndDate.getMonth() + 1;
+			year = dpEndDate.getYear();
+			String dateEnd = year + "-" + month + "-" + date;
+			
 			int hour = tpStartTime.getCurrentHour();
 			int min = tpStartTime.getCurrentMinute();
 			String timeStart = hour + ":" + min;
@@ -149,6 +157,7 @@ public class ActivityRegistration extends Activity{
 			params.add(new BasicNameValuePair("eventName", name));
 			params.add(new BasicNameValuePair("timeStart", timeStart));
 			params.add(new BasicNameValuePair("dateStart", dateStart));
+			params.add(new BasicNameValuePair("dateEnd", dateEnd));
 			params.add(new BasicNameValuePair("location", location));
 			params.add(new BasicNameValuePair("description", description));
 			params.add(new BasicNameValuePair("private", privateOption));
