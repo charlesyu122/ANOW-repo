@@ -94,21 +94,6 @@ public class Home extends TabActivity implements OnClickListener {
 	}
 
 	public void populateDummy() {
-		/*
-		 * Events Dummy this.events = new Event[] { new Event(1,
-		 * "Starbucks Promo", "2:00pm", "12.01.12", "Ayala Terraces",
-		 * R.drawable.starbucks), new Event(2,"Ayala Sale", "10:00am",
-		 * "8.15.2012", "Ayala Cebu", R.drawable.ayala), new
-		 * Event(3,"USC Graduation", "6:00pm", "03.25.13",
-		 * "USC South Campus",R.drawable.usc), new Event(4,"Graduation Ball",
-		 * "6:00pm", "03.27.13", "Radisson Blu", R.drawable.usc), new
-		 * Event(5,"Accenture Talk", "7:00pm", "10.27.12", "Waterfront",
-		 * R.drawable.accenture), new Event(6,"Sunscream 2012",
-		 * "7:00 am","8.27.12", "Tambuli", R.drawable.summersunscream), new
-		 * Event(7,"DS Acquaintance Party", "5:00pm", "8.16.12", "JCenter Mall",
-		 * R.drawable.ds), new Event(8,"USC Prom", "8:00pm", "12.7.12",
-		 * "Waterfront", R.drawable.usc) };
-		 */
 		// Activities Dummy
 		this.activities = new Event[] {
 				/*
@@ -154,14 +139,13 @@ public class Home extends TabActivity implements OnClickListener {
 		// Setup ListViews
 		// Load upcoming events in Background Thread
 		lvEvents = (ListView) findViewById(R.id.lvEvents);
-		new LoadAllEvents().execute();
+		new LoadAllEvents(true).execute();
 		lvActivities = (ListView) findViewById(R.id.lvActivities);
 		lvActivities.setAdapter(new EventActivityAdapter(this, activities));
 		lvEvents.setOnItemLongClickListener(eventLongClickListener);
 		lvEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-			public void onItemClick(AdapterView<?> arg0, View v, int arg2,
-					long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View v, int arg2,long arg3) {
 				// TODO Auto-generated method stub
 				Intent i = new Intent(Home.this, EventProfile.class);
 				Event eventObj = (Event) v.getTag();
@@ -169,31 +153,29 @@ public class Home extends TabActivity implements OnClickListener {
 				startActivity(i);
 			}
 		});
-		lvActivities
-				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		lvActivities.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-					public void onItemClick(AdapterView<?> arg0, View v,
-							int arg2, long arg3) {
-						// TODO Auto-generated method stub
-						Intent i = null;
-						Event activityObj = null;
-						try {
-							AViewHolder aObj = (AViewHolder) v.getTag();
-							activityObj = aObj.activityObj;
-							i = new Intent(Home.this, ActivityProfile.class);
-							i.putExtra("activityObject", activityObj);
-						} catch (Exception e) {
-							try {
-								EViewHolder eObj = (EViewHolder) v.getTag();
-								activityObj = eObj.eventObj;
-								i = new Intent(Home.this, EventProfile.class);
-								i.putExtra("eventObject", activityObj);
-							} catch (Exception ex) {
-							}
-						}
-						startActivity(i);
+			public void onItemClick(AdapterView<?> arg0, View v,int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				Intent i = null;
+				Event activityObj = null;
+				try {
+					AViewHolder aObj = (AViewHolder) v.getTag();
+					activityObj = aObj.activityObj;
+					i = new Intent(Home.this, ActivityProfile.class);
+					i.putExtra("activityObject", activityObj);
+				} catch (Exception e) {
+					try {
+						EViewHolder eObj = (EViewHolder) v.getTag();
+						activityObj = eObj.eventObj;
+						i = new Intent(Home.this, EventProfile.class);
+						i.putExtra("eventObject", activityObj);
+					} catch (Exception ex) {
 					}
-				});
+				}
+				startActivity(i);
+			}
+		});
 
 		// Setup Tabhost
 		tabHost = getTabHost();
@@ -249,6 +231,7 @@ public class Home extends TabActivity implements OnClickListener {
 					clipDescription, item);
 			View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
 			v.startDrag(dragData, myShadow, null, 0);
+			new LoadAllEvents(false).execute();
 			return true;
 		}
 	};
@@ -360,14 +343,23 @@ public class Home extends TabActivity implements OnClickListener {
 	 * */
 	class LoadAllEvents extends AsyncTask<String, String, String> {
 
+		Boolean withProgBar;
+		
+		// constructor
+		public LoadAllEvents(Boolean status){
+			this.withProgBar = status;
+		}
+		
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
-			pDialog = new ProgressDialog(Home.this);
-			pDialog.setMessage("Loading Upcoming Events. Please wait...");
-			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(false);
-			pDialog.show();
+			if(withProgBar == true){
+				pDialog = new ProgressDialog(Home.this);
+				pDialog.setMessage("Loading Upcoming Events. Please wait...");
+				pDialog.setIndeterminate(false);
+				pDialog.setCancelable(false);
+				pDialog.show();
+			}
 			super.onPreExecute();
 		}
 

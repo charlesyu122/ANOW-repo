@@ -11,9 +11,17 @@
         android:layout_marginLeft="10dp"
 		android:textSize="16dip"
 		android:textColor="#FFFFFF"/>
-
+    
     <TextView
         android:id="@+id/tvAlertEventDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+		android:textSize="16dip"
+		android:textColor="#FFFFFF"/>
+
+    <TextView
+        android:id="@+id/tvAlertSelectedDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
