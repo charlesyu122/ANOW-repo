@@ -55,6 +55,7 @@ public class MyDragEventListener extends Activity implements OnDragListener {
 	private static String url_attend_event = "http://10.0.2.2/ANowPhp/attend_event.php";
 	// JSON Node names
 	private static final String TAG_SUCCESS = "success";
+	
 
 	public MyDragEventListener(Context c, String selectedMonthYr,
 			ArrayList<Event> eventList, String username) {
@@ -167,6 +168,10 @@ public class MyDragEventListener extends Activity implements OnDragListener {
 							// Set item background with event
 							Drawable withEventBg = context.getResources().getDrawable(R.drawable.witheventcell);
 							((TextView) v.findViewById(R.id.tvDateCell)).setBackgroundDrawable(withEventBg);
+							// Refresh Home page
+							finish();
+							startActivity(getIntent());
+							
 						}
 						else{
 							Toast.makeText(context, "Unable to attend event on chosen date. Please re-check the date of chosen event.", Toast.LENGTH_LONG).show();
@@ -216,6 +221,8 @@ public class MyDragEventListener extends Activity implements OnDragListener {
 		return dates;
 	}
 
+	
+	
 	class AddAttendance extends AsyncTask<String, String, String> {
 
 		@Override

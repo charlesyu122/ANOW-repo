@@ -149,7 +149,9 @@ public class MainActivity extends Activity {
 				Toast.makeText(MainActivity.this, "Invalid username/password", Toast.LENGTH_SHORT).show();
 			else{
 				Intent i = new Intent(MainActivity.this, Home.class);
-				i.putExtra("username", etUsername.getText().toString());
+				// Store username in App Controller
+				ApplicationController AP = (ApplicationController)getApplicationContext();
+				AP.setUsername(etUsername.getText().toString());			
 				startActivity(i);
 				finish();
 			}

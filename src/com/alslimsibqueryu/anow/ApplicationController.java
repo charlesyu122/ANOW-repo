@@ -4,7 +4,9 @@ import android.app.Application;
 
 public class ApplicationController extends Application{
 
-	String username = "hello";
+	String username;
+	String dateToday;
+	
 	
 	@Override
 	public void onCreate() {
@@ -12,7 +14,21 @@ public class ApplicationController extends Application{
 		super.onCreate();
 	}
 	
+	//setter getters
+	public void setUsername(String uname){
+		this.username = uname;
+	}
+	
+	public void setDateToday(String today){
+		this.dateToday = today;
+	}
+	
 	public String getUsername(){
 		return username;
 	}
+	
+	public String getDateToday(){
+		return dateToday;
+	}
+	
 }
