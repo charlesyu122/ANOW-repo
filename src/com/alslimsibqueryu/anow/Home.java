@@ -31,7 +31,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -317,11 +316,7 @@ public class Home extends TabActivity implements OnClickListener {
 			int current) {
 		this.dates = new String[42];
 		int ndx, ctr;
-		// display parameters
-		Log.d("numOfDays", ""+numOfDays);
-		Log.d("firstDay", ""+firstDay);
-		Log.d("prevDay", ""+prevDays);
-		
+		 
 		// Load Events on the Calendar
 		
 		// currentmonth
