@@ -31,6 +31,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -152,7 +153,6 @@ public class Home extends TabActivity implements OnClickListener {
 		// Set date today in Application Controller
 		ApplicationController AP = (ApplicationController)getApplicationContext();
 		AP.setDateToday(todayDate);
-		
 		tvCurMonth.setText(monthYrFormat.format(curDate.getTime()));
 		this.updateDatesDisplayed(1);
 
@@ -162,7 +162,7 @@ public class Home extends TabActivity implements OnClickListener {
 		// Setup ListViews
 		// Load upcoming events in Background Thread
 		lvEvents = (ListView) findViewById(R.id.lvEvents);
-		new LoadAllEvents(true).execute();
+		new LoadAllEvents().execute();
 		lvActivities = (ListView) findViewById(R.id.lvActivities);
 		lvActivities.setAdapter(new EventActivityAdapter(this, activities));
 		lvEvents.setOnItemLongClickListener(eventLongClickListener);
@@ -253,7 +253,7 @@ public class Home extends TabActivity implements OnClickListener {
 			ClipData dragData = new ClipData((CharSequence) v.getTag(),clipDescription, item);
 			View.DragShadowBuilder myShadow = new View.DragShadowBuilder(v);
 			v.startDrag(dragData, myShadow, null, 0);
-			new LoadAllEvents(false).execute();
+			lvEvents.setAdapter(new EventAdapter(Home.this, eventsList));
 			return true;
 		}
 	};
@@ -317,6 +317,13 @@ public class Home extends TabActivity implements OnClickListener {
 			int current) {
 		this.dates = new String[42];
 		int ndx, ctr;
+		// display parameters
+		Log.d("numOfDays", ""+numOfDays);
+		Log.d("firstDay", ""+firstDay);
+		Log.d("prevDay", ""+prevDays);
+		
+		// Load Events on the Calendar
+		
 		// currentmonth
 		for (ndx = firstDay - 1, ctr = 1; ctr <= numOfDays; ctr++, ndx++) {
 
@@ -350,9 +357,7 @@ public class Home extends TabActivity implements OnClickListener {
 			public void onItemClick(AdapterView<?> parent, View v, int pos,
 					long id) {
 				// TODO Auto-generated method stub
-				// Toast.makeText(getApplicationContext(),
-				// ((TextView)v.findViewById(R.id.tvDateCell)).getText(),
-				// Toast.LENGTH_SHORT).show();
+				// Retrieve events on spec day
 				tvDate.setText(((TextView) v.findViewById(R.id.tvDateCell)).getText() + " " + tvCurMonth.getText());
 			}
 		});
@@ -362,25 +367,15 @@ public class Home extends TabActivity implements OnClickListener {
 	 * Background Async Task to Load all events by making HTTP Request
 	 * */
 	class LoadAllEvents extends AsyncTask<String, String, String> {
-
-		Boolean withProgBar;
-		
-		// constructor
-		public LoadAllEvents(Boolean status){
-			this.withProgBar = status;
-		}
 		
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
-			if(withProgBar == true){
-				pDialog = new ProgressDialog(Home.this);
-				pDialog.setMessage("Loading Upcoming Events. Please wait...");
-				pDialog.setIndeterminate(false);
-				pDialog.setCancelable(false);
-				pDialog.show();
-			}else
-				eventsList.clear(); //Refreshes events list
+			pDialog = new ProgressDialog(Home.this);
+			pDialog.setMessage("Loading Upcoming Events. Please wait...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(false);
+			pDialog.show();
 			super.onPreExecute();
 		}
 
@@ -706,6 +701,7 @@ public class Home extends TabActivity implements OnClickListener {
 				params.add(new BasicNameValuePair("username", username));
 				params.add(new BasicNameValuePair("event_id", Integer.toString(selectedEventId)));
 				params.add(new BasicNameValuePair("private", privateOption));
+				params.add(new BasicNameValuePair("attend_date", selectedYear+"-"+selectedMonthInt+"-"+selectedDate));
 
 				// Getting JSON object
 				JSONObject json = jsonParser.makeHttpRequest(url_attend_event,
@@ -733,6 +729,26 @@ public class Home extends TabActivity implements OnClickListener {
 			}
 		}
 
+	}
+
+	/**
+	 * Background Async Task to Load all events for calendar display by making HTTP Request
+	 * */
+	class LoadEventsForCalendar extends AsyncTask<String, String, String> {
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+		
+		
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 	}
 
 	
