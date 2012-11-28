@@ -735,6 +735,11 @@ public class Home extends TabActivity implements OnClickListener {
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
+			pDialog = new ProgressDialog(Home.this);
+			pDialog.setMessage("Loading your calendar..");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(true);
+			pDialog.show();
 		}
 		
 		
@@ -744,6 +749,11 @@ public class Home extends TabActivity implements OnClickListener {
 			return null;
 		}
 		
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			pDialog.dismiss();
+		}
 	}
 
 	
