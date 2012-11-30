@@ -60,6 +60,7 @@ public class Home extends TabActivity implements OnClickListener {
 	String[] dates;
 	TabHost tabHost;
 	String username;
+	Boolean firstLoad = true;
 
 	// Calendar
 	TextView tvCurMonth;
@@ -89,20 +90,26 @@ public class Home extends TabActivity implements OnClickListener {
 	JSONParser jParser = new JSONParser();
 
 	ArrayList<Event> eventsList;
+	ArrayList<Event> eventsListForMonth;
+	ArrayList<String> attendsListForMonth;
 
-	// URL to get all product list
+	// URLS
 	private static String url_all_events = "http://10.0.2.2/ANowPhp/get_recent_events.php";
+	private static String url_attended_events = "http://10.0.2.2/ANowPhp/get_attended_events.php";
 
 	// products JSONArray
 	JSONArray events = null;
+	JSONArray attends = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
-		// Initialize
+		// Initialize attributes
 		eventsList = new ArrayList<Event>();
+		eventsListForMonth = new ArrayList<Event>();
+		attendsListForMonth = new ArrayList<String>();
 
 		// Get username from Application Controller
 		ApplicationController AP = (ApplicationController)getApplicationContext();
@@ -153,7 +160,9 @@ public class Home extends TabActivity implements OnClickListener {
 		ApplicationController AP = (ApplicationController)getApplicationContext();
 		AP.setDateToday(todayDate);
 		tvCurMonth.setText(monthYrFormat.format(curDate.getTime()));
-		this.updateDatesDisplayed(1);
+		// Retrieve events for calendar
+		// Load Events on the Calendar
+		loadEventsOnCalendar(1);
 
 		btnNext.setOnClickListener(this);
 		btnPrev.setOnClickListener(this);
@@ -161,7 +170,7 @@ public class Home extends TabActivity implements OnClickListener {
 		// Setup ListViews
 		// Load upcoming events in Background Thread
 		lvEvents = (ListView) findViewById(R.id.lvEvents);
-		new LoadAllEvents().execute();
+		//new LoadAllEvents().execute();
 		lvActivities = (ListView) findViewById(R.id.lvActivities);
 		lvActivities.setAdapter(new EventActivityAdapter(this, activities));
 		lvEvents.setOnItemLongClickListener(eventLongClickListener);
@@ -278,24 +287,24 @@ public class Home extends TabActivity implements OnClickListener {
 			prevMonth.add(Calendar.MONTH, -1);
 			tvCurMonth.setText(monthYrFormat.format(prevMonth.getTime()));
 			curDate = prevMonth;
+			firstLoad = false;
 
-			if (monthYrFormat.format(curDate.getTime()).equals(
-					monthYrFormat.format(Calendar.getInstance().getTime())))
-				this.updateDatesDisplayed(1);
+			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
+				loadEventsOnCalendar(1);
 			else
-				this.updateDatesDisplayed(0);
+				loadEventsOnCalendar(0);
 			break;
 		case R.id.btnNext:
 			Calendar nextMonth = (Calendar) curDate.clone();
 			nextMonth.add(Calendar.MONTH, 1);
 			tvCurMonth.setText(monthYrFormat.format(nextMonth.getTime()));
 			curDate = nextMonth;
+			firstLoad = false;
 
-			if (monthYrFormat.format(curDate.getTime()).equals(
-					monthYrFormat.format(Calendar.getInstance().getTime())))
-				this.updateDatesDisplayed(1);
+			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
+				loadEventsOnCalendar(1);
 			else
-				this.updateDatesDisplayed(0);
+				loadEventsOnCalendar(0);
 			break;
 		}
 	}
@@ -312,12 +321,9 @@ public class Home extends TabActivity implements OnClickListener {
 		}
 	}
 	
-	private void updateArrayDates(int numOfDays, int firstDay, int prevDays,
-			int current) {
+	private void updateArrayDates(int numOfDays, int firstDay, int prevDays, int current) {
 		this.dates = new String[42];
 		int ndx, ctr;
-		 
-		// Load Events on the Calendar
 		
 		// currentmonth
 		for (ndx = firstDay - 1, ctr = 1; ctr <= numOfDays; ctr++, ndx++) {
@@ -325,8 +331,14 @@ public class Home extends TabActivity implements OnClickListener {
 			String date = dateFormat.format(today.getTime());
 			if (date.charAt(0) == '0')
 				date = Character.toString(date.charAt(1));
-			if (current == 1 && date.equals(Integer.toString(ctr)))
-				this.dates[ndx] = Integer.toString(ctr) + "!";
+			if (current == 1 && date.equals(Integer.toString(ctr))){
+				String dateString = Integer.toString(ctr);
+				dateString += "!";
+				if(checkForEvent(ctr) == true)
+					dateString += "*";
+				this.dates[ndx] = dateString;
+			} else if (checkForEvent(ctr) == true)
+				this.dates[ndx] = Integer.toString(ctr) + "*";
 			else
 				this.dates[ndx] = Integer.toString(ctr);
 		}
@@ -338,6 +350,32 @@ public class Home extends TabActivity implements OnClickListener {
 			this.dates[ndx] = Integer.toString(ctr) + "#";
 	}
 
+	private boolean checkForEvent(int traversedDate) {
+		// TODO Auto-generated method stub
+		Boolean check = false;
+		int eventDate;
+		String temp = "", listDate = ""; 
+		for(int i=0; check == false && i<attendsListForMonth.size(); i++, temp = ""){
+			listDate = attendsListForMonth.get(i);
+			if(listDate.charAt(8) != '0')
+				temp+= listDate.charAt(8);
+			temp+= listDate.charAt(9);
+			eventDate = Integer.parseInt(temp);
+			if(traversedDate == eventDate){
+				check = true;
+			}
+		}
+		return check;
+	}
+
+	private void loadEventsOnCalendar(int current){
+		DateFormat yrMonthFormat = new SimpleDateFormat("yyyy-MM");
+		String selectectedMonthYr = yrMonthFormat.format(curDate.getTime());
+		String firstDate = selectectedMonthYr+"-01";
+		String lastDate = selectectedMonthYr+"-31";
+		new LoadEventsForCalendar(firstDate, lastDate, current).execute();
+	}
+	
 	private void updateDatesDisplayed(int current) {
 		int days = curDate.getActualMaximum(Calendar.DAY_OF_MONTH);
 		curDate.set(Calendar.DAY_OF_MONTH, 1);
@@ -478,7 +516,16 @@ public class Home extends TabActivity implements OnClickListener {
 				date = date.substring(0, date.length()-1);
 				tvDate.setText(date);
 				tvDate.setTextColor(Color.GRAY);
-			}else if(gridDates[position].charAt(gridDates[position].length()-1) == '!'){ //date today
+			} else if(gridDates[position].charAt(gridDates[position].length()-1) == '*'){ //date with event
+				String date = gridDates[position];
+				date = date.substring(0, date.length()-1);
+				tvDate.setBackgroundDrawable(Home.this.getResources().getDrawable(R.drawable.witheventcell));
+				if(date.charAt(date.length()-1) == '!'){ // date today with event
+					date = date.substring(0, date.length()-1);
+					tvDate.setTextColor(Color.RED);
+				}
+				tvDate.setText(date);
+			} else if(gridDates[position].charAt(gridDates[position].length()-1) == '!'){ //date today with no event
 				String date = gridDates[position];
 				date = date.substring(0, date.length()-1);
 				tvDate.setText(date);
@@ -731,10 +778,22 @@ public class Home extends TabActivity implements OnClickListener {
 	 * */
 	class LoadEventsForCalendar extends AsyncTask<String, String, String> {
 
+		String beginDate, endDate;
+		int current;
+		
+		public LoadEventsForCalendar(String begin, String end, int current){
+			this.beginDate = begin;
+			this.endDate = end;
+			this.current = current;
+		}
+		
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
+			// Refresh lists
+			eventsListForMonth.clear();
+			attendsListForMonth.clear();
 			pDialog = new ProgressDialog(Home.this);
 			pDialog.setMessage("Loading your calendar..");
 			pDialog.setIndeterminate(false);
@@ -744,8 +803,54 @@ public class Home extends TabActivity implements OnClickListener {
 		
 		
 		@Override
-		protected String doInBackground(String... params) {
+		protected String doInBackground(String... args) {
 			// TODO Auto-generated method stub
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("begin_date", beginDate));
+			params.add(new BasicNameValuePair("end_date", endDate));
+			params.add(new BasicNameValuePair("username", username));
+
+			// Getting JSONString from url
+			JSONObject json = jParser.makeHttpRequest(url_attended_events, params);
+
+			try {
+				// Check success return
+				int success = json.getInt("success");
+				if (success == 1) {
+					// Upcoming events are found
+					// Get array of events and attends
+					events = json.getJSONArray("events");
+					attends = json.getJSONArray("attends");
+
+					// Loop through all events
+					for (int i = 0; i < events.length(); i++) {
+						JSONObject c = events.getJSONObject(i);
+
+						// Store each json item in variable
+						int id = c.getInt("event_id");
+						String name = c.getString("event_name");
+						String tStart = c.getString("time_start");
+						String dStart = c.getString("date_start");
+						String dEnd = c.getString("date_end");
+						String loc = c.getString("location");
+						String desc = c.getString("description");
+						String type = c.getString("type");
+						String imgUrl = c.getString("image");
+						int img = getResources().getIdentifier(imgUrl, null, getPackageName());
+
+						// Create new Event object
+						Event e = new Event(id, name, tStart, dStart, dEnd, loc, desc, type, img);
+
+						// Add info to list of events and attends
+						eventsListForMonth.add(e);
+						attendsListForMonth.add(attends.getString(i));
+					}
+				} else {
+					// no upcoming events found
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 			return null;
 		}
 		
@@ -753,6 +858,9 @@ public class Home extends TabActivity implements OnClickListener {
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			pDialog.dismiss();
+			updateDatesDisplayed(current);
+			if(firstLoad == true)
+				new LoadAllEvents().execute();
 		}
 	}
 
