@@ -31,6 +31,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,8 +77,7 @@ public class Home extends TabActivity implements OnClickListener {
 	// NOW tab
 	ListView lvActivities;
 	Event[] activities;
-	TextView tvDate;
-	Button bAdd;
+	TextView tvDate, tvNoEvent;
 	// Header Views
 	TextView tvHTitle;
 	Button btnProfile, btnSettings, btnAddActivity;
@@ -115,25 +115,7 @@ public class Home extends TabActivity implements OnClickListener {
 		ApplicationController AP = (ApplicationController)getApplicationContext();
 		this.username = AP.getUsername();
 		
-		this.populateDummy();
 		this.setup();
-	}
-
-	public void populateDummy() {
-		// Activities Dummy
-		this.activities = new Event[] {
-				/*
-				 * new Event(3,"USC Graduation", "6:00pm", "03.25.13",
-				 * "USC South Campus",R.drawable.usc), new Event(1,
-				 * "Starbucks Promo", "2:00pm", "12.01.12", "Ayala Terraces",
-				 * R.drawable.starbucks),
-				 */
-				new Event(1, "Android Exam", "12:30pm", "10.10.12", "LB 446"),
-				new Event(2, "Softeng Exam", "8:30pm", "10.13.12", "LB 466"),
-				new Event(3, "Project Meeting", "4:00pm", "9.30.12",
-						"Starbucks"),
-				new Event(4, "Birthday", "9pm", "10.13.12", "Famous Resto"),
-				new Event(5, "Thesis Defense", "2pm", "10.12.12", "LB467") };
 	}
 
 	private void setup() {
@@ -160,7 +142,6 @@ public class Home extends TabActivity implements OnClickListener {
 		ApplicationController AP = (ApplicationController)getApplicationContext();
 		AP.setDateToday(todayDate);
 		tvCurMonth.setText(monthYrFormat.format(curDate.getTime()));
-		// Retrieve events for calendar
 		// Load Events on the Calendar
 		loadEventsOnCalendar(1);
 
@@ -170,9 +151,8 @@ public class Home extends TabActivity implements OnClickListener {
 		// Setup ListViews
 		// Load upcoming events in Background Thread
 		lvEvents = (ListView) findViewById(R.id.lvEvents);
-		//new LoadAllEvents().execute();
 		lvActivities = (ListView) findViewById(R.id.lvActivities);
-		lvActivities.setAdapter(new EventActivityAdapter(this, activities));
+		
 		lvEvents.setOnItemLongClickListener(eventLongClickListener);
 		lvEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -214,8 +194,7 @@ public class Home extends TabActivity implements OnClickListener {
 		// Setup tabs
 		// Events Tab
 		TabSpec specs = tabHost.newTabSpec("tag1");
-		View tabIndicator = LayoutInflater.from(this).inflate(
-				R.layout.tab_indicator, getTabWidget(), false);
+		View tabIndicator = LayoutInflater.from(this).inflate(R.layout.tab_indicator, getTabWidget(), false);
 		TextView title = (TextView) tabIndicator.findViewById(R.id.title);
 		title.setText("Events");
 		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.icon);
@@ -242,8 +221,8 @@ public class Home extends TabActivity implements OnClickListener {
 
 		// NOW Tab Setup
 		tvDate = (TextView) findViewById(R.id.tvDate);
-		tvDate.setText(dateFormat.format(today.getTime()) + " "
-				+ tvCurMonth.getText());
+		tvNoEvent = (TextView)findViewById(R.id.tvNoActivities);
+		tvDate.setText(dateFormat.format(today.getTime()) + " "+ tvCurMonth.getText());
 	}
 
 	AdapterView.OnItemLongClickListener eventLongClickListener = new AdapterView.OnItemLongClickListener() {
@@ -315,9 +294,7 @@ public class Home extends TabActivity implements OnClickListener {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (data.getExtras().containsKey("addActivity")) {
 			if (data.getBooleanExtra("addActivity", false) == true)
-				Toast.makeText(Home.this,
-						"Activity has been added to your calendar!",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(Home.this, "Activity has been added to your calendar!", Toast.LENGTH_SHORT).show();
 		}
 	}
 	
@@ -390,12 +367,51 @@ public class Home extends TabActivity implements OnClickListener {
 			public void onItemClick(AdapterView<?> parent, View v, int pos,
 					long id) {
 				// TODO Auto-generated method stub
-				// Retrieve events on spec day
-				tvDate.setText(((TextView) v.findViewById(R.id.tvDateCell)).getText() + " " + tvCurMonth.getText());
+				String date = ((TextView) v.findViewById(R.id.tvDateCell)).getText().toString();
+				String monthYr = tvCurMonth.getText().toString();
+				tvDate.setText( date + " " + monthYr);
+				// Retrieve events on specific day
+				activities = getActivities(formatDate(monthYr, date));
+				if(activities.length > 0)
+					tvNoEvent.setVisibility(View.GONE);
+				else
+					tvNoEvent.setVisibility(View.VISIBLE);
+				Home.this.lvActivities.setAdapter(new EventActivityAdapter(Home.this, activities));
+				tabHost.setCurrentTab(1);
 			}
 		});
 	}
-
+	
+	private Event[] getActivities(String selectedDate){
+		ArrayList<Event> activities = new ArrayList<Event>();
+		for(int i=0; i < attendsListForMonth.size(); i++){
+			if(attendsListForMonth.get(i).equals(selectedDate))
+				activities.add(eventsListForMonth.get(i));
+		}
+		return activities.toArray(new Event[activities.size()]);
+	}
+	
+	private String formatDate(String monthYr, String date){
+		// Parse for year-month-date format
+		String delim = "[ ]+";
+		String[] monthYrArr = monthYr.split(delim);
+		String monthName = monthYrArr[0];
+		String year = monthYrArr[1];
+		Date d = null;
+		try {
+			d = new SimpleDateFormat("MMMMM", Locale.ENGLISH).parse(monthName);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		int monthNum = cal.get(Calendar.MONTH) + 1;
+		if(date.length() == 1)
+			date = "0"+date;
+		return year+"-"+monthNum+"-"+date;
+	}
+	
 	/**
 	 * Background Async Task to Load all events by making HTTP Request
 	 * */
@@ -568,8 +584,7 @@ public class Home extends TabActivity implements OnClickListener {
 			this.selectedYear = monthYr[1];
 			Date date = null;
 			try {
-				date = new SimpleDateFormat("MMMMM", Locale.ENGLISH)
-						.parse(selectedMonthName);
+				date = new SimpleDateFormat("MMMMM", Locale.ENGLISH).parse(selectedMonthName);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -654,11 +669,18 @@ public class Home extends TabActivity implements OnClickListener {
 						// TODO Auto-generated method stub
 						
 						// Check validity of dates
-						SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 						try {
+							Log.d("SELECTED", selectedYear+"-"+selectedMonthInt+"-"+selectedDate);
+							Log.d("START", eventDates[0]);
+							Log.d("END", eventDates[1]);
 							Date selectedDateF = format.parse(selectedYear+"-"+selectedMonthInt+"-"+selectedDate);
 							Date startDateF = format.parse(eventDates[0]);
 							Date endDateF = format.parse(eventDates[1]);	
+							if(selectedDateF.compareTo(startDateF) >= 0)
+								Log.d("STATUS", "PASS1");
+							if(selectedDateF.compareTo(endDateF) <= 0)
+								Log.d("STATUS", "PASS2");
 							if(selectedDateF.compareTo(startDateF) >= 0 && selectedDateF.compareTo(endDateF) <= 0){
 								// Add Attendance to chosen event
 								new AddAttendance().execute();
@@ -746,8 +768,7 @@ public class Home extends TabActivity implements OnClickListener {
 				params.add(new BasicNameValuePair("attend_date", selectedYear+"-"+selectedMonthInt+"-"+selectedDate));
 
 				// Getting JSON object
-				JSONObject json = jsonParser.makeHttpRequest(url_attend_event,
-						params);
+				JSONObject json = jsonParser.makeHttpRequest(url_attend_event,params);
 
 				// Check for success tag
 				try {
@@ -858,6 +879,14 @@ public class Home extends TabActivity implements OnClickListener {
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			pDialog.dismiss();
+			// Retrieve activities for list current date
+			activities = getActivities(yrMonthDateFormat.format(curDate.getTime()));
+			if(activities.length > 0)
+				tvNoEvent.setVisibility(View.GONE);
+			else
+				tvNoEvent.setVisibility(View.VISIBLE);
+			lvActivities.setAdapter(new EventActivityAdapter(Home.this, activities));
+			// Retrieve events for calendar
 			updateDatesDisplayed(current);
 			if(firstLoad == true)
 				new LoadAllEvents().execute();
