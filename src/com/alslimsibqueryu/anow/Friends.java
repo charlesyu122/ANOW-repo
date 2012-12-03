@@ -2,7 +2,17 @@ package com.alslimsibqueryu.anow;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -19,11 +29,13 @@ import android.widget.LinearLayout.LayoutParams;
 public class Friends extends Activity{
 
 	ListView lvFriends;
-	User[] friendDummies;
 	String[] namesOfFriends;
+	User[] arrayOfFriends;
+	
 	//Header views
 	TextView tvTitle;
 	Button btnBack;
+	
 	// Side index attributes
 	private GestureDetector mGestureDetector;
 	private static float sideIndexX;
@@ -32,42 +44,33 @@ public class Friends extends Activity{
 	private int indexListSize;
 	private ArrayList<Object[]> indexList = null;
 	
+	// Database Connectivity attributes
+	private String username;
+	ArrayList<User> friendsList;
+	private ProgressDialog pDialog;
+	JSONParser jParser = new JSONParser();
+	private static String url_get_friends = "http://10.0.2.2/ANowPhp/get_friends.php";
+	JSONArray users = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.friends);
-		this.populateDummies();
-		this.transferNames();
-		Arrays.sort(friendDummies, User.UserNameComparator);
-		Arrays.sort(namesOfFriends);
-		this.setup();
-		// Side Index
-		mGestureDetector = new GestureDetector(this,new SideIndexGestureListener());
+		
+		// Retrieve username
+		ApplicationController AC = (ApplicationController)getApplicationContext();
+		this.username = AC.getUsername();
+		
+		// Load friends
+		new LoadAllFriends().execute();
 	}
 	
-	private void populateDummies() {
-		friendDummies = new User[] {
-				new User(1, "Fealrone Alajas", R.drawable.ic_launcher),
-				new User(1, "Erwin Lim", R.drawable.ic_launcher),
-				new User(1, "Jullian Sibi", R.drawable.ic_launcher),
-				new User(1, "Josha Querubin", R.drawable.ic_launcher),
-				new User(1, "Charles Yu", R.drawable.ic_launcher),
-				new User(1, "Paul Parreno", R.drawable.ic_launcher),
-				new User(1, "Juan Cruz", R.drawable.ic_launcher),
-				new User(1, "Kobe Bryant", R.drawable.ic_launcher),
-				new User(1, "Totin Monkey", R.drawable.ic_launcher),
-				new User(1, "Aferer Lim", R.drawable.ic_launcher),
-				new User(1, "Bouyant Salajas", R.drawable.ic_launcher),
-				new User(1, "Shang Lumpia", R.drawable.ic_launcher),
-				new User(1, "Apple iSibi", R.drawable.ic_launcher),
-		};
-	}
 	
 	private void transferNames(){
-		this.namesOfFriends = new String[friendDummies.length];
-		for(int i=0; i<this.friendDummies.length; i++)
-			this.namesOfFriends[i] = this.friendDummies[i].name;
+		this.namesOfFriends = new String[arrayOfFriends.length];
+		for(int i=0; i<this.arrayOfFriends.length; i++)
+			this.namesOfFriends[i] = this.arrayOfFriends[i].name;
 	}
 	
 	private void setup(){
@@ -85,7 +88,7 @@ public class Friends extends Activity{
 		});
 		//Set-up views
 		lvFriends = (ListView) findViewById(R.id.lvFriends);
-		lvFriends.setAdapter(new UserAdapter(Friends.this,friendDummies));
+		lvFriends.setAdapter(new UserAdapter(Friends.this, arrayOfFriends, 'F'));
 		lvFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View v,int arg2, long arg3) {
@@ -95,7 +98,88 @@ public class Friends extends Activity{
 		});
 	}
 	
+	// Methods for database query
+	class LoadAllFriends extends AsyncTask<String, String, String> {
 
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+    		pDialog = new ProgressDialog(Friends.this);
+    		pDialog.setMessage("Loading Friends. Please wait...");
+    		pDialog.setIndeterminate(false);
+    		pDialog.setCancelable(false);
+    		pDialog.show();
+		}
+		
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			// Build parameters
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("username", username));
+
+			// Getting JSON object
+			JSONObject json = jParser.makeHttpRequest(url_get_friends, params);
+
+			// Check for success tag
+			try {
+				int success = json.getInt("success");
+				if (success == 1) {
+
+					//Get array of products
+					users = json.getJSONArray("friends");
+					friendsList = new ArrayList<User>();
+					
+					//Looping through all products
+					for(int i=0; i < users.length(); i++){
+						JSONObject c  = users.getJSONObject(i);
+						
+						//Storing each json item in variable
+						String username = c.getString("username");
+						String name = c.getString("name");
+						String birthday = c.getString("birthday");
+						String hobbies = c.getString("hobbies");
+						String eventCount = c.getString("event_count");
+						String uri = c.getString("profile_image");
+						int profPic = getResources().getIdentifier(uri, null, getPackageName());
+						
+						// Create new user object
+						User friend = new User(username, name, birthday, hobbies, eventCount, profPic);
+						
+						//Adding friends to list of friends to display
+						friendsList.add(friend);
+					}
+				} else {
+					// failed to retrieved
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			pDialog.dismiss();
+			
+			// Convert list to array
+			arrayOfFriends = friendsList.toArray(new User[friendsList.size()]);
+			// Set up for Side Index
+			transferNames();
+			Arrays.sort(arrayOfFriends, User.UserNameComparator);
+			Arrays.sort(namesOfFriends);
+			setup();
+			// Side Index
+			mGestureDetector = new GestureDetector(Friends.this,new SideIndexGestureListener());
+		}
+	}
+	
+	
+	
+	// Methods for side index
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (mGestureDetector.onTouchEvent(event)) {

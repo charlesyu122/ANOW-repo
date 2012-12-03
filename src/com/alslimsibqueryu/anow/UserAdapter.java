@@ -13,8 +13,9 @@ public class UserAdapter extends ArrayAdapter<User> {
 
 	private Context context;
 	User[] values = null;
+	char type; // F for friends list P for participants list
 
-	public UserAdapter(Context context, User[] objects) {
+	public UserAdapter(Context context, User[] objects, char type) {
 		super(context, R.layout.single_user, objects);
 		// TODO Auto-generated constructor stub
 		this.context = context;
@@ -36,19 +37,18 @@ public class UserAdapter extends ArrayAdapter<User> {
 		userProfPic.setImageResource(values[position].profPic);
 		userName.setText(values[position].name);
 		
-		if (values[position].status == 0)
+		if (type == 'P'){
 			connect.setVisibility(View.VISIBLE);
-		
-		connect.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				values[position].setStatus(1);
-				connect.setText("Connected");
-				connect.setEnabled(false);
-			}
-		});
-
+			connect.setOnClickListener(new View.OnClickListener() {
+				
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					values[position].setStatus(1);
+					connect.setText("Connected");
+					connect.setEnabled(false);
+				}
+			});
+		}
 		rowView.setTag(values[position]);
 		return rowView;
 	}

@@ -464,8 +464,7 @@ public class Home extends TabActivity implements OnClickListener {
 								getPackageName());
 
 						// Create new Event object
-						Event e = new Event(id, name, tStart, dStart, dEnd,
-								loc, desc, "E", img);
+						Event e = new Event(id, name, tStart, dStart, dEnd, loc, desc, "E", img);
 
 						// Add event to arraylist of events
 						eventsList.add(e);
