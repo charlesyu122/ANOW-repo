@@ -9,26 +9,28 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
-        <ListView
-            android:id="@+id/lvFriends"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:listSelector="@drawable/list_item_selector" >
-        </ListView>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-        <LinearLayout
-            android:id="@+id/friendsSideIndex"
-            android:layout_width="30dip"
-            android:layout_height="fill_parent"
-            android:background="#303030"
-            android:fadingEdge="vertical"
-            android:gravity="center_horizontal"
-            android:orientation="vertical" >
-        </LinearLayout>
+            <ListView
+                android:id="@+id/lvFriends"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:listSelector="@drawable/list_item_selector" />
+
+            <TextView
+                android:id="@+id/tvNoFriends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                android:text="User has no connections" />
+        </RelativeLayout>
+
     </LinearLayout>
 
 </LinearLayout>

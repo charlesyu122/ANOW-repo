@@ -1,7 +1,6 @@
 package com.alslimsibqueryu.anow;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -12,37 +11,25 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.LinearLayout.LayoutParams;
 
 public class Friends extends Activity{
 
 	ListView lvFriends;
-	String[] namesOfFriends;
-	User[] arrayOfFriends;
+	TextView tvNoFriends;
+	private String type; // user or friend
+	private int countOfFriends;
 	
 	//Header views
 	TextView tvTitle;
 	Button btnBack;
-	
-	// Side index attributes
-	private GestureDetector mGestureDetector;
-	private static float sideIndexX;
-	private static float sideIndexY;
-	private int sideIndexHeight;
-	private int indexListSize;
-	private ArrayList<Object[]> indexList = null;
 	
 	// Database Connectivity attributes
 	private String username;
@@ -58,26 +45,26 @@ public class Friends extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.friends);
 		
-		// Retrieve username
-		ApplicationController AC = (ApplicationController)getApplicationContext();
-		this.username = AC.getUsername();
+		// Retrieve type
+		Intent i = getIntent();
+		this.type = i.getStringExtra("type");
+		if(type.equals("user")){
+			ApplicationController AC = (ApplicationController)getApplicationContext();
+			this.username = AC.getUsername();
+		} else if(type.equals("friend")){
+			this.username = i.getStringExtra("friend_username");
+		}
 		
+		tvNoFriends = (TextView)findViewById(R.id.tvNoFriends);
 		// Load friends
 		new LoadAllFriends().execute();
-	}
-	
-	
-	private void transferNames(){
-		this.namesOfFriends = new String[arrayOfFriends.length];
-		for(int i=0; i<this.arrayOfFriends.length; i++)
-			this.namesOfFriends[i] = this.arrayOfFriends[i].name;
 	}
 	
 	private void setup(){
 		//Set-up header views
 		tvTitle = (TextView)findViewById(R.id.tvTitle);
 		btnBack = (Button)findViewById(R.id.btnHeader);
-		tvTitle.setText("Friends");
+		tvTitle.setText("Connections");
 		btnBack.setText("Back");
 		btnBack.setOnClickListener(new View.OnClickListener() {
 			
@@ -88,19 +75,28 @@ public class Friends extends Activity{
 		});
 		//Set-up views
 		lvFriends = (ListView) findViewById(R.id.lvFriends);
-		lvFriends.setAdapter(new UserAdapter(Friends.this, arrayOfFriends, 'F'));
+		if(type.equals("user"))
+			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'F'));
+		else
+			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'L'));
 		lvFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View v,int arg2, long arg3) {
 				// TODO Auto-generated method stub
-				Toast.makeText(Friends.this, "Go to profile",Toast.LENGTH_SHORT).show();
+				if(type.equals("user")){
+					User friend = (User)v.getTag();
+					Intent i = new Intent(Friends.this, UserProfile.class);
+					i.putExtra("type", "friend");
+					i.putExtra("username", friend.username);
+					startActivity(i);
+				}
 			}
 		});
 	}
 	
 	// Methods for database query
 	class LoadAllFriends extends AsyncTask<String, String, String> {
-
+		
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
@@ -129,6 +125,7 @@ public class Friends extends Activity{
 
 					//Get array of products
 					users = json.getJSONArray("friends");
+					countOfFriends = users.length();
 					friendsList = new ArrayList<User>();
 					
 					//Looping through all products
@@ -152,6 +149,7 @@ public class Friends extends Activity{
 					}
 				} else {
 					// failed to retrieved
+					countOfFriends = 0;
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -164,182 +162,24 @@ public class Friends extends Activity{
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			pDialog.dismiss();
-			
-			// Convert list to array
-			arrayOfFriends = friendsList.toArray(new User[friendsList.size()]);
-			// Set up for Side Index
-			transferNames();
-			Arrays.sort(arrayOfFriends, User.UserNameComparator);
-			Arrays.sort(namesOfFriends);
-			setup();
-			// Side Index
-			mGestureDetector = new GestureDetector(Friends.this,new SideIndexGestureListener());
-		}
-	}
-	
-	
-	
-	// Methods for side index
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		if (mGestureDetector.onTouchEvent(event)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private ArrayList<Object[]> createIndex(String[] strArr) {
-		ArrayList<Object[]> tmpIndexList = new ArrayList<Object[]>();
-		Object[] tmpIndexItem = null;
-
-		int tmpPos = 0;
-		String tmpLetter = "";
-		String currentLetter = null;
-		String strItem = null;
-
-		for (int j = 0; j < strArr.length; j++) {
-			strItem = strArr[j];
-			currentLetter = strItem.substring(0, 1);
-
-			// every time new letters comes
-			// save it to index list
-			if (!currentLetter.equals(tmpLetter)) {
-				tmpIndexItem = new Object[3];
-				tmpIndexItem[0] = tmpLetter;
-				tmpIndexItem[1] = tmpPos - 1;
-				tmpIndexItem[2] = j - 1;
-
-				tmpLetter = currentLetter;
-				tmpPos = j + 1;
-
-				tmpIndexList.add(tmpIndexItem);
+			if(countOfFriends == 0){
+				tvNoFriends.setVisibility(View.VISIBLE);
+				// Set-up header views
+				tvTitle = (TextView)findViewById(R.id.tvTitle);
+				btnBack = (Button)findViewById(R.id.btnHeader);
+				tvTitle.setText("Friends");
+				btnBack.setText("Back");
+				btnBack.setOnClickListener(new View.OnClickListener() {
+					
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						finish();
+					}
+				});
+			} else{
+				// Set-up list
+				setup();
 			}
 		}
-
-		// save also last letter
-		tmpIndexItem = new Object[3];
-		tmpIndexItem[0] = tmpLetter;
-		tmpIndexItem[1] = tmpPos - 1;
-		tmpIndexItem[2] = strArr.length - 1;
-		tmpIndexList.add(tmpIndexItem);
-
-		// and remove first temporary empty entry
-		if (tmpIndexList != null && tmpIndexList.size() > 0) {
-			tmpIndexList.remove(0);
-		}
-
-		return tmpIndexList;
-	}
-
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-
-		LinearLayout sideIndex = (LinearLayout) findViewById(R.id.friendsSideIndex);
-		sideIndexHeight = sideIndex.getHeight();
-		sideIndex.removeAllViews();
-
-		// TextView for every visible item
-		TextView tmpTV = null;
-
-		// we'll create the index list
-		indexList = createIndex(namesOfFriends);
-
-		// number of items in the index List
-		indexListSize = indexList.size();
-
-		// maximal number of item, which could be displayed
-		int indexMaxSize = (int) Math.floor(sideIndex.getHeight() / 20);
-
-		int tmpIndexListSize = indexListSize;
-
-		// handling that case when indexListSize > indexMaxSize
-		while (tmpIndexListSize > indexMaxSize) {
-			tmpIndexListSize = tmpIndexListSize / 2;
-		}
-
-		// computing delta (only a part of items will be displayed to save a
-		// place)
-		double delta = indexListSize / tmpIndexListSize;
-
-		String tmpLetter = null;
-		Object[] tmpIndexItem = null;
-
-		// show every m-th letter
-		for (double i = 1; i <= indexListSize; i = i + delta) {
-			tmpIndexItem = indexList.get((int) i - 1);
-			tmpLetter = tmpIndexItem[0].toString();
-			tmpTV = new TextView(this);
-			tmpTV.setText(tmpLetter);
-			tmpTV.setGravity(Gravity.CENTER);
-			tmpTV.setTextSize(20);
-			LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,
-					LayoutParams.WRAP_CONTENT, 1);
-			tmpTV.setLayoutParams(params);
-			sideIndex.addView(tmpTV);
-		}
-
-		// and set a touch listener for it
-		sideIndex.setOnTouchListener(new View.OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				// now you know coordinates of touch
-                sideIndexX = event.getX();
-                sideIndexY = event.getY();
-
-                // and can display a proper item it country list
-                displayListItem();
-				return false;
-			}
-		});
-	}
-
-	class SideIndexGestureListener extends
-			GestureDetector.SimpleOnGestureListener {
-		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2,
-				float distanceX, float distanceY) {
-			// we know already coordinates of first touch
-			// we know as well a scroll distance
-			sideIndexX = sideIndexX - distanceX;
-			sideIndexY = sideIndexY - distanceY;
-
-			// when the user scrolls within our side index
-			// we can show for every position in it a proper
-			// item in the country list
-			if (sideIndexX >= 0 && sideIndexY >= 0) {
-				displayListItem();
-			}
-
-			return super.onScroll(e1, e2, distanceX, distanceY);
-		}
-	}
-
-	public void displayListItem() {
-		// compute number of pixels for every side index item
-		double pixelPerIndexItem = (double) sideIndexHeight / indexListSize;
-
-		// compute the item index for given event position belongs to
-		int itemPosition = (int) (sideIndexY / pixelPerIndexItem);
-
-		// compute minimal position for the item in the list
-		int minPosition = (int) (itemPosition * pixelPerIndexItem);
-
-		// get the item (we can do it since we know item index)
-		Object[] indexItem = indexList.get(itemPosition);
-
-		// and compute the proper item in the country list
-		int indexMin = Integer.parseInt(indexItem[1].toString());
-		int indexMax = Integer.parseInt(indexItem[2].toString());
-		int indexDelta = Math.max(1, indexMax - indexMin);
-
-		double pixelPerSubitem = pixelPerIndexItem / indexDelta;
-		int subitemPosition = (int) (indexMin + (sideIndexY - minPosition)
-				/ pixelPerSubitem);
-
-		ListView listView = (ListView) findViewById(R.id.lvFriends);
-		listView.setSelection(subitemPosition);
-	}
+	}	
 }

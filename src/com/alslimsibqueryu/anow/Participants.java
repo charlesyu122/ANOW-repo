@@ -86,7 +86,7 @@ public class Participants extends Activity {
 		});
 		// Set-up views
 		lvParticipants = (ListView) findViewById(R.id.lvParticipants);
-		lvParticipants.setAdapter(new UserAdapter(Participants.this,participantDummies, 'P'));
+		//lvParticipants.setAdapter(new UserAdapter(Participants.this,participantDummies, 'P'));
 		lvParticipants.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View v,int arg2, long arg3) {

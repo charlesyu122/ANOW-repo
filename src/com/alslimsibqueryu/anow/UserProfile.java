@@ -25,6 +25,9 @@ import android.widget.Toast;
 
 public class UserProfile extends Activity {
 
+	// Attributes
+	private String type; // user or friend
+	
 	// Header Views
 	Button btnSettings, btnSave;
 	TextView headerTitle;
@@ -68,9 +71,18 @@ public class UserProfile extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_profile);
-		Intent i = getIntent();
-		this.username = i.getStringExtra("username");
 		
+		// Get type of profile and username
+		Intent i = getIntent();
+		this.type = i.getStringExtra("type");
+		
+		if(type.equals("user")){
+			ApplicationController AC = (ApplicationController)getApplicationContext();
+			this.username = AC.getUsername();
+		} else if(type.equals("friend")){
+			this.username = i.getStringExtra("username");
+		}
+
 		// Initialize
 		this.myProfile = new User();
 		this.userMatched = new ArrayList<HashMap<String, String>>();
@@ -88,13 +100,19 @@ public class UserProfile extends Activity {
 		btnSettings = (Button) findViewById(R.id.btnHeader);
 		btnSave = (Button) findViewById(R.id.btnHeader2);
 		headerTitle.setText("Profile");
-		btnSettings.setText("Settings");
+		if(type.equals("user"))
+			btnSettings.setText("Settings");
+		else 
+			btnSettings.setText("Back");
 		btnSave.setText("Save");
 		btnSettings.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				startActivity(new Intent(UserProfile.this, Settings.class));
+				if(type.equals("user"))
+					startActivity(new Intent(UserProfile.this, Settings.class));
+				else
+					finish();
 			}
 		});
 
@@ -111,6 +129,8 @@ public class UserProfile extends Activity {
 		btnCalendar = (Button) findViewById(R.id.btnCalendar);
 		btnFriends = (Button) findViewById(R.id.btnFriends);
 		btnInvites = (Button) findViewById(R.id.btnInvites);
+		if(type.equals("friend"))
+			btnInvites.setVisibility(View.GONE);
 		
 		btnCalendar.setOnClickListener(new View.OnClickListener() {
 
@@ -124,7 +144,9 @@ public class UserProfile extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent i = new Intent(UserProfile.this, Friends.class);
-				i.putExtra("username", username);
+				i.putExtra("type", type);
+				if(type.equals("friend"))
+					i.putExtra("friend_username", username);
 				startActivity(i);
 			}
 		});
@@ -197,10 +219,12 @@ public class UserProfile extends Activity {
 			}
 		};
 
-		tvProfName.setOnLongClickListener(listen);
-		tvProfBday.setOnLongClickListener(listen);
-		tvProfInterest.setOnLongClickListener(listen);
-		btnSave.setOnClickListener(savelisten);
+		if(type.equals("user")){
+			tvProfName.setOnLongClickListener(listen);
+			tvProfBday.setOnLongClickListener(listen);
+			tvProfInterest.setOnLongClickListener(listen);
+			btnSave.setOnClickListener(savelisten);
+		}
 	}
 
 	class LoadUserProfile extends AsyncTask<String, String, String>{

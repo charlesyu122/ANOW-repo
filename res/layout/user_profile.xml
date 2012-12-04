@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/custom_profbutton"
-                    android:text="Friends"
+                    android:text="Connections"
                     android:textColor="#CCCCCC" />
 
                 <Button
@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/custom_profbutton"
-                    android:text="My Calendar"
+                    android:text="View Calendar"
                     android:textColor="#CCCCCC" />
             </LinearLayout>
 

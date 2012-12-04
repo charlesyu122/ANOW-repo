@@ -1,5 +1,7 @@
 package com.alslimsibqueryu.anow;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +17,12 @@ public class UserAdapter extends ArrayAdapter<User> {
 	User[] values = null;
 	char type; // F for friends list P for participants list
 
-	public UserAdapter(Context context, User[] objects, char type) {
+	public UserAdapter(Context context, ArrayList<User> objects, char type) {
 		super(context, R.layout.single_user, objects);
 		// TODO Auto-generated constructor stub
 		this.context = context;
-		this.values = objects;
+		this.values = objects.toArray(new User[objects.size()]);
+		this.type = type;
 	}
 
 	@Override
@@ -33,7 +36,10 @@ public class UserAdapter extends ArrayAdapter<User> {
 		ImageView userProfPic = (ImageView) rowView.findViewById(R.id.ivListProfPic);
 		TextView userName = (TextView) rowView.findViewById(R.id.tvUserName);
 		final Button connect = (Button) rowView.findViewById(R.id.btnConnect);
-
+		ImageView ivInfo = (ImageView) rowView.findViewById(R.id.ivUInfo);
+		if(type == 'L')
+			ivInfo.setVisibility(View.GONE);
+		
 		userProfPic.setImageResource(values[position].profPic);
 		userName.setText(values[position].name);
 		
