@@ -1,5 +1,6 @@
 package com.alslimsibqueryu.anow;
 
+import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class Settings extends Activity implements OnClickListener {
 	
 	// url to create a new account for user
 	private static String url_edit_username_password = "http://10.0.2.2/ANowPhp/edit_username_password.php";
+	private static String url_edit_picture = "http://10.0.2.2/ANowPhp/edit_picture.php";
 	
 	//JSON Node names
 	private static final String TAG_SUCCESS = "success";
@@ -84,17 +86,14 @@ public class Settings extends Activity implements OnClickListener {
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
- 
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
+            
+            Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
             cursor.moveToFirst();
- 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             picturePath = cursor.getString(columnIndex);
             cursor.close();
             
-            Toast.makeText(Settings.this, picturePath, Toast.LENGTH_SHORT).show();
-         
+            new EditPicture().execute();
         }
 	}
 
@@ -198,6 +197,9 @@ public class Settings extends Activity implements OnClickListener {
 			alertP.show();
 			break;
 		case R.id.btnChangeProfPic:
+			updateSuccess = 0;
+			AP = (ApplicationController)getApplicationContext();
+			username = AP.getUsername();
 			Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, 
 					android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 			
@@ -238,7 +240,7 @@ public class Settings extends Activity implements OnClickListener {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
 			pDialog = new ProgressDialog(Settings.this);
-			pDialog.setMessage("Updating Profile...");
+			pDialog.setMessage("Updating Username...");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(false);
 			pDialog.show();
@@ -292,7 +294,7 @@ public class Settings extends Activity implements OnClickListener {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
 			pDialog = new ProgressDialog(Settings.this);
-			pDialog.setMessage("Updating Profile...");
+			pDialog.setMessage("Updating Password...");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(false);
 			pDialog.show();
@@ -333,6 +335,59 @@ public class Settings extends Activity implements OnClickListener {
 				Toast.makeText(Settings.this, "Password successfully edited!", Toast.LENGTH_SHORT).show();
 			else
 				Toast.makeText(Settings.this, "Confirm password is incorrect!", Toast.LENGTH_SHORT).show();
+		}
+		
+	}	
+
+	class EditPicture extends AsyncTask<String, String, String>{
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			pDialog = new ProgressDialog(Settings.this);
+			pDialog.setMessage("Processing your Profile Picture...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(false);
+			pDialog.show();
+		}
+		
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("picturePath", picturePath));
+			params.add(new BasicNameValuePair("password", password));
+			params.add(new BasicNameValuePair("username", username));
+			
+			// Send modified data through HTTP request
+			JSONObject json = jsonParser.makeHttpRequest(url_edit_picture, params);
+			
+			// Check json success tag
+			try
+			{
+				int success = json.getInt(TAG_SUCCESS);
+				
+				if(success == 1)
+					updateSuccess = 1;
+				
+			} 
+			catch(JSONException e){
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+	
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			pDialog.dismiss();
+			
+			if(updateSuccess == 1)
+				Toast.makeText(Settings.this, "Picture successfully uploaded! Path is "+picturePath, Toast.LENGTH_LONG).show();
+			else
+				Toast.makeText(Settings.this, "Cannot upload your photo. Path is "+picturePath, Toast.LENGTH_LONG).show();
 		}
 		
 	}	
