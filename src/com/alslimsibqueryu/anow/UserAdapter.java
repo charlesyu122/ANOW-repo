@@ -1,8 +1,16 @@
 package com.alslimsibqueryu.anow;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,35 +22,54 @@ import android.widget.TextView;
 public class UserAdapter extends ArrayAdapter<User> {
 
 	private Context context;
+	private String loggedInUsername;
 	User[] values = null;
 	char type; // F for friends list P for participants list
+	
+	// Attributes for Database Interaction
+	private ProgressDialog pDialog;
+	private JSONParser jParser = new JSONParser();
+	private static String url_connect_users = "http://10.0.2.2/ANowPhp/connect_users.php";
 
-	public UserAdapter(Context context, ArrayList<User> objects, char type) {
+	public UserAdapter(Context context, ArrayList<User> objects, char type, String loggedIn) {
 		super(context, R.layout.single_user, objects);
 		// TODO Auto-generated constructor stub
 		this.context = context;
 		this.values = objects.toArray(new User[objects.size()]);
 		this.type = type;
+		this.loggedInUsername = loggedIn;
 	}
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-		View rowView = convertView;
-		if(rowView == null){
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			rowView = inflater.inflate(R.layout.single_user, parent, false);
-		}
+		
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View rowView = inflater.inflate(R.layout.single_user, parent, false);
+		
 		ImageView userProfPic = (ImageView) rowView.findViewById(R.id.ivListProfPic);
 		TextView userName = (TextView) rowView.findViewById(R.id.tvUserName);
 		final Button connect = (Button) rowView.findViewById(R.id.btnConnect);
 		ImageView ivInfo = (ImageView) rowView.findViewById(R.id.ivUInfo);
-		if(type == 'L')
-			ivInfo.setVisibility(View.GONE);
-		
 		userProfPic.setImageResource(values[position].profPic);
 		userName.setText(values[position].name);
 		
+		if(values[position].status.equals("strangers")){
+			connect.setVisibility(View.VISIBLE);
+			connect.setOnClickListener(new View.OnClickListener() {
+				
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					new ConnectUser(values[position].username).execute();
+					connect.setText("Connected");
+					connect.setEnabled(false);
+				}
+			});
+		}
+		
+		if(type == 'L')
+			ivInfo.setVisibility(View.INVISIBLE);
+	
 		if (type == 'P'){
 			connect.setVisibility(View.VISIBLE);
 			connect.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +84,55 @@ public class UserAdapter extends ArrayAdapter<User> {
 		}
 		rowView.setTag(values[position]);
 		return rowView;
+	}
+	
+	public class ConnectUser extends AsyncTask<String, String, String>{
+
+		private String connectToUser;
+		
+		public ConnectUser(String user){
+			this.connectToUser = user;
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			pDialog = new ProgressDialog(context);
+			pDialog.setMessage("Connecting to "+ connectToUser+"...");
+    		pDialog.setIndeterminate(false);
+    		pDialog.setCancelable(false);
+    		pDialog.show();
+		}
+		
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("logged_in", loggedInUsername));
+			params.add(new BasicNameValuePair("username", connectToUser));
+			
+			// Get JSON object
+			JSONObject json = jParser.makeHttpRequest(url_connect_users, params);
+			
+			// Check for success tag
+			try{
+				int success = json.getInt("success");
+				if(success == 1){
+					// successfully connected user
+				}
+			}catch(JSONException e){
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			pDialog.dismiss();
+		}
+		
 	}
 
 }

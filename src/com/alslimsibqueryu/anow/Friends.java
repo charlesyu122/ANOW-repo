@@ -33,6 +33,7 @@ public class Friends extends Activity{
 	
 	// Database Connectivity attributes
 	private String username;
+	private String loggedInUsername; // for type friend
 	ArrayList<User> friendsList;
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
@@ -76,9 +77,9 @@ public class Friends extends Activity{
 		//Set-up views
 		lvFriends = (ListView) findViewById(R.id.lvFriends);
 		if(type.equals("user"))
-			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'F'));
+			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'F', username));
 		else
-			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'L'));
+			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'L', loggedInUsername));
 		lvFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View v,int arg2, long arg3) {
@@ -114,6 +115,11 @@ public class Friends extends Activity{
 			// Build parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("username", username));
+			if(type.equals("friend")){
+				ApplicationController AC = (ApplicationController)getApplicationContext();
+				loggedInUsername = AC.getUsername();
+				params.add(new BasicNameValuePair("username_loggedin", loggedInUsername));
+			}
 
 			// Getting JSON object
 			JSONObject json = jParser.makeHttpRequest(url_get_friends, params);
@@ -140,9 +146,13 @@ public class Friends extends Activity{
 						String eventCount = c.getString("event_count");
 						String uri = c.getString("profile_image");
 						int profPic = getResources().getIdentifier(uri, null, getPackageName());
+						String status = "friends";
+						if(type.equals("friend")){
+							status = c.getString("status");
+						}
 						
 						// Create new user object
-						User friend = new User(username, name, birthday, hobbies, eventCount, profPic);
+						User friend = new User(username, name, birthday, hobbies, eventCount, profPic, status);
 						
 						//Adding friends to list of friends to display
 						friendsList.add(friend);
