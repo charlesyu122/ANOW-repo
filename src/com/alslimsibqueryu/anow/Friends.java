@@ -61,11 +61,22 @@ public class Friends extends Activity{
 		new LoadAllFriends().execute();
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if(resultCode == 2)
+			finish();
+	}
+	
 	private void setup(){
 		//Set-up header views
 		tvTitle = (TextView)findViewById(R.id.tvTitle);
 		btnBack = (Button)findViewById(R.id.btnHeader);
-		tvTitle.setText("Connections");
+		if(type.equals("user"))
+			tvTitle.setText("My Connections");
+		else
+			tvTitle.setText("Connections");
 		btnBack.setText("Back");
 		btnBack.setOnClickListener(new View.OnClickListener() {
 			
@@ -89,7 +100,7 @@ public class Friends extends Activity{
 					Intent i = new Intent(Friends.this, UserProfile.class);
 					i.putExtra("type", "friend");
 					i.putExtra("username", friend.username);
-					startActivity(i);
+					startActivityForResult(i, 1);
 				}
 			}
 		});

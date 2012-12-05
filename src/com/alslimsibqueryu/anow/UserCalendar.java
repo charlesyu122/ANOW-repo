@@ -100,10 +100,8 @@ public class UserCalendar extends Activity {
 
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(UserCalendar.this, UserProfile.class);
-				intent.putExtra("type", "user");
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
+				setResult(2);
+				finish();
 			}
 		});
 		btnBack.setOnClickListener(new View.OnClickListener() {

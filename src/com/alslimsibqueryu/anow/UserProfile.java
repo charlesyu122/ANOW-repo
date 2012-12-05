@@ -93,17 +93,29 @@ public class UserProfile extends Activity {
 		// Load user profile in Background Thread
 		new LoadUserProfile().execute();
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if(resultCode == 2){
+			setResult(2);
+			finish();
+		}
+	}
 
 	private void setup() {
 		// Set-up header
 		headerTitle = (TextView) findViewById(R.id.tvTitle);
 		btnSettings = (Button) findViewById(R.id.btnHeader);
 		btnSave = (Button) findViewById(R.id.btnHeader2);
-		headerTitle.setText("Profile");
-		if(type.equals("user"))
+		if(type.equals("user")){
 			btnSettings.setText("Settings");
-		else 
+			headerTitle.setText("My Profile");
+		}else{ 
 			btnSettings.setText("Back");
+			headerTitle.setText("Profile");
+		}
 		btnSave.setText("Save");
 		btnSettings.setOnClickListener(new View.OnClickListener() {
 			
@@ -142,7 +154,7 @@ public class UserProfile extends Activity {
 					Intent i = new Intent(UserProfile.this, UserCalendar.class);
 					i.putExtra("username", username);
 					i.putExtra("name", name);
-					startActivity(i);
+					startActivityForResult(i, 1);
 				}
 			}
 		});
@@ -152,8 +164,9 @@ public class UserProfile extends Activity {
 				// TODO Auto-generated method stub
 				Intent i = new Intent(UserProfile.this, Friends.class);
 				i.putExtra("type", type);
-				if(type.equals("friend"))
+				if(type.equals("friend")){
 					i.putExtra("friend_username", username);
+				}
 				startActivity(i);
 			}
 		});
