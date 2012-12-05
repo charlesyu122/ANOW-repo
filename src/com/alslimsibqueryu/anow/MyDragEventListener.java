@@ -57,8 +57,7 @@ public class MyDragEventListener extends Activity implements OnDragListener {
 	private static final String TAG_SUCCESS = "success";
 	
 
-	public MyDragEventListener(Context c, String selectedMonthYr,
-			ArrayList<Event> eventList, String username) {
+	public MyDragEventListener(Context c, String selectedMonthYr, ArrayList<Event> eventList, String username) {
 		this.context = c;
 		this.username = username;
 		this.eventList = eventList;
@@ -69,8 +68,7 @@ public class MyDragEventListener extends Activity implements OnDragListener {
 		this.selectedYear = monthYr[1];
 		Date date = null;
 		try {
-			date = new SimpleDateFormat("MMMMM", Locale.ENGLISH)
-					.parse(selectedMonthName);
+			date = new SimpleDateFormat("MMMMM", Locale.ENGLISH).parse(selectedMonthName);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

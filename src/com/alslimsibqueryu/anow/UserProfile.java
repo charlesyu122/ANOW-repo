@@ -136,7 +136,14 @@ public class UserProfile extends Activity {
 
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				finish();
+				if(type.equals("user"))
+					finish();
+				else if(type.equals("friend")){
+					Intent i = new Intent(UserProfile.this, UserCalendar.class);
+					i.putExtra("username", username);
+					i.putExtra("name", name);
+					startActivity(i);
+				}
 			}
 		});
 		btnFriends.setOnClickListener(new View.OnClickListener() {

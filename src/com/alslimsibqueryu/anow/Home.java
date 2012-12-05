@@ -57,13 +57,14 @@ import android.widget.Toast;
 @SuppressWarnings("deprecation")
 public class Home extends TabActivity implements OnClickListener {
 
-	GridView calendar;
-	String[] dates;
+	// Attributes
 	TabHost tabHost;
 	String username;
 	Boolean firstLoad = true;
 
 	// Calendar
+	GridView calendar;
+	String[] dates;
 	TextView tvCurMonth;
 	ImageButton btnPrev, btnNext;
 	Calendar curDate, today;
@@ -121,7 +122,6 @@ public class Home extends TabActivity implements OnClickListener {
 	private void setup() {
 		// Setup Header
 		tvHTitle = (TextView) findViewById(R.id.tvTitle);
-		tvHTitle.setText(username + " Calendar");
 		btnProfile = (Button) findViewById(R.id.btnHeaderProfile);
 		btnSettings = (Button) findViewById(R.id.btnHeaderSetting);
 		btnAddActivity = (Button) findViewById(R.id.btnHeaderAddActivity);
@@ -138,9 +138,6 @@ public class Home extends TabActivity implements OnClickListener {
 		curDate = Calendar.getInstance();
 		today = Calendar.getInstance();
 		this.todayDate = yrMonthDateFormat.format(today.getTime());
-		// Set date today in Application Controller
-		ApplicationController AP = (ApplicationController)getApplicationContext();
-		AP.setDateToday(todayDate);
 		tvCurMonth.setText(monthYrFormat.format(curDate.getTime()));
 		// Load Events on the Calendar
 		loadEventsOnCalendar(1);
