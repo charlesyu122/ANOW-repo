@@ -384,8 +384,9 @@ public class Home extends TabActivity implements OnClickListener {
 	private Event[] getActivities(String selectedDate){
 		ArrayList<Event> activities = new ArrayList<Event>();
 		for(int i=0; i < attendsListForMonth.size(); i++){
-			if(attendsListForMonth.get(i).equals(selectedDate))
+			if(attendsListForMonth.get(i).equals(selectedDate)){
 				activities.add(eventsListForMonth.get(i));
+			}
 		}
 		return activities.toArray(new Event[activities.size()]);
 	}
@@ -669,9 +670,6 @@ public class Home extends TabActivity implements OnClickListener {
 						// Check validity of dates
 						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 						try {
-							Log.d("SELECTED", selectedYear+"-"+selectedMonthInt+"-"+selectedDate);
-							Log.d("START", eventDates[0]);
-							Log.d("END", eventDates[1]);
 							Date selectedDateF = format.parse(selectedYear+"-"+selectedMonthInt+"-"+selectedDate);
 							Date startDateF = format.parse(eventDates[0]);
 							Date endDateF = format.parse(eventDates[1]);	

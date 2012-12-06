@@ -20,7 +20,7 @@ public class EventActivityAdapter extends BaseAdapter{
 
         for (int i=0; i < values.length; i++) {
             //if it has an image, use an ImageRow
-            if (values[i].getEventImage() != null) {
+            if (values[i].type.equals("E")) {
                 rows.add(new EventRow(LayoutInflater.from(this.context), values[i]));
             } else {//otherwise use a DescriptionRow
                 rows.add(new ActivityRow(LayoutInflater.from(this.context), values[i]));
