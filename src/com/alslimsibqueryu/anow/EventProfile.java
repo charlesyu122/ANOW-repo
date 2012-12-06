@@ -10,13 +10,18 @@ import android.widget.TextView;
 
 public class EventProfile extends Activity{
 
-	Event receivedEvent;
+	Event receivedEvent; String eventId;
+	String type; // advertised or attended
 	ImageView ivEpic;
 	TextView tvEname, tvEdate, tvEloc, tvEtime, tvEdesc;
 	Button btnParticipants, btnInvite;
 	//Header views
 	TextView tvTitle;
 	Button btnBack;
+	
+	// Tags
+	private static final String TYPE_ADVERTISED = "advertised";
+	private static final String TYPE_ATTENDED = "attended";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +34,9 @@ public class EventProfile extends Activity{
 	
 	private void receiveData(){
 		Intent i = getIntent();
-		receivedEvent = (Event)i.getSerializableExtra("eventObject");
+		this.receivedEvent = (Event)i.getSerializableExtra("eventObject");
+		this.eventId = Integer.toString(receivedEvent.eventId);
+		this.type = i.getStringExtra("type");
 	}
 	
 	private void setup(){
@@ -49,18 +56,27 @@ public class EventProfile extends Activity{
 		
 		btnParticipants = (Button)findViewById(R.id.btnParticipants);
 		btnInvite = (Button)findViewById(R.id.btnEInvite);
+		if(type.equals(TYPE_ADVERTISED))
+			btnInvite.setText("Check Calendar");
 		btnParticipants.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				startActivity(new Intent(EventProfile.this, Participants.class));
+				Intent i = new Intent(EventProfile.this, Participants.class);
+				i.putExtra("event_id", eventId);
+				startActivity(i);
 			}
 		});
 		btnInvite.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				startActivity(new Intent(EventProfile.this, Friends.class));
+				if(type.equals(TYPE_ATTENDED)){
+					Intent i = new Intent(EventProfile.this, Friends.class);
+					i.putExtra("event_id", eventId);
+					startActivity(i);
+				}else 
+					finish();
 			}
 		});
 		//Set-up header views

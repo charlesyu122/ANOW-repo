@@ -158,6 +158,7 @@ public class Home extends TabActivity implements OnClickListener {
 				Intent i = new Intent(Home.this, EventProfile.class);
 				Event eventObj = (Event) v.getTag();
 				i.putExtra("eventObject", eventObj);
+				i.putExtra("type", "advertised");
 				startActivity(i);
 			}
 		});
@@ -181,6 +182,7 @@ public class Home extends TabActivity implements OnClickListener {
 					} catch (Exception ex) {
 					}
 				}
+				i.putExtra("type", "attended");
 				startActivity(i);
 			}
 		});

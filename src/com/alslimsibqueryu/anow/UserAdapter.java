@@ -67,21 +67,9 @@ public class UserAdapter extends ArrayAdapter<User> {
 			});
 		}
 		
-		if(type == 'L')
+		if(type == 'L' || type == 'P')
 			ivInfo.setVisibility(View.INVISIBLE);
 	
-		if (type == 'P'){
-			connect.setVisibility(View.VISIBLE);
-			connect.setOnClickListener(new View.OnClickListener() {
-				
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					values[position].setStatus(1);
-					connect.setText("Connected");
-					connect.setEnabled(false);
-				}
-			});
-		}
 		rowView.setTag(values[position]);
 		return rowView;
 	}
