@@ -14,8 +14,9 @@ import android.widget.Toast;
 public class ActivityProfile extends Activity{
 
 	Event receivedActivity;
+	private String activityId;
 	TextView tvActName, tvActDate, tvActLoc, tvActTime, tvActDesc;
-	Button btnEdit, btnInvite, btnDelete;
+	Button btnEdit, btnInvite, btnDelete, btnParticipants;
 	EditText etActName, etActLoc, etActDesc;
 	//Header Views
 	TextView tvTitle;
@@ -66,6 +67,17 @@ public class ActivityProfile extends Activity{
 		btnInvite = (Button)findViewById(R.id.btnAInvite);
 		btnDelete = (Button)findViewById(R.id.btnDeleteActivity);
 		btnEdit = (Button)findViewById(R.id.btnEdit);
+		btnParticipants = (Button)findViewById(R.id.btnAParticipants);
+
+		btnParticipants.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent(ActivityProfile.this, Participants.class);
+				i.putExtra("event_id", activityId);
+				startActivity(i);
+			}
+		});
 		btnInvite.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
@@ -124,6 +136,7 @@ public class ActivityProfile extends Activity{
 	private void receiveData(){
 		Intent i = getIntent();
 		receivedActivity = (Event)i.getSerializableExtra("activityObject");
+		this.activityId = Integer.toString(receivedActivity.eventId);
 	}
 	
 	View.OnClickListener saveListen = new View.OnClickListener() {
