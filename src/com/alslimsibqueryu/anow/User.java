@@ -3,7 +3,7 @@ package com.alslimsibqueryu.anow;
 import java.util.Comparator;
 
 public class User {
-	int stat;
+
 	public String status; //friends or strangers
 	public String username;
 	public String name;
@@ -11,14 +11,11 @@ public class User {
 	public String hobbies;
 	public int eventCount;
 	public int profPic;
+	public boolean invited; // for invite friends 
 	
 	//constructors
 	public User(){}
-	public User(int status, String name, int pic){ // for testing
-		this.stat = status;
-		this.name = name;
-		this.profPic = pic;
-	}
+
 	public User(String uname, String name, String bday, String hobbies, String eventCount, int profPic, String status){
 		this.username = uname;
 		this.name = name;
@@ -29,8 +26,8 @@ public class User {
 		this.status = status;
 	}
 	
-	public void setStatus(int stat){
-		this.stat = stat;
+	public void setInvited(boolean invite){
+		this.invited = invite;
 	}
 	
 	public static Comparator<User> UserNameComparator = new Comparator<User>() {

@@ -72,7 +72,9 @@ public class EventProfile extends Activity{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if(type.equals(TYPE_ATTENDED)){
-					// Go to friendsinvite list
+					Intent i = new Intent(EventProfile.this, FriendsInvite.class);
+					i.putExtra("event_id", eventId);
+					startActivity(i);
 				}else 
 					finish();
 			}
