@@ -82,7 +82,9 @@ public class ActivityProfile extends Activity{
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				startActivity(new Intent(ActivityProfile.this, Friends.class));
+				Intent i = new Intent(ActivityProfile.this, FriendsInvite.class);
+				i.putExtra("event_id", activityId);
+				startActivity(i);
 			}
 		});
 		btnEdit.setOnClickListener(new View.OnClickListener() {
