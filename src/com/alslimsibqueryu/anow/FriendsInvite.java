@@ -26,6 +26,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FriendsInvite extends Activity{
 	
@@ -93,6 +94,7 @@ public class FriendsInvite extends Activity{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				new SendInvite().execute();
+				Toast.makeText(FriendsInvite.this, "Successfully invited selected connections!", Toast.LENGTH_SHORT).show();
 			}
 		});
 
