@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 
 public class UserInviteAdapter extends ArrayAdapter<User>{
 	
+	@SuppressWarnings("unused")
 	private Context context;
 	User[] values = null;
 	

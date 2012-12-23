@@ -174,9 +174,7 @@ public class UserProfile extends Activity {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent i = new Intent(UserProfile.this, Invites.class);
-				i.putExtra("username", username);
-				startActivity(i);
+				startActivity(new Intent(UserProfile.this, Invites.class));
 			}
 		});
 

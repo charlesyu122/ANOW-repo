@@ -206,8 +206,7 @@ public class Home extends TabActivity implements OnClickListener {
 
 		// @NOW Tab
 		specs = tabHost.newTabSpec("tag2");
-		tabIndicator = LayoutInflater.from(this).inflate(
-				R.layout.tab_indicator, getTabWidget(), false);
+		tabIndicator = LayoutInflater.from(this).inflate(R.layout.tab_indicator, getTabWidget(), false);
 		title = (TextView) tabIndicator.findViewById(R.id.title);
 		title.setText("NOW");
 		icon = (ImageView) tabIndicator.findViewById(R.id.icon);
@@ -221,13 +220,12 @@ public class Home extends TabActivity implements OnClickListener {
 		// NOW Tab Setup
 		tvDate = (TextView) findViewById(R.id.tvDate);
 		tvNoEvent = (TextView)findViewById(R.id.tvNoActivities);
-		tvDate.setText(dateFormat.format(today.getTime()) + " "+ tvCurMonth.getText());
+		tvDate.setText(dateFormat.format(today.getTime()) + " " + tvCurMonth.getText());
 	}
 
 	AdapterView.OnItemLongClickListener eventLongClickListener = new AdapterView.OnItemLongClickListener() {
 		@SuppressLint({ "NewApi", "NewApi" })
-		public boolean onItemLongClick(AdapterView<?> arg0, View v, int arg2,
-				long arg3) {
+		public boolean onItemLongClick(AdapterView<?> arg0, View v, int arg2, long arg3) {
 			// TODO Auto-generated method stub
 
 			String event = (String) ((TextView) v.findViewById(R.id.tvEName))
@@ -406,9 +404,13 @@ public class Home extends TabActivity implements OnClickListener {
 		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(d);
-		int monthNum = cal.get(Calendar.MONTH) + 1;
+		int monthNumInt = cal.get(Calendar.MONTH) + 1;
+		String monthNum = Integer.toString(monthNumInt);
+		if(monthNum.length() == 1)
+			monthNum = "0"+monthNum;
 		if(date.length() == 1)
 			date = "0"+date;
+		Log.d("HERE", year+"-"+monthNum+"-"+date);
 		return year+"-"+monthNum+"-"+date;
 	}
 	
