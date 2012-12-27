@@ -29,7 +29,7 @@ public class ActivityProfile extends Activity{
 	Button btnEdit, btnInvite, btnDelete, btnParticipants;
 	EditText etActName, etActLoc, etActDesc;
 	int updateSuccess;
-	String old_name, name, date, loc, desc;
+	String newName, newLoc, newDesc;
 	
 	//Header Views
 	TextView tvTitle;
@@ -119,11 +119,6 @@ public class ActivityProfile extends Activity{
 				
 				// TODO Auto-generated method stub
 				
-				//gets all the old text for query purposes
-				name = old_name = tvActName.getText().toString();
-				loc = tvActLoc.getText().toString();
-				desc = tvActDesc.getText().toString();
-				
 				btnDelete.setVisibility(View.VISIBLE);
 				
 				//Activity name
@@ -151,11 +146,6 @@ public class ActivityProfile extends Activity{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				AlertDialog.Builder alert = new AlertDialog.Builder(ActivityProfile.this);
-				
-				//gets all the old text for query purposes
-				name = tvActName.getText().toString();
-				loc = tvActLoc.getText().toString();
-				desc = tvActDesc.getText().toString();
 				
 				alert.setTitle("Delete");
 				alert.setMessage("Are you sure you want to delete this activity?");
@@ -196,19 +186,19 @@ public class ActivityProfile extends Activity{
 			else
 			{
 				//Set Activity name				
-				name = etActName.getText().toString();
+				newName = etActName.getText().toString();
 				tvActName.setText(etActName.getText());
 				tvActName.setVisibility(View.VISIBLE);
 				etActName.setVisibility(View.GONE);
 				
 				//Set Activity location
-				loc = etActLoc.getText().toString();
+				newLoc = etActLoc.getText().toString();
 				tvActLoc.setText(etActLoc.getText());
 				tvActLoc.setVisibility(View.VISIBLE);
 				etActLoc.setVisibility(View.GONE);
 				
 				//Set Activity description
-				desc = etActDesc.getText().toString();
+				newDesc = etActDesc.getText().toString();
 				tvActDesc.setText(etActDesc.getText());
 				tvActDesc.setVisibility(View.VISIBLE);
 				etActDesc.setVisibility(View.GONE);
@@ -244,10 +234,10 @@ public class ActivityProfile extends Activity{
 			
 			// Building Parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("old_name", old_name));
-			params.add(new BasicNameValuePair("name", name));
-			params.add(new BasicNameValuePair("loc", loc));
-			params.add(new BasicNameValuePair("desc", desc));
+			params.add(new BasicNameValuePair("activity_id", activityId));
+			params.add(new BasicNameValuePair("name", newName));
+			params.add(new BasicNameValuePair("loc", newLoc));
+			params.add(new BasicNameValuePair("desc", newDesc));
 			
 			// Send modified data through HTTP request
 			JSONObject json = jParser.makeHttpRequest(url_edit_activity, params);
@@ -292,9 +282,7 @@ public class ActivityProfile extends Activity{
 			
 			// Building Parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("name", name));
-			params.add(new BasicNameValuePair("loc", loc));
-			params.add(new BasicNameValuePair("desc", desc));
+			params.add(new BasicNameValuePair("activity_id", activityId));
 			
 			// Send modified data through HTTP request
 			JSONObject json = jParser.makeHttpRequest(url_delete_activity, params);
