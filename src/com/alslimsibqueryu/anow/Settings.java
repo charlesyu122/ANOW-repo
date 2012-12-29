@@ -35,6 +35,7 @@ public class Settings extends Activity implements OnClickListener {
 	int updateSuccess;
 	String username, new_username, new_password, password, picturePath;
 	ApplicationController AP;
+	Intent i;
 	
 	// Header views
 	TextView tvTitle;
@@ -73,6 +74,7 @@ public class Settings extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		i = getIntent();
 		setContentView(R.layout.settings);
 		this.setup();
 	}
@@ -117,6 +119,8 @@ public class Settings extends Activity implements OnClickListener {
 
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				i.putExtra("logOut", false);
+				setResult(RESULT_OK, i);
 				finish();
 			}
 		});
@@ -132,8 +136,7 @@ public class Settings extends Activity implements OnClickListener {
 			alertU.setTitle("Change email address:");
 			alertU.setView(textEntryViewU);
 			
-			alertU.setPositiveButton("Save",
-					new DialogInterface.OnClickListener() {
+			alertU.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
@@ -151,8 +154,7 @@ public class Settings extends Activity implements OnClickListener {
 								new EditUsername().execute();
 						}
 					});
-			alertU.setNegativeButton("Cancel",
-					new DialogInterface.OnClickListener() {
+			alertU.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
@@ -167,8 +169,7 @@ public class Settings extends Activity implements OnClickListener {
 			alertP.setTitle("Change password:");
 			alertP.setView(textEntryViewP);
 			
-			alertP.setPositiveButton("Save",
-					new DialogInterface.OnClickListener() {
+			alertP.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
@@ -186,8 +187,7 @@ public class Settings extends Activity implements OnClickListener {
 								new EditPassword().execute();
 						}
 					});
-			alertP.setNegativeButton("Cancel",
-					new DialogInterface.OnClickListener() {
+			alertP.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
@@ -214,10 +214,10 @@ public class Settings extends Activity implements OnClickListener {
 			alertOut.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO Auto-generated method stub
-					Intent i = new Intent(Settings.this, MainActivity.class);
-					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					startActivity(i);
+					// TODO Auto-generated method stubs
+					i.putExtra("logOut", true);
+					setResult(RESULT_OK, i);
+					finish();
 				}
 			});
 			alertOut.setNegativeButton("No", new DialogInterface.OnClickListener() {

@@ -153,7 +153,6 @@ public class MainActivity extends Activity {
 				ApplicationController AP = (ApplicationController)getApplicationContext();
 				AP.setUsername(etUsername.getText().toString());			
 				startActivity(i);
-				finish();
 			}
 		}
     }

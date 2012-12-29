@@ -245,6 +245,26 @@ public class Home extends TabActivity implements OnClickListener {
 		}
 	};
 
+	public void onBackPressed() {
+		AlertDialog.Builder alertOut = new AlertDialog.Builder(Home.this);
+		alertOut.setTitle("Log out");
+		alertOut.setMessage("Are you sure you want to log-out?");
+		alertOut.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stubs
+				finish();
+			}
+		});
+		alertOut.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+			// TODO Auto-generated method stub
+			}
+		});
+		alertOut.show();
+	};
+	
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
@@ -259,7 +279,8 @@ public class Home extends TabActivity implements OnClickListener {
 			startActivityForResult(iAdd, 1);
 			break;
 		case R.id.btnHeaderSetting:
-			startActivity(new Intent(Home.this, Settings.class));
+			Intent iSettings = new Intent(Home.this, Settings.class);
+			startActivityForResult(iSettings, 1);
 			break;
 		case R.id.btnPrev:
 			Calendar prevMonth = (Calendar) curDate.clone();
@@ -292,6 +313,10 @@ public class Home extends TabActivity implements OnClickListener {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
+		if(data.getExtras().containsKey("logOut")){
+			if (data.getBooleanExtra("logOut", false) == true)
+				Home.this.finish();
+		}
 		if (data.getExtras().containsKey("addActivity")) {
 			if (data.getBooleanExtra("addActivity", false) == true)
 				Toast.makeText(Home.this, "Activity has been added to your calendar!", Toast.LENGTH_SHORT).show();
@@ -303,6 +328,7 @@ public class Home extends TabActivity implements OnClickListener {
 				tabHost.setCurrentTab(0);
 			}
 		}
+
 	}
 	
 	private void updateArrayDates(int numOfDays, int firstDay, int prevDays, int current) {
