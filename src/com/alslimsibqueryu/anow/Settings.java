@@ -214,7 +214,7 @@ public class Settings extends Activity implements OnClickListener {
 			alertOut.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
 				public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
+					// TODO Auto-generated method stub
 					Intent i = new Intent(Settings.this, MainActivity.class);
 					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					startActivity(i);

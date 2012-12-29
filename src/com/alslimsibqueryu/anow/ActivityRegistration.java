@@ -30,7 +30,7 @@ public class ActivityRegistration extends Activity{
 	// Activity Views
 	String username;
 	EditText etActName, etActLoc, etActDesc;
-	DatePicker dpStartDate, dpEndDate;
+	DatePicker dpStartDate;
 	TimePicker tpStartTime;
 	Button btnAddActivity;
 	CheckBox cbSetPrivacy;
@@ -77,7 +77,6 @@ public class ActivityRegistration extends Activity{
 		etActLoc = (EditText)findViewById(R.id.etActLoc);
 		etActDesc = (EditText)findViewById(R.id.etActDesc);
 		dpStartDate = (DatePicker)findViewById(R.id.dpStartDate);
-		dpEndDate = (DatePicker)findViewById(R.id.dpEndDate);
 		tpStartTime = (TimePicker)findViewById(R.id.tpStartTime);
 		btnAddActivity = (Button) findViewById(R.id.btnActRegSubmit);
 		cbSetPrivacy = (CheckBox)findViewById(R.id.cbSetActivityPrivate);
@@ -142,11 +141,7 @@ public class ActivityRegistration extends Activity{
 			int month = dpStartDate.getMonth() + 1;
 			int year = dpStartDate.getYear();
 			String dateStart = year + "-" + month + "-" + date;
-			
-			date = dpEndDate.getDayOfMonth();
-			month = dpEndDate.getMonth() + 1;
-			year = dpEndDate.getYear();
-			String dateEnd = year + "-" + month + "-" + date;
+			String dateEnd = dateStart;
 			
 			int hour = tpStartTime.getCurrentHour();
 			int min = tpStartTime.getCurrentMinute();
