@@ -189,6 +189,7 @@ public class ActivityRegistration extends Activity{
 			if(successLog == 1){
 				Intent i = getIntent();
 				i.putExtra("addActivity", true);
+				i.putExtra("reloadHome", true);
 				setResult(RESULT_OK, i);
 				finish();
 			}

@@ -173,17 +173,20 @@ public class Home extends TabActivity implements OnClickListener {
 					activityObj = aObj.activityObj;
 					i = new Intent(Home.this, ActivityProfile.class);
 					i.putExtra("activityObject", activityObj);
+					i.putExtra("type", "attended");
+					startActivityForResult(i, 1);
 				} catch (Exception e) {
 					try {
 						EViewHolder eObj = (EViewHolder) v.getTag();
 						activityObj = eObj.eventObj;
 						i = new Intent(Home.this, EventProfile.class);
 						i.putExtra("eventObject", activityObj);
+						i.putExtra("type", "attended");
+						startActivity(i);
 					} catch (Exception ex) {
 					}
 				}
-				i.putExtra("type", "attended");
-				startActivity(i);
+
 			}
 		});
 
@@ -292,6 +295,13 @@ public class Home extends TabActivity implements OnClickListener {
 		if (data.getExtras().containsKey("addActivity")) {
 			if (data.getBooleanExtra("addActivity", false) == true)
 				Toast.makeText(Home.this, "Activity has been added to your calendar!", Toast.LENGTH_SHORT).show();
+		}
+		if(data.getExtras().containsKey("reloadHome")){
+			if(data.getBooleanExtra("reloadHome", false) == true) {
+				loadEventsOnCalendar(1);
+				// set current tab to events
+				tabHost.setCurrentTab(0);
+			}
 		}
 	}
 	

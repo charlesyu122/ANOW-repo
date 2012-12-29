@@ -69,6 +69,9 @@ public class ActivityProfile extends Activity{
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				Intent i = getIntent();
+				i.putExtra("reloadHome", false);
+				setResult(RESULT_OK, i);
 				finish();
 			}
 		});
@@ -303,8 +306,12 @@ public class ActivityProfile extends Activity{
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			pDialog.dismiss();
-			if(updateSuccess == 1)
+			if(updateSuccess == 1){
+				Intent i = getIntent();
+				i.putExtra("reloadHome", true);
+				setResult(RESULT_OK, i);
 				finish();
+			}
 		}
 	}	
 	
