@@ -170,6 +170,15 @@ public class ActivityProfile extends Activity{
 		});
 	}
 	
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		Intent i = getIntent();
+		i.putExtra("reloadHome", false);
+		setResult(RESULT_OK, i);
+		finish();
+	}
+	
 	private void receiveData(){
 		Intent i = getIntent();
 		receivedActivity = (Event)i.getSerializableExtra("activityObject");

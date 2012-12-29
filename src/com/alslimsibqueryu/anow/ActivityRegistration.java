@@ -55,6 +55,15 @@ public class ActivityRegistration extends Activity{
 		this.setup();
 	}
 	
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		Intent i = getIntent();
+		i.putExtra("reloadHome", false);
+		setResult(RESULT_OK, i);
+		finish();
+	}
+	
 	private void setup(){
 		// Set-up Header Views
 		tvHeaderTitle = (TextView)findViewById(R.id.tvTitle);

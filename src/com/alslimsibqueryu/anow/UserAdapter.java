@@ -67,8 +67,9 @@ public class UserAdapter extends ArrayAdapter<User> {
 					connect.setEnabled(false);
 				}
 			});
-		} else{ // Already friends
+		} else if(values[position].status.equals("newly-connected")){ // Newly-connected user
 			connect.setText("Connected");
+			connect.setVisibility(View.VISIBLE);
 			connect.setEnabled(false);
 		}
 		

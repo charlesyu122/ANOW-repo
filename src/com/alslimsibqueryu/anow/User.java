@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 public class User {
 
-	public String status; //friends or strangers
+	public String status; //friends or strangers or newly-connected
 	public String username;
 	public String name;
 	public String birthday;
@@ -31,7 +31,7 @@ public class User {
 	}
 	
 	public void connectUser(){
-		this.status = "friends";
+		this.status = "newly-connected";
 	}
 	
 	public static Comparator<User> UserNameComparator = new Comparator<User>() {

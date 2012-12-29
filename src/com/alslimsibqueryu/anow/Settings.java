@@ -98,6 +98,13 @@ public class Settings extends Activity implements OnClickListener {
         }
 	}
 
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		i.putExtra("reloadHome", false);
+		setResult(RESULT_OK, i);
+		finish();
+	}
 
 	private void setup() {
 		// Set-up views

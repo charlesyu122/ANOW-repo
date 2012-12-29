@@ -271,7 +271,7 @@ public class Home extends TabActivity implements OnClickListener {
 		case R.id.btnHeaderProfile:
 			Intent iProfile = new Intent(Home.this, UserProfile.class);
 			iProfile.putExtra("type", "user");
-			startActivity(iProfile);
+			startActivityForResult(iProfile, 1);
 			break;
 		case R.id.btnHeaderAddActivity:
 			Intent iAdd = new Intent(Home.this, ActivityRegistration.class);

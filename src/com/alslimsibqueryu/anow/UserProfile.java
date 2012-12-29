@@ -27,6 +27,7 @@ public class UserProfile extends Activity {
 
 	// Attributes
 	private String type; // user or friend
+	private Boolean needToReload = false;
 	
 	// Header Views
 	Button btnSettings, btnSave;
@@ -104,6 +105,16 @@ public class UserProfile extends Activity {
 		}
 	}
 
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		Intent i = getIntent();
+		if(needToReload == true)
+			i.putExtra("reloadHome", true);
+		setResult(RESULT_OK, i);
+		finish();
+	}
+	
 	private void setup() {
 		// Set-up header
 		headerTitle = (TextView) findViewById(R.id.tvTitle);
@@ -148,9 +159,13 @@ public class UserProfile extends Activity {
 
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if(type.equals("user"))
+				if(type.equals("user")){
+					Intent i = getIntent();
+					if(needToReload == true)
+						i.putExtra("reloadHome", true);
+					setResult(RESULT_OK, i);
 					finish();
-				else if(type.equals("friend")){
+				}else if(type.equals("friend")){
 					Intent i = new Intent(UserProfile.this, UserCalendar.class);
 					i.putExtra("username", username);
 					i.putExtra("name", name);
@@ -174,6 +189,7 @@ public class UserProfile extends Activity {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				needToReload = true;
 				startActivity(new Intent(UserProfile.this, Invites.class));
 			}
 		});
