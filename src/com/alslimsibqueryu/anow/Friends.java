@@ -14,6 +14,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -126,10 +127,12 @@ public class Friends extends Activity{
 			// Build parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("username", username));
+			Log.d("HERE", username);
 			if(type.equals("friend")){
 				ApplicationController AC = (ApplicationController)getApplicationContext();
 				loggedInUsername = AC.getUsername();
-				params.add(new BasicNameValuePair("username_loggedin", loggedInUsername));
+				params.add(new BasicNameValuePair("loggedInUsername", loggedInUsername));
+				Log.d("HERE", loggedInUsername);
 			}
 
 			// Getting JSON object
