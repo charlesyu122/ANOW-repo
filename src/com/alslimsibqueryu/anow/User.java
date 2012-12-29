@@ -30,6 +30,10 @@ public class User {
 		this.invited = invite;
 	}
 	
+	public void connectUser(){
+		this.status = "friends";
+	}
+	
 	public static Comparator<User> UserNameComparator = new Comparator<User>() {
 
 		public int compare(User lhs, User rhs) {

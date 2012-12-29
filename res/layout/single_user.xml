@@ -36,7 +36,6 @@
 		android:layout_toLeftOf="@id/ivUInfo"
 		android:layout_marginRight="10dp" 
 		android:visibility="gone"
-		android:text="Connect"
 		android:textSize="10dip"/>
 
 </RelativeLayout>

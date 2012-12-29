@@ -55,16 +55,21 @@ public class UserAdapter extends ArrayAdapter<User> {
 		userName.setText(values[position].name);
 		
 		if(values[position].status.equals("strangers")){
+			connect.setText("Connect");
 			connect.setVisibility(View.VISIBLE);
 			connect.setOnClickListener(new View.OnClickListener() {
 				
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					new ConnectUser(values[position].username).execute();
+					values[position].connectUser();
 					connect.setText("Connected");
 					connect.setEnabled(false);
 				}
 			});
+		} else{ // Already friends
+			connect.setText("Connected");
+			connect.setEnabled(false);
 		}
 		
 		if(type == 'L' || type == 'P')
