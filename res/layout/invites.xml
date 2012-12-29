@@ -3,14 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
+
     <include layout="@layout/header" />
-    
-    <ListView 
-        android:id="@+id/lvInvites"
+
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:listSelector="@drawable/list_item_selector" />
-    
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <ListView
+                android:id="@+id/lvInvites"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:listSelector="@drawable/list_item_selector" />
+
+            <TextView
+                android:id="@+id/tvNoInvites"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Currently no invites."
+                android:visibility="gone" />
+        </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

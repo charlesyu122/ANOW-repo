@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -21,6 +22,8 @@ import android.widget.TextView;
 public class Invites extends Activity{
 
 	ListView lvInvites;
+	TextView tvNoInvites;
+	private int countOfInvites;
 	//Header views
 	TextView tvTitle;
 	Button btnBack;
@@ -41,23 +44,28 @@ public class Invites extends Activity{
 		// Retrieve user name
 		ApplicationController AC = (ApplicationController)getApplicationContext();
 		this.username = AC.getUsername();
+		//Setup header
+		setupHeader();
 		// Load invites
 		new LoadAllInvitations().execute();
 	}
 	
-	private void setup(){
+	private void setupHeader(){
 		//Set-up header views
 		tvTitle = (TextView)findViewById(R.id.tvTitle);
 		btnBack = (Button)findViewById(R.id.btnHeader);
 		tvTitle.setText("Invites");
 		btnBack.setText("Back");
 		btnBack.setOnClickListener(new View.OnClickListener() {
-			
+					
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				finish();
 			}
 		});
+	}
+	
+	private void setup(){
 		//Set-up views
 		lvInvites = (ListView)findViewById(R.id.lvInvites);
 		lvInvites.setAdapter(new InviteAdapter(this, invitationList.toArray(new Invite[invitationList.size()])));
@@ -94,6 +102,7 @@ public class Invites extends Activity{
 
 					//Get array of products
 					invites = json.getJSONArray("invitations");
+					countOfInvites = invites.length();
 					invitationList = new ArrayList<Invite>();
 						
 					//Looping through all products
@@ -115,11 +124,12 @@ public class Invites extends Activity{
 					}
 				} else {
 					// failed to retrieved
+					countOfInvites = 0;
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-		
+			Log.d("HERE", ""+countOfInvites);
 			return null;
 		}
 			
@@ -127,7 +137,12 @@ public class Invites extends Activity{
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			pDialog.dismiss();
-			setup();
+			if(countOfInvites != 0)
+				setup();
+			else{
+				tvNoInvites = (TextView)findViewById(R.id.tvNoInvites);
+				tvNoInvites.setVisibility(View.VISIBLE);
+			}
 		}	
 	}
 }
