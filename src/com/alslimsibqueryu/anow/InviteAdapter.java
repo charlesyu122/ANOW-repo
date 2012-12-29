@@ -53,12 +53,19 @@ public class InviteAdapter extends ArrayAdapter<Invite>{
 		ivPic.setImageResource(values[position].invitedEventPic);
 		tvInviteeName.setText(values[position].inviteeName+ " invited you to");
 		tvInviteEvent.setText(values[position].invitedEvent);
+		if(values[position].status.equals("invite"))
+			btnAttend.setText("Attend");
+		else{
+			btnAttend.setText("Confirmed");
+			btnAttend.setEnabled(false);
+		}
 		
 		btnAttend.setOnClickListener(new View.OnClickListener() {
 				
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				new AcceptInvite(values[position].attendId).execute();
+				values[position].confirmInvite();
 				btnAttend.setText("Confirmed");
 				btnAttend.setEnabled(false);
 			}
