@@ -738,8 +738,7 @@ public class Home extends TabActivity implements OnClickListener {
 						}
 					}
 				});
-				alertEventConfirm.setNegativeButton("Cancel",
-						new DialogInterface.OnClickListener() {
+				alertEventConfirm.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
 							public void onClick(DialogInterface dialog, int which) {
 								// TODO Auto-generated method stub
@@ -784,11 +783,12 @@ public class Home extends TabActivity implements OnClickListener {
 			protected void onPreExecute() {
 				// TODO Auto-generated method stub
 				super.onPreExecute();
+				/*
 				pDialog = new ProgressDialog(Home.this);
 				pDialog.setMessage("Adding the event to your calendar..");
 				pDialog.setIndeterminate(false);
 				pDialog.setCancelable(true);
-				pDialog.show();
+				pDialog.show();*/
 			}
 
 			@Override
@@ -822,7 +822,7 @@ public class Home extends TabActivity implements OnClickListener {
 			@Override
 			protected void onPostExecute(String result) {
 				// TODO Auto-generated method stub
-				pDialog.dismiss();
+				//pDialog.dismiss();
 			}
 		}
 
