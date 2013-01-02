@@ -31,7 +31,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -298,6 +297,7 @@ public class Home extends TabActivity implements OnClickListener {
 	
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
+		String monthYr;
 		switch (v.getId()) {
 		case R.id.btnHeaderProfile:
 			Intent iProfile = new Intent(Home.this, UserProfile.class);
@@ -324,6 +324,8 @@ public class Home extends TabActivity implements OnClickListener {
 				loadEventsOnCalendar(1);
 			else
 				loadEventsOnCalendar(0);
+			monthYr = tvCurMonth.getText().toString();
+			tvDate.setText( "1" + " " + monthYr);
 			break;
 		case R.id.btnNext:
 			Calendar nextMonth = (Calendar) curDate.clone();
@@ -336,6 +338,8 @@ public class Home extends TabActivity implements OnClickListener {
 				loadEventsOnCalendar(1);
 			else
 				loadEventsOnCalendar(0);
+			monthYr = tvCurMonth.getText().toString();
+			tvDate.setText( "1" + " " + monthYr);
 			break;
 		}
 	}
@@ -477,7 +481,6 @@ public class Home extends TabActivity implements OnClickListener {
 			monthNum = "0"+monthNum;
 		if(date.length() == 1)
 			date = "0"+date;
-		Log.d("HERE", year+"-"+monthNum+"-"+date);
 		return year+"-"+monthNum+"-"+date;
 	}
 	
@@ -740,10 +743,6 @@ public class Home extends TabActivity implements OnClickListener {
 							Date selectedDateF = format.parse(selectedYear+"-"+selectedMonthInt+"-"+selectedDate);
 							Date startDateF = format.parse(eventDates[0]);
 							Date endDateF = format.parse(eventDates[1]);	
-							if(selectedDateF.compareTo(startDateF) >= 0)
-								Log.d("STATUS", "PASS1");
-							if(selectedDateF.compareTo(endDateF) <= 0)
-								Log.d("STATUS", "PASS2");
 							if(selectedDateF.compareTo(startDateF) >= 0 && selectedDateF.compareTo(endDateF) <= 0){
 								// Add Attendance to chosen event
 								new AddAttendance().execute();
