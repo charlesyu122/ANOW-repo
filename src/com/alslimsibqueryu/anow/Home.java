@@ -92,11 +92,13 @@ public class Home extends TabActivity implements OnClickListener {
 
 	ArrayList<Event> eventsList;
 	ArrayList<Event> eventsListForMonth;
+	ArrayList<String> eventIdsWithChanges;
 	ArrayList<String> attendsListForMonth;
 
 	// URLS
 	private static String url_all_events = "http://10.0.2.2/ANowPhp/get_recent_events.php";
 	private static String url_attended_events = "http://10.0.2.2/ANowPhp/get_attended_events.php";
+	private static String url_event_changes = "http://10.0.2.2/ANowPhp/get_events_with_changes.php";
 
 	// products JSONArray
 	JSONArray events = null;
@@ -110,6 +112,7 @@ public class Home extends TabActivity implements OnClickListener {
 		// Initialize attributes
 		eventsList = new ArrayList<Event>();
 		eventsListForMonth = new ArrayList<Event>();
+		eventIdsWithChanges = new ArrayList<String>();
 		attendsListForMonth = new ArrayList<String>();
 
 		// Get username from Application Controller
@@ -117,6 +120,8 @@ public class Home extends TabActivity implements OnClickListener {
 		this.username = AP.getUsername();
 		
 		this.setup();
+		// Check if their are changes in event dates
+		new LoadEventsWithChanges().execute();
 	}
 
 	private void setup() {
@@ -226,6 +231,32 @@ public class Home extends TabActivity implements OnClickListener {
 		tvDate.setText(dateFormat.format(today.getTime()) + " " + tvCurMonth.getText());
 	}
 
+	private void alertChanges(){
+		LayoutInflater factory = LayoutInflater.from(Home.this);
+		View changesView = factory.inflate(R.layout.alert_changes, null);
+		AlertDialog.Builder alertEventChanges = new AlertDialog.Builder(Home.this);
+		alertEventChanges.setTitle("Event Dates Changes:");
+		alertEventChanges.setView(changesView);
+		alertEventChanges.setPositiveButton("View Events", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				Intent i = new Intent(Home.this, EventChanges.class);
+				i.putStringArrayListExtra("eventIds", eventIdsWithChanges);
+				startActivityForResult(i, 1);
+			}
+		});
+		alertEventChanges.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				loadEventsOnCalendar(1);
+			}
+		});
+		alertEventChanges.show();
+	}
+	
+	
 	AdapterView.OnItemLongClickListener eventLongClickListener = new AdapterView.OnItemLongClickListener() {
 		@SuppressLint({ "NewApi", "NewApi" })
 		public boolean onItemLongClick(AdapterView<?> arg0, View v, int arg2, long arg3) {
@@ -498,8 +529,7 @@ public class Home extends TabActivity implements OnClickListener {
 						String loc = c.getString("location");
 						String desc = c.getString("description");
 						String imgUrl = c.getString("image");
-						int img = getResources().getIdentifier(imgUrl, null,
-								getPackageName());
+						int img = getResources().getIdentifier(imgUrl, null, getPackageName());
 
 						// Create new Event object
 						Event e = new Event(id, name, tStart, dStart, dEnd, loc, desc, "E", img);
@@ -605,7 +635,6 @@ public class Home extends TabActivity implements OnClickListener {
 		String selectedDate;
 
 		// Attributes for Database Interaction
-		private ProgressDialog pDialog;
 		JSONParser jsonParser = new JSONParser();
 		// urls
 		private String url_attend_event = "http://10.0.2.2/ANowPhp/attend_event.php";
@@ -927,5 +956,61 @@ public class Home extends TabActivity implements OnClickListener {
 		}
 	}
 
-	
+	/**
+	 * Background Async Task to Load all events by making HTTP Request
+	 * */
+	class LoadEventsWithChanges extends AsyncTask<String, String, String> {
+		
+		int success; 
+		
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... args) {
+			// TODO Auto-generated method stub
+			// Building parameters
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("today", todayDate));
+			params.add(new BasicNameValuePair("username", username));
+
+			// Getting JSONString from url
+			JSONObject json = jParser.makeHttpRequest(url_event_changes, params);
+
+			try {
+				// Check success return
+				success = json.getInt("success");
+				if (success == 1) { // There are changes in event dates attended
+				
+					// Get array of events
+					events = json.getJSONArray("events");
+
+					// Loop through all events
+					for (int i = 0; i < events.length(); i++) {
+						JSONObject c = events.getJSONObject(i);
+
+						// Add event to arraylist of event ids with changes
+						eventIdsWithChanges.add(Integer.toString(c.getInt("event_id")));
+					}
+				} else {
+					// no events with changes found
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			if(success == 1) // There are changes
+				alertChanges();
+		}
+
+	}
 }

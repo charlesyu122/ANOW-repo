@@ -31,14 +31,6 @@ public class Event implements Serializable{
 		this.eventImage = image;
 	}
 	
-	public Event(int id, String name, String tStart, String dStart, String loc){
-		this.eventId = id;
-		this.eventName = name;
-		this.eventTimeStart = tStart;
-		this.eventDateStart = dStart;
-		this.eventLocation = loc;
-		this.eventDescription = "	Attend this!Attend this!Attend this!Attend this!Attend this!Attend this!Attend this!Attend this!Attend this!Attend this!This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun. This is very fun.";
-	}
 	
 	public String getEventName(){
 		return this.eventName;
