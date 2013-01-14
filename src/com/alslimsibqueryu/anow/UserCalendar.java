@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -245,8 +244,6 @@ public class UserCalendar extends Activity {
 				tvSelectedDate.setText(date + " " + monthYr);
 				// Retrieve events on specific day
 				activities = getActivities(formatDate(monthYr, date));
-				Log.d("monthyr", monthYr);
-				Log.d("date", date);
 				if (activities.length > 0)
 					tvNoEventsForUser.setVisibility(View.GONE);
 				else
@@ -257,7 +254,6 @@ public class UserCalendar extends Activity {
 	}
 
 	private Event[] getActivities(String selectedDate) {
-		Log.d("selectedDate!!!", selectedDate);
 		ArrayList<Event> activities = new ArrayList<Event>();
 		for (int i = 0; i < attendsListForMonth.size(); i++) {
 			if (attendsListForMonth.get(i).equals(selectedDate))
@@ -361,9 +357,6 @@ public class UserCalendar extends Activity {
 			this.beginDate = begin;
 			this.endDate = end;
 			this.current = cur;
-			Log.d("begin", begin);
-			Log.d("endate", endDate);
-			Log.d("current", ""+current);
 		}
 		
 		@Override
@@ -445,7 +438,6 @@ public class UserCalendar extends Activity {
 			lvActivities.setAdapter(new EventActivityAdapter(UserCalendar.this, activities));
 			// Retrieve events for calendar
 			updateDatesDisplayed(current);
-			Log.d("HERE", ""+activities.length);
 		}
 		
 	}
