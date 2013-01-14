@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,6 +132,8 @@ public class UserCalendar extends Activity {
 					loadEventsOnCalendar(1);
 				else
 					loadEventsOnCalendar(0);
+				String monthYr = tvCurMonth.getText().toString();
+				tvSelectedDate.setText( "1" + " " + monthYr);
 			}
 		});
 		btnNext.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +150,8 @@ public class UserCalendar extends Activity {
 					loadEventsOnCalendar(1);
 				else
 					loadEventsOnCalendar(0);
+				String monthYr = tvCurMonth.getText().toString();
+				tvSelectedDate.setText( "1" + " " + monthYr);
 			}
 		});
 		// Get current date
@@ -154,8 +159,6 @@ public class UserCalendar extends Activity {
 		today = Calendar.getInstance();
 		this.todayDate = yrMonthDateFormat.format(today.getTime());
 		tvCurMonth.setText(monthYrFormat.format(curDate.getTime()));
-		// Load Events on the Calendar
-		loadEventsOnCalendar(1);
 
 		// Set-up views on right side
 		tvSelectedDate = (TextView) findViewById(R.id.tvUserSelectedDate);
@@ -163,11 +166,12 @@ public class UserCalendar extends Activity {
 		lvActivities = (ListView) findViewById(R.id.lvUserActivities);
 		tvSelectedDate.setText(dateFormat.format(today.getTime()) + " "+ tvCurMonth.getText());
 		
+		// Load Events on the Calendar
+		loadEventsOnCalendar(1);
 	}
 
 	// Helper methods
-	private void updateArrayDates(int numOfDays, int firstDay, int prevDays,
-			int current) {
+	private void updateArrayDates(int numOfDays, int firstDay, int prevDays, int current) {
 		this.dates = new String[42];
 		int ndx, ctr;
 
@@ -241,6 +245,8 @@ public class UserCalendar extends Activity {
 				tvSelectedDate.setText(date + " " + monthYr);
 				// Retrieve events on specific day
 				activities = getActivities(formatDate(monthYr, date));
+				Log.d("monthyr", monthYr);
+				Log.d("date", date);
 				if (activities.length > 0)
 					tvNoEventsForUser.setVisibility(View.GONE);
 				else
@@ -251,6 +257,7 @@ public class UserCalendar extends Activity {
 	}
 
 	private Event[] getActivities(String selectedDate) {
+		Log.d("selectedDate!!!", selectedDate);
 		ArrayList<Event> activities = new ArrayList<Event>();
 		for (int i = 0; i < attendsListForMonth.size(); i++) {
 			if (attendsListForMonth.get(i).equals(selectedDate))
@@ -274,7 +281,10 @@ public class UserCalendar extends Activity {
 		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(d);
-		int monthNum = cal.get(Calendar.MONTH) + 1;
+		int monthNumInt = cal.get(Calendar.MONTH) + 1;
+		String monthNum = Integer.toString(monthNumInt);
+		if(monthNum.length() == 1)
+			monthNum = "0"+monthNum;
 		if (date.length() == 1)
 			date = "0" + date;
 		return year + "-" + monthNum + "-" + date;
@@ -351,6 +361,9 @@ public class UserCalendar extends Activity {
 			this.beginDate = begin;
 			this.endDate = end;
 			this.current = cur;
+			Log.d("begin", begin);
+			Log.d("endate", endDate);
+			Log.d("current", ""+current);
 		}
 		
 		@Override
@@ -432,6 +445,7 @@ public class UserCalendar extends Activity {
 			lvActivities.setAdapter(new EventActivityAdapter(UserCalendar.this, activities));
 			// Retrieve events for calendar
 			updateDatesDisplayed(current);
+			Log.d("HERE", ""+activities.length);
 		}
 		
 	}

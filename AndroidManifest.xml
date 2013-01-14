@@ -9,8 +9,9 @@
 
     <application
         android:name="com.alslimsibqueryu.anow.ApplicationController"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ic_anow_laucher"
         android:label="@string/app_name"
+        android:debuggable="true"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
