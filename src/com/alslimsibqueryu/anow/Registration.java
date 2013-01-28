@@ -15,6 +15,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -80,35 +81,57 @@ public class Registration extends Activity{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				successLog = 0;
-				switch(checkFields()){
-				case 1: 
-					// No missing fields and passwords match
+				int check = checkFields();
+				if(check == 1){
 					new CreateNewUser().execute();
-					break;
-				case 2:
-					// Missing field
+				} else if(check ==0){
 					Toast.makeText(Registration.this, "Please fill up missing fields", Toast.LENGTH_SHORT).show();
-					break;
-				case 3:
-					// Passwords doesn't match
-					Toast.makeText(Registration.this, "Passwords entered do not match", Toast.LENGTH_SHORT).show();
-					break;
-				}
-				
+				}	
 			}
 		});
 	}
 	
 	private int checkFields(){
-		int ret = 0;
-		if(etEmail.getText().toString().matches("") || etPassword.getText().toString().matches("") || etFName.getText().toString().matches("") || 
-		   etLName.getText().toString().matches("") || etHobbies.getText().toString().matches("") || etCPassword.getText().toString().matches(""))
-			ret = 2;
-		else if( !(etPassword.getText().toString().matches(etCPassword.getText().toString())) )
-			ret = 3;
-		else 
-			ret = 1;
+		int ret = 1;
+		// Check for empty fields
+		if(etEmail.getText().toString().length() == 0){
+			ret = 0;
+			etEmail.setError("Username/E-mail address is required!");
+		}
+		if(etFName.getText().toString().length() == 0){
+			ret = 0;
+			etFName.setError("First name is required!");
+		}
+		if(etLName.getText().toString().length() == 0){
+			ret = 0;
+			etLName.setError("Last name is required!");
+		}
+		if(etPassword.getText().toString().length() ==0){
+			ret = 0;
+			etPassword.setError("Password is required!");
+		}
+		if(etHobbies.getText().toString().length() == 0){
+			ret = 0;
+			etHobbies.setError("Hobbies are required!");
+		}
+		// Other validations
+		if(!((etPassword.getText().toString()).equals(etCPassword.getText().toString())) && ret == 1){
+			etPassword.setError("Passwords do not match");
+			etCPassword.setError("Passwords do not match");
+			Toast.makeText(Registration.this, "Please make sure the passwords match.", Toast.LENGTH_SHORT).show();
+			ret = -1;
+		}
+		if(isNotEmailValid(etEmail.getText())){
+			etEmail.setError("Email address is not valid");
+			Toast.makeText(Registration.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+			ret = -1;
+		}
+
 		return ret;
+	}
+	
+	boolean isNotEmailValid(CharSequence email){
+		return !Patterns.EMAIL_ADDRESS.matcher(email).matches();
 	}
 	
 	private String hashPassword(String password){
