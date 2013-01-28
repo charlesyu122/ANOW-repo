@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -155,9 +156,12 @@ public class Settings extends Activity implements OnClickListener {
 							final EditText etP = (EditText)textEntryViewU.findViewById(R.id.etConfirmPasswordU);
 							password = hashPassword(etP.getText().toString());
 							
+							// email validation
 							if((new_username.length() == 0 || etP.getText().toString().length() == 0))
 								Toast.makeText(Settings.this, "Required field(s) is missing!", Toast.LENGTH_SHORT).show();
-							else
+							else if(isNotEmailValid(new_username)){
+								Toast.makeText(Settings.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+							}else 
 								new EditUsername().execute();
 						}
 					});
@@ -235,8 +239,11 @@ public class Settings extends Activity implements OnClickListener {
 			});
 			alertOut.show();
 			break;
-		}
-		
+		}	
+	}
+	
+	boolean isNotEmailValid(CharSequence email){
+		return !Patterns.EMAIL_ADDRESS.matcher(email).matches();
 	}
 	
 	class EditUsername extends AsyncTask<String, String, String>{
