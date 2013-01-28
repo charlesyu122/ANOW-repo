@@ -1,7 +1,13 @@
 package com.alslimsibqueryu.anow;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -106,9 +112,10 @@ public class ActivityRegistration extends Activity{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				successLog = 0;
-				if(checkFields() == 1)
+				int check = checkFields();
+				if(check == 1)
 					new CreateNewActivity().execute();
-				else{
+				else if(check == 0){
 					Toast.makeText(ActivityRegistration.this, "Please fill up missing fields", Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -118,8 +125,36 @@ public class ActivityRegistration extends Activity{
 	
 	private int checkFields(){
 		int ret = 1;
-		if(etActName.getText().toString().matches("") || etActLoc.getText().toString().matches("") || etActDesc.getText().toString().matches(""))
+		if(etActName.getText().toString().length() == 0){
+			etActName.setError("Activity Name required!");
 			ret = 0;
+		}
+		if(etActLoc.getText().toString().length() == 0){
+			etActLoc.setError("Activity Location required!");
+			ret = 0;
+		}
+		if(etActDesc.getText().toString().length() == 0){
+			etActDesc.setError("Activity Description required!");
+			ret = 0;
+		}
+		// Check if date is okay
+		Date eventDate = null;
+		int date = dpStartDate.getDayOfMonth();
+		int month = dpStartDate.getMonth() + 1;
+		int year = dpStartDate.getYear();
+		String eventDateStr = year + "-" + month + "-" + date;
+		try {
+			eventDate = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH).parse(eventDateStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// Get date today
+		Calendar currentDate = Calendar.getInstance();
+		if(eventDate.before(currentDate.getTime())){
+			ret = -1;
+			Toast.makeText(ActivityRegistration.this, "The date must be today onwards.", Toast.LENGTH_SHORT).show();
+		}
 		return ret;
 	}
 	
