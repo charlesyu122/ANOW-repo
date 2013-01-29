@@ -34,8 +34,9 @@ public class EventRow implements Row{
         holder.eventName.setText(event.getEventName());
         holder.eventDate.setText(event.getEventTimeStart());
         holder.eventPic.setImageBitmap(event.getImage());
-        holder.eventObj = (Event)event;
+        holder.eventObj = new Event(event.eventId, event.eventName, event.eventTimeStart, event.eventDateStart, event.eventDateEnd, event.eventLocation, event.eventDescription, event.type);
         
+        rowView.setTag(holder);
         return rowView;
 	}
 

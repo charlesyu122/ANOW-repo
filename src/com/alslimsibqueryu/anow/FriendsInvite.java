@@ -1,5 +1,10 @@
 package com.alslimsibqueryu.anow;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +18,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,6 +37,7 @@ import android.widget.Toast;
 
 public class FriendsInvite extends Activity{
 	
+	private String server = "http://10.0.2.2/";
 	ListView lvFriendsToInvite;
 	CheckBox cbSelectAll;
 	Button btnInvite;
@@ -116,6 +124,8 @@ public class FriendsInvite extends Activity{
 	// Classes for database query
 	class LoadAllFriendsForInvite extends AsyncTask<String, String, String> {
 			
+		Bitmap bitmap = null;
+		
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
@@ -157,11 +167,22 @@ public class FriendsInvite extends Activity{
 						String birthday = c.getString("birthday");
 						String hobbies = c.getString("hobbies");
 						String eventCount = c.getString("event_count");
-						String uri = c.getString("profile_image");
-						int profPic = getResources().getIdentifier(uri, null, getPackageName());
+						String imgDir = c.getString("profile_image");
 							
+						// Retrieve image from directory
+						try {
+					        URL urlImage = new URL(server + parseDir(imgDir));
+					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+					        InputStream inputStream = connection.getInputStream();
+					        bitmap = BitmapFactory.decodeStream(inputStream);
+					    } catch (MalformedURLException e) {
+					        e.printStackTrace();
+					    } catch (IOException e) {
+					        e.printStackTrace();
+					    }
+						
 						// Create new user object
-						User friend = new User(username, name, birthday, hobbies, eventCount, profPic, "friends");
+						User friend = new User(username, name, birthday, hobbies, eventCount, bitmap, "friends");
 							
 						//Adding friends to list of friends to display
 						friendsToInviteList.add(friend);
@@ -177,6 +198,13 @@ public class FriendsInvite extends Activity{
 			return null;
 		}
 			
+		private String parseDir(String dir){
+			String ret = "", delim = "/";
+			String[] folders = dir.split(delim);
+			ret += folders[3]+"/"+folders[4]+"/"+folders[5]+"/"+folders[6];
+			return ret; 
+		}
+		
 		@Override
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
@@ -304,7 +332,7 @@ public class FriendsInvite extends Activity{
 				holder = (UserCBViewHolder) v.getTag();
 			}
 			
-			holder.ivUserProfPic.setImageResource(values.get(position).profPic);
+			holder.ivUserProfPic.setImageBitmap(values.get(position).profPic);
 			holder.cbInviteUser.setText(values.get(position).name);
 
 			return v;

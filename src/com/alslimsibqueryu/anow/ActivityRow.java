@@ -9,8 +9,8 @@ public class ActivityRow implements Row{
 	private final Event activity;
 	private final LayoutInflater inflater;
 	
-	public ActivityRow(LayoutInflater inflater, Event activity){
-		this.activity = activity;
+	public ActivityRow(LayoutInflater inflater, EventWithImage activityWithImage){
+		this.activity = new Event(activityWithImage.eventId, activityWithImage.eventName, activityWithImage.eventTimeStart, activityWithImage.eventDateStart, activityWithImage.eventDateEnd, activityWithImage.eventLocation, activityWithImage.eventDescription, activityWithImage.type);
 		this.inflater = inflater;
 	}
 
@@ -35,7 +35,7 @@ public class ActivityRow implements Row{
         holder.activityLocation.setText(activity.getEventLocation());
         holder.activityObj = activity;
 
-        //rowView.setTag(activity);
+        rowView.setTag(holder);
         return rowView;
 	}
 

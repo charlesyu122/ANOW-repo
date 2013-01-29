@@ -1,5 +1,10 @@
 package com.alslimsibqueryu.anow;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +17,8 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +30,7 @@ import android.widget.TextView;
 
 public class Friends extends Activity{
 
+	private String server = "http://10.0.2.2/";
 	ListView lvFriends;
 	TextView tvNoFriends;
 	private String type; // user or friend
@@ -110,6 +118,8 @@ public class Friends extends Activity{
 	// Methods for database query
 	class LoadAllFriends extends AsyncTask<String, String, String> {
 		
+		Bitmap bitmap = null;
+		
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
@@ -158,15 +168,26 @@ public class Friends extends Activity{
 						String birthday = c.getString("birthday");
 						String hobbies = c.getString("hobbies");
 						String eventCount = c.getString("event_count");
-						String uri = c.getString("profile_image");
-						int profPic = getResources().getIdentifier(uri, null, getPackageName());
+						String imgDir = c.getString("profile_image");
 						String status = "friends";
 						if(type.equals("friend")){
 							status = c.getString("status");
 						}
 						
+						// Retrieve image from directory
+						try {
+					        URL urlImage = new URL(server + parseDir(imgDir));
+					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+					        InputStream inputStream = connection.getInputStream();
+					        bitmap = BitmapFactory.decodeStream(inputStream);
+					    } catch (MalformedURLException e) {
+					        e.printStackTrace();
+					    } catch (IOException e) {
+					        e.printStackTrace();
+					    }
+						
 						// Create new user object
-						User friend = new User(username, name, birthday, hobbies, eventCount, profPic, status);
+						User friend = new User(username, name, birthday, hobbies, eventCount, bitmap, status);
 						
 						//Adding friends to list of friends to display
 						friendsList.add(friend);
@@ -180,6 +201,13 @@ public class Friends extends Activity{
 			}
 
 			return null;
+		}
+		
+		private String parseDir(String dir){
+			String ret = "", delim = "/";
+			String[] folders = dir.split(delim);
+			ret += folders[3]+"/"+folders[4]+"/"+folders[5]+"/"+folders[6];
+			return ret; 
 		}
 		
 		@Override

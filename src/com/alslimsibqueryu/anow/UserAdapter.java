@@ -51,7 +51,7 @@ public class UserAdapter extends ArrayAdapter<User> {
 		TextView userName = (TextView) rowView.findViewById(R.id.tvUserName);
 		final Button connect = (Button) rowView.findViewById(R.id.btnConnect);
 		ImageView ivInfo = (ImageView) rowView.findViewById(R.id.ivUInfo);
-		userProfPic.setImageResource(values[position].profPic);
+		userProfPic.setImageBitmap(values[position].profPic);
 		userName.setText(values[position].name);
 		
 		if(values[position].status.equals("strangers")){

@@ -2,6 +2,8 @@ package com.alslimsibqueryu.anow;
 
 import java.util.Comparator;
 
+import android.graphics.Bitmap;
+
 public class User {
 
 	public String status; //friends or strangers or newly-connected
@@ -10,13 +12,13 @@ public class User {
 	public String birthday;
 	public String hobbies;
 	public int eventCount;
-	public int profPic;
+	public Bitmap profPic;
 	public boolean invited; // for invite friends 
 	
 	//constructors
 	public User(){}
 
-	public User(String uname, String name, String bday, String hobbies, String eventCount, int profPic, String status){
+	public User(String uname, String name, String bday, String hobbies, String eventCount, Bitmap profPic, String status){
 		this.username = uname;
 		this.name = name;
 		this.birthday = bday;

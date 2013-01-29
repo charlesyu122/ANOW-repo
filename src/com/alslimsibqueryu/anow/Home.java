@@ -39,7 +39,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -173,7 +172,7 @@ public class Home extends TabActivity implements OnClickListener {
 				Event eventObj = (Event) v.getTag();
 				i.putExtra("eventObject", eventObj);
 				i.putExtra("type", "advertised");
-				i.putExtra("bmp", getEventImage(eventObj));
+				i.putExtra("bmp", getEventImage(eventObj,"events"));
 				startActivity(i);
 			}
 		});
@@ -197,7 +196,7 @@ public class Home extends TabActivity implements OnClickListener {
 						i = new Intent(Home.this, EventProfile.class);
 						i.putExtra("eventObject", activityObj);
 						i.putExtra("type", "attended");
-						i.putExtra("bmp", getEventImage(activityObj));
+						i.putExtra("bmp", getEventImage(activityObj, "attends"));
 						startActivity(i);
 					} catch (Exception ex) {
 					}
@@ -267,13 +266,22 @@ public class Home extends TabActivity implements OnClickListener {
 		alertEventChanges.show();
 	}
 	
-	private Bitmap getEventImage(Event eventObj){
+	private Bitmap getEventImage(Event eventObj, String type){
 		// Get event image
 		Bitmap eventImage = null;
-		for(int ctr=0, check =0; check ==0 && ctr < eventsList.size(); ctr++){
-			if(eventsList.get(ctr).eventId == eventObj.eventId){
-				check = 1;
-				eventImage = eventsList.get(ctr).eventImage;
+		if(type.equals("events")){
+			for(int ctr=0, check =0; check ==0 && ctr < eventsList.size(); ctr++){
+				if(eventsList.get(ctr).eventId == eventObj.eventId){
+					check = 1;
+					eventImage = eventsList.get(ctr).eventImage;
+				}
+			}
+		} else if(type.equals("attends")){
+			for(int ctr=0, check =0; check ==0 && ctr < eventsListForMonth.size(); ctr++){
+				if(eventsListForMonth.get(ctr).eventId == eventObj.eventId){
+					check = 1;
+					eventImage = eventsListForMonth.get(ctr).eventImage;
+				}
 			}
 		}
 		return eventImage;
@@ -565,7 +573,6 @@ public class Home extends TabActivity implements OnClickListener {
 						String desc = c.getString("description");
 						String imgDir = c.getString("image");
 						
-						Log.d("HERE", imgDir);
 						// Retrieve image from directory
 						try {
 					        URL urlImage = new URL(server + parseDir(imgDir));
