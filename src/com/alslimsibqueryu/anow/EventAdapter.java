@@ -11,16 +11,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class EventAdapter extends ArrayAdapter<Event>{
+public class EventAdapter extends ArrayAdapter<EventWithImage>{
 	
 	private Context context;
-	Event[] values = null;
+	EventWithImage[] values = null;
 	
-	public EventAdapter(Context context, ArrayList<Event> eventsList) {
+	public EventAdapter(Context context, ArrayList<EventWithImage> eventsList) {
 		super(context, R.layout.single_event, eventsList);
 		// TODO Auto-generated constructor stub
 		this.context = context;
-		this.values = eventsList.toArray(new Event[eventsList.size()]);
+		this.values = eventsList.toArray(new EventWithImage[eventsList.size()]);
 	}
 	
 	@Override
@@ -35,8 +35,7 @@ public class EventAdapter extends ArrayAdapter<Event>{
 		TextView eName = (TextView)rowView.findViewById(R.id.tvEName);
 		TextView eTime = (TextView)rowView.findViewById(R.id.tvEDate);
 		
-		
-		iv.setImageResource(values[position].eventImage);
+		iv.setImageBitmap(values[position].eventImage);
 		eName.setText(values[position].eventName);
 		if(values[position].eventDateStart.matches(values[position].eventDateEnd))
 			eTime.setText(values[position].eventDateStart);
@@ -48,10 +47,11 @@ public class EventAdapter extends ArrayAdapter<Event>{
 			String[] eDate = end.split(delim);
 			eTime.setText(sDate[1]+"-"+ sDate[2] + " to " + eDate[1]+"-"+ eDate[2]);
 		}
-			
-		rowView.setTag(values[position]);
+		
+		Event temp = (Event)values[position];
+		Event tag = new Event(temp.eventId, temp.eventName, temp.eventTimeStart, temp.eventDateStart, temp.eventDateEnd, temp.eventLocation, temp.eventDescription, temp.type);
+		rowView.setTag(tag);
 		
 		return rowView;
 	}
-		
 }

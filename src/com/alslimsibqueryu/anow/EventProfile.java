@@ -2,6 +2,7 @@ package com.alslimsibqueryu.anow;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,7 @@ public class EventProfile extends Activity{
 
 	Event receivedEvent; String eventId;
 	String type; // advertised or attended
+	Bitmap eventImage;
 	ImageView ivEpic;
 	TextView tvEname, tvEdate, tvEloc, tvEtime, tvEdesc;
 	Button btnParticipants, btnInvite;
@@ -37,6 +39,7 @@ public class EventProfile extends Activity{
 		this.receivedEvent = (Event)i.getSerializableExtra("eventObject");
 		this.eventId = Integer.toString(receivedEvent.eventId);
 		this.type = i.getStringExtra("type");
+		this.eventImage = i.getParcelableExtra("bmp");
 	}
 	
 	private void setup(){
@@ -47,7 +50,8 @@ public class EventProfile extends Activity{
 		tvEloc = (TextView)findViewById(R.id.tvEventLocation);
 		tvEtime = (TextView)findViewById(R.id.tvEventTime);
 		tvEdesc = (TextView)findViewById(R.id.tvEventDesc);
-		ivEpic.setImageResource(this.receivedEvent.eventImage);
+		
+		ivEpic.setImageBitmap(eventImage);
 		tvEname.setText(this.receivedEvent.eventName);
 		tvEdate.setText(this.receivedEvent.eventDateStart);
 		tvEloc.setText(this.receivedEvent.eventLocation);

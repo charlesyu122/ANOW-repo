@@ -1,5 +1,11 @@
 package com.alslimsibqueryu.anow;
 
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,6 +27,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,6 +49,7 @@ public class UserCalendar extends Activity {
 	// Attributes
 	private String username, name;
 	Boolean firstLoad = true;
+	private String server = "http://10.0.2.2/";
 
 	// Header Views
 	TextView tvTitle;
@@ -61,12 +70,12 @@ public class UserCalendar extends Activity {
 	// Other views
 	TextView tvSelectedDate, tvNoEventsForUser;
 	ListView lvActivities;
-	Event[] activities;
+	EventWithImage[] activities;
 
 	// Database Interaction Attributes
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
-	ArrayList<Event> eventsListForMonth;
+	ArrayList<EventWithImage> eventsListForMonth;
 	ArrayList<String> attendsListForMonth;
 	private static String url_user_attended_events = "http://10.0.2.2/ANowPhp/get_user_attended_events.php";
 	JSONArray events = null;
@@ -78,7 +87,7 @@ public class UserCalendar extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_calendar);
 		// Initialize attributes
-		eventsListForMonth = new ArrayList<Event>();
+		eventsListForMonth = new ArrayList<EventWithImage>();
 		attendsListForMonth = new ArrayList<String>();
 		
 		// Retrieve extras
@@ -253,13 +262,13 @@ public class UserCalendar extends Activity {
 		});
 	}
 
-	private Event[] getActivities(String selectedDate) {
-		ArrayList<Event> activities = new ArrayList<Event>();
+	private EventWithImage[] getActivities(String selectedDate) {
+		ArrayList<EventWithImage> activities = new ArrayList<EventWithImage>();
 		for (int i = 0; i < attendsListForMonth.size(); i++) {
 			if (attendsListForMonth.get(i).equals(selectedDate))
 				activities.add(eventsListForMonth.get(i));
 		}
-		return activities.toArray(new Event[activities.size()]);
+		return activities.toArray(new EventWithImage[activities.size()]);
 	}
 
 	private String formatDate(String monthYr, String date) {
@@ -352,6 +361,7 @@ public class UserCalendar extends Activity {
 
 		String beginDate, endDate;
 		int current;
+		Bitmap bitmap = null;
 		
 		public LoadUserEventsForCalendar(String begin, String end, int cur){
 			this.beginDate = begin;
@@ -406,12 +416,23 @@ public class UserCalendar extends Activity {
 						String loc = c.getString("location");
 						String desc = c.getString("description");
 						String type = c.getString("type");
-						String imgUrl = c.getString("image");
-						int img = getResources().getIdentifier(imgUrl, null, getPackageName());
+						String imgDir = c.getString("image");
 
+						// Retrieve image from directory
+						try {
+					        URL urlImage = new URL(server + parseDir(imgDir));
+					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+					        InputStream inputStream = connection.getInputStream();
+					        bitmap = BitmapFactory.decodeStream(inputStream);
+					    } catch (MalformedURLException e) {
+					        e.printStackTrace();
+					    } catch (IOException e) {
+					        e.printStackTrace();
+					    }
+						
 						// Create new Event object
-						Event e = new Event(id, name, tStart, dStart, dEnd, loc, desc, type, img);
-
+						EventWithImage e = new EventWithImage(id, name, tStart, dStart, dEnd, loc, desc, type, bitmap);
+						
 						// Add info to list of events and attends
 						eventsListForMonth.add(e);
 						attendsListForMonth.add(attends.getString(i));
@@ -423,6 +444,13 @@ public class UserCalendar extends Activity {
 				e.printStackTrace();
 			}
 			return null;
+		}
+		
+		private String parseDir(String dir){
+			String ret = "", delim = "/";
+			String[] folders = dir.split(delim);
+			ret += folders[3]+"/"+folders[4]+"/"+folders[5]+"/"+folders[6];
+			return ret; 
 		}
 		
 		@Override

@@ -13,7 +13,7 @@ public class EventActivityAdapter extends BaseAdapter{
 	private Context context;
 	final List<Row> rows;
 	
-	public EventActivityAdapter(Context context, Event[] values) {
+	public EventActivityAdapter(Context context, EventWithImage[] values) {
 		// TODO Auto-generated constructor stub
 		this.context = context;
 		this.rows = new ArrayList<Row>();//member variable

@@ -1,6 +1,5 @@
 package com.alslimsibqueryu.anow;
 
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +7,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class EventRow implements Row{
-	private final Event event;
+	private final EventWithImage event;
 	private final LayoutInflater inflater;
 	
-	public EventRow(LayoutInflater inflater, Event event){
+	public EventRow(LayoutInflater inflater, EventWithImage event){
 		this.event = event;
 		this.inflater = inflater;
 	}
@@ -34,8 +33,8 @@ public class EventRow implements Row{
 
         holder.eventName.setText(event.getEventName());
         holder.eventDate.setText(event.getEventTimeStart());
-        holder.eventPic.setImageResource(event.getEventImage());
-        holder.eventObj = event;
+        holder.eventPic.setImageBitmap(event.getImage());
+        holder.eventObj = (Event)event;
         
         return rowView;
 	}
@@ -58,7 +57,4 @@ public class EventRow implements Row{
         }
         
     }
-	
-	
-
 }

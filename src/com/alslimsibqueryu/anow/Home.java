@@ -1,5 +1,10 @@
 package com.alslimsibqueryu.anow;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +19,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import com.alslimsibqueryu.anow.ActivityRow.AViewHolder;
 import com.alslimsibqueryu.anow.EventRow.EViewHolder;
 
@@ -27,10 +33,13 @@ import android.content.ClipDescription;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +69,7 @@ public class Home extends TabActivity implements OnClickListener {
 	TabHost tabHost;
 	String username;
 	Boolean firstLoad = true;
+	private String server = "http://10.0.2.2/";
 
 	// Calendar
 	GridView calendar;
@@ -76,7 +86,7 @@ public class Home extends TabActivity implements OnClickListener {
 	ListView lvEvents;
 	// NOW tab
 	ListView lvActivities;
-	Event[] activities;
+	EventWithImage[] activities;
 	TextView tvDate, tvNoEvent;
 	// Header Views
 	TextView tvHTitle;
@@ -89,8 +99,8 @@ public class Home extends TabActivity implements OnClickListener {
 	// Create JSON Parser object
 	JSONParser jParser = new JSONParser();
 
-	ArrayList<Event> eventsList;
-	ArrayList<Event> eventsListForMonth;
+	ArrayList<EventWithImage> eventsList;
+	ArrayList<EventWithImage> eventsListForMonth;
 	ArrayList<String> eventIdsWithChanges;
 	ArrayList<String> attendsListForMonth;
 
@@ -109,8 +119,8 @@ public class Home extends TabActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 		// Initialize attributes
-		eventsList = new ArrayList<Event>();
-		eventsListForMonth = new ArrayList<Event>();
+		eventsList = new ArrayList<EventWithImage>();
+		eventsListForMonth = new ArrayList<EventWithImage>();
 		eventIdsWithChanges = new ArrayList<String>();
 		attendsListForMonth = new ArrayList<String>();
 
@@ -163,6 +173,7 @@ public class Home extends TabActivity implements OnClickListener {
 				Event eventObj = (Event) v.getTag();
 				i.putExtra("eventObject", eventObj);
 				i.putExtra("type", "advertised");
+				i.putExtra("bmp", getEventImage(eventObj));
 				startActivity(i);
 			}
 		});
@@ -186,6 +197,7 @@ public class Home extends TabActivity implements OnClickListener {
 						i = new Intent(Home.this, EventProfile.class);
 						i.putExtra("eventObject", activityObj);
 						i.putExtra("type", "attended");
+						i.putExtra("bmp", getEventImage(activityObj));
 						startActivity(i);
 					} catch (Exception ex) {
 					}
@@ -193,7 +205,7 @@ public class Home extends TabActivity implements OnClickListener {
 
 			}
 		});
-
+		
 		// Setup Tabhost
 		tabHost = getTabHost();
 
@@ -255,6 +267,17 @@ public class Home extends TabActivity implements OnClickListener {
 		alertEventChanges.show();
 	}
 	
+	private Bitmap getEventImage(Event eventObj){
+		// Get event image
+		Bitmap eventImage = null;
+		for(int ctr=0, check =0; check ==0 && ctr < eventsList.size(); ctr++){
+			if(eventsList.get(ctr).eventId == eventObj.eventId){
+				check = 1;
+				eventImage = eventsList.get(ctr).eventImage;
+			}
+		}
+		return eventImage;
+	}
 	
 	AdapterView.OnItemLongClickListener eventLongClickListener = new AdapterView.OnItemLongClickListener() {
 		@SuppressLint({ "NewApi", "NewApi" })
@@ -366,6 +389,13 @@ public class Home extends TabActivity implements OnClickListener {
 
 	}
 	
+	private String parseDir(String dir){
+		String ret = "", delim = "/";
+		String[] folders = dir.split(delim);
+		ret += folders[3]+"/"+folders[4]+"/"+folders[5]+"/"+folders[6];
+		return ret; 
+	}
+	
 	private void updateArrayDates(int numOfDays, int firstDay, int prevDays, int current) {
 		this.dates = new String[42];
 		int ndx, ctr;
@@ -450,14 +480,14 @@ public class Home extends TabActivity implements OnClickListener {
 		});
 	}
 	
-	private Event[] getActivities(String selectedDate){
-		ArrayList<Event> activities = new ArrayList<Event>();
+	private EventWithImage[] getActivities(String selectedDate){
+		ArrayList<EventWithImage> activities = new ArrayList<EventWithImage>();
 		for(int i=0; i < attendsListForMonth.size(); i++){
 			if(attendsListForMonth.get(i).equals(selectedDate)){
 				activities.add(eventsListForMonth.get(i));
 			}
 		}
-		return activities.toArray(new Event[activities.size()]);
+		return activities.toArray(new EventWithImage[activities.size()]);
 	}
 	
 	private String formatDate(String monthYr, String date){
@@ -488,6 +518,8 @@ public class Home extends TabActivity implements OnClickListener {
 	 * Background Async Task to Load all events by making HTTP Request
 	 * */
 	class LoadAllEvents extends AsyncTask<String, String, String> {
+		
+		Bitmap bitmap = null;
 		
 		@Override
 		protected void onPreExecute() {
@@ -531,11 +563,23 @@ public class Home extends TabActivity implements OnClickListener {
 						String dEnd = c.getString("date_end");
 						String loc = c.getString("location");
 						String desc = c.getString("description");
-						String imgUrl = c.getString("image");
-						int img = getResources().getIdentifier(imgUrl, null, getPackageName());
+						String imgDir = c.getString("image");
+						
+						Log.d("HERE", imgDir);
+						// Retrieve image from directory
+						try {
+					        URL urlImage = new URL(server + parseDir(imgDir));
+					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+					        InputStream inputStream = connection.getInputStream();
+					        bitmap = BitmapFactory.decodeStream(inputStream);
+					    } catch (MalformedURLException e) {
+					        e.printStackTrace();
+					    } catch (IOException e) {
+					        e.printStackTrace();
+					    }
 
 						// Create new Event object
-						Event e = new Event(id, name, tStart, dStart, dEnd, loc, desc, "E", img);
+						EventWithImage e = new EventWithImage(id, name, tStart, dStart, dEnd, loc, desc, "E", bitmap);
 
 						// Add event to arraylist of events
 						eventsList.add(e);
@@ -811,12 +855,6 @@ public class Home extends TabActivity implements OnClickListener {
 			protected void onPreExecute() {
 				// TODO Auto-generated method stub
 				super.onPreExecute();
-				/*
-				pDialog = new ProgressDialog(Home.this);
-				pDialog.setMessage("Adding the event to your calendar..");
-				pDialog.setIndeterminate(false);
-				pDialog.setCancelable(true);
-				pDialog.show();*/
 			}
 
 			@Override
@@ -863,6 +901,7 @@ public class Home extends TabActivity implements OnClickListener {
 
 		String beginDate, endDate;
 		int current;
+		Bitmap bitmap;
 		
 		public LoadEventsForCalendar(String begin, String end, int current){
 			this.beginDate = begin;
@@ -918,11 +957,23 @@ public class Home extends TabActivity implements OnClickListener {
 						String loc = c.getString("location");
 						String desc = c.getString("description");
 						String type = c.getString("type");
-						String imgUrl = c.getString("image");
-						int img = getResources().getIdentifier(imgUrl, null, getPackageName());
-
+						String imgDir = c.getString("image");
+						
+						if(!imgDir.equals("null")){
+							// Retrieve image from directory
+							try {
+						        URL urlImage = new URL(server + parseDir(imgDir));
+						        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+						        InputStream inputStream = connection.getInputStream();
+						        bitmap = BitmapFactory.decodeStream(inputStream);
+						    } catch (MalformedURLException e) {
+						        e.printStackTrace();
+						    } catch (IOException e) {
+						        e.printStackTrace();
+						    }
+						}
 						// Create new Event object
-						Event e = new Event(id, name, tStart, dStart, dEnd, loc, desc, type, img);
+						EventWithImage e = new EventWithImage(id, name, tStart, dStart, dEnd, loc, desc, type, bitmap);
 
 						// Add info to list of events and attends
 						eventsListForMonth.add(e);
@@ -936,6 +987,7 @@ public class Home extends TabActivity implements OnClickListener {
 			}
 			return null;
 		}
+		
 		
 		@Override
 		protected void onPostExecute(String result) {

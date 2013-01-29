@@ -10,12 +10,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class EventChangeAdapter extends ArrayAdapter<Event>{
+public class EventChangeAdapter extends ArrayAdapter<EventWithImage>{
 	
 	private final Context context;
-	private final ArrayList<Event> values;
+	private final ArrayList<EventWithImage> values;
 	
-	public EventChangeAdapter(Context context, ArrayList<Event> values){
+	public EventChangeAdapter(Context context, ArrayList<EventWithImage> values){
 		super(context, R.layout.single_event_change, values);
 		this.context = context;
 		this.values = values;
@@ -34,7 +34,7 @@ public class EventChangeAdapter extends ArrayAdapter<Event>{
 		TextView tvEName = (TextView)rowView.findViewById(R.id.tvEventChangeName);
 		TextView tvEDate = (TextView)rowView.findViewById(R.id.tvEventChangeDate);
 		
-		ivEPic.setImageResource(values.get(position).eventImage);
+		ivEPic.setImageBitmap(values.get(position).eventImage);
 		tvEName.setText(values.get(position).eventName + " moved to");
 		if(values.get(position).eventDateStart.matches(values.get(position).eventDateEnd))
 			tvEDate.setText(values.get(position).eventDateStart);
@@ -49,5 +49,4 @@ public class EventChangeAdapter extends ArrayAdapter<Event>{
 		
 		return rowView;
 	}
-
 }

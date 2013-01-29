@@ -316,7 +316,6 @@ public class UserProfile extends Activity {
 						
 						// Retrieve image from directory
 						try {
-							Log.d("HERE", server + parseDir(imgDir));
 					        URL urlImage = new URL(server + parseDir(imgDir));
 					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
 					        InputStream inputStream = connection.getInputStream();

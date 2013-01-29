@@ -1,5 +1,10 @@
 package com.alslimsibqueryu.anow;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +17,8 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,8 +31,9 @@ public class EventChanges extends Activity{
 	
 	//Attributes
 	ArrayList<String> eventIds;
-	ArrayList<Event> eventsWithChanges;
+	ArrayList<EventWithImage> eventsWithChanges;
 	Intent i;
+	private String server = "http://10.0.2.2/";
 	// Header views
 	TextView tvTitle;
 	Button btnBack;
@@ -47,7 +55,7 @@ public class EventChanges extends Activity{
 		// Retrieve events
 		i = getIntent();
 		eventIds = i.getStringArrayListExtra("eventIds");
-		eventsWithChanges = new ArrayList<Event>();
+		eventsWithChanges = new ArrayList<EventWithImage>();
 		
 		Log.d("HERE", ""+eventIds.size());
 		new LoadEvents().execute();
@@ -85,6 +93,8 @@ public class EventChanges extends Activity{
 	}
 	
 	class LoadEvents extends AsyncTask<String, String, String> {
+		
+		Bitmap bitmap = null;
 		
 		@Override
 		protected void onPreExecute() {
@@ -129,11 +139,22 @@ public class EventChanges extends Activity{
 						String loc = c.getString("location");
 						String desc = c.getString("description");
 						String type = c.getString("type");
-						String imgUrl = c.getString("image");
-						int img = getResources().getIdentifier(imgUrl, null, getPackageName());
+						String imgDir = c.getString("image");
+						
+						// Retrieve image from directory
+						try {
+					        URL urlImage = new URL(server + parseDir(imgDir));
+					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+					        InputStream inputStream = connection.getInputStream();
+					        bitmap = BitmapFactory.decodeStream(inputStream);
+					    } catch (MalformedURLException e) {
+					        e.printStackTrace();
+					    } catch (IOException e) {
+					        e.printStackTrace();
+					    }
 
 						// Create new Event object
-						Event e = new Event(id, name, tStart, dStart, dEnd, loc, desc, type, img);
+						EventWithImage e = new EventWithImage(id, name, tStart, dStart, dEnd, loc, desc, type, bitmap);
 
 						// Add event to arraylist of events
 						eventsWithChanges.add(e);
@@ -146,7 +167,14 @@ public class EventChanges extends Activity{
 			}
 			return null;
 		}
-
+		
+		private String parseDir(String dir){
+			String ret = "", delim = "/";
+			String[] folders = dir.split(delim);
+			ret += folders[3]+"/"+folders[4]+"/"+folders[5]+"/"+folders[6];
+			return ret; 
+		}
+		
 		@Override
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
