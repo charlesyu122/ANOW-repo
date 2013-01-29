@@ -3,10 +3,8 @@ package com.alslimsibqueryu.anow;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -44,6 +42,7 @@ public class ActivityRegistration extends Activity{
 	JSONParser jsonParser = new JSONParser();
 	int successLog; // checks if the user successfully logs in
 	String privateOption = "N"; // sets the added activity to private
+	SimpleDateFormat yearMonthDate = new SimpleDateFormat("yyyy-MM-dd");
 	
 	// url to create a new account for user
 	private static String url_create_activity = "http://10.0.2.2/ANowPhp/create_activity.php";
@@ -144,14 +143,22 @@ public class ActivityRegistration extends Activity{
 		int year = dpStartDate.getYear();
 		String eventDateStr = year + "-" + month + "-" + date;
 		try {
-			eventDate = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH).parse(eventDateStr);
+			eventDate = yearMonthDate.parse(eventDateStr);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// Get date today
-		Calendar currentDate = Calendar.getInstance();
-		if(eventDate.before(currentDate.getTime())){
+		Date d = new Date();
+		String todayDateStr = yearMonthDate.format(d.getTime());
+		Date currentDate = null;
+		try {
+			currentDate = yearMonthDate.parse(todayDateStr);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if(eventDate.before(currentDate)){
 			ret = -1;
 			Toast.makeText(ActivityRegistration.this, "The date must be today onwards.", Toast.LENGTH_SHORT).show();
 		}

@@ -1,5 +1,10 @@
 package com.alslimsibqueryu.anow;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +18,8 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +35,7 @@ public class UserProfile extends Activity {
 	// Attributes
 	private String type; // user or friend
 	private Boolean needToReload = false;
+	private String server = "http://10.0.2.2/";
 	
 	// Header Views
 	Button btnSettings, btnSave;
@@ -64,8 +72,7 @@ public class UserProfile extends Activity {
 	JSONArray user = null;
 	
 	// Information to display
-	String name, eventCount, birthday, hobbies;
-	int profPic;
+	String name, eventCount, birthday, hobbies, imgDir;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -263,6 +270,8 @@ public class UserProfile extends Activity {
 
 	class LoadUserProfile extends AsyncTask<String, String, String>{
 
+		Bitmap bitmap = null;
+		
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
@@ -303,14 +312,33 @@ public class UserProfile extends Activity {
 						birthday = temp.getString("birthday");
 						hobbies = temp.getString("hobbies");
 						eventCount = temp.getString("event_count");
-						String uri = temp.getString("profile_image");
-						profPic = getResources().getIdentifier(uri, null, getPackageName());
+						imgDir = temp.getString("profile_image");
+						
+						// Retrieve image from directory
+						try {
+							Log.d("HERE", server + parseDir(imgDir));
+					        URL urlImage = new URL(server + parseDir(imgDir));
+					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+					        InputStream inputStream = connection.getInputStream();
+					        bitmap = BitmapFactory.decodeStream(inputStream);
+					    } catch (MalformedURLException e) {
+					        e.printStackTrace();
+					    } catch (IOException e) {
+					        e.printStackTrace();
+					    }
 					}
 				}
 			}catch(JSONException e){
 				e.printStackTrace();
 			}
 			return null;
+		}
+		
+		private String parseDir(String dir){
+			String ret = "", delim = "/";
+			String[] folders = dir.split(delim);
+			ret += folders[3]+"/"+folders[4]+"/"+folders[5]+"/"+folders[6];
+			return ret; 
 		}
 		
 		@Override
@@ -323,7 +351,7 @@ public class UserProfile extends Activity {
 				public void run() {
 					// TODO Auto-generated method stub
 					// Display Information
-					ivProfPic.setImageResource(profPic);
+					ivProfPic.setImageBitmap(bitmap);
 					tvUsername.setText(username);
 					tvEventCount.setText(eventCount);
 					tvProfName.setText(name);
@@ -332,7 +360,6 @@ public class UserProfile extends Activity {
 				}
 			});
 		}
-		
 	}
 	
 	class UpdateUserProfile extends AsyncTask<String, String, String> {
