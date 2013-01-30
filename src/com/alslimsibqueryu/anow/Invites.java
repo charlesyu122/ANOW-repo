@@ -1,5 +1,10 @@
 package com.alslimsibqueryu.anow;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +16,8 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +28,7 @@ import android.widget.TextView;
 
 public class Invites extends Activity{
 
+	private String server = "http://10.0.2.2/";
 	ListView lvInvites;
 	TextView tvNoInvites;
 	private int countOfInvites;
@@ -74,6 +82,8 @@ public class Invites extends Activity{
 	// Methods for database query
 	class LoadAllInvitations extends AsyncTask<String, String, String> {
 			
+		Bitmap bitmap = null;
+		
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
@@ -113,11 +123,23 @@ public class Invites extends Activity{
 						String attendId = c.getString("attend_id");
 						String event = c.getString("event_name");
 						String invitee = c.getString("invitee_name");
-						String uri = c.getString("event_image");
-						int eventPic = getResources().getIdentifier(uri, null, getPackageName());
-							
+						String imgDir = c.getString("event_image");
+	
+						if(!imgDir.equals("null")){
+							// Retrieve image from directory
+							try {
+						        URL urlImage = new URL(server + parseDir(imgDir));
+						        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+						        InputStream inputStream = connection.getInputStream();
+						        bitmap = BitmapFactory.decodeStream(inputStream);
+						    } catch (MalformedURLException e) {
+						        e.printStackTrace();
+						    } catch (IOException e) {
+						        e.printStackTrace();
+						    }
+						}
 						// Create new invite object
-						Invite invite = new Invite(attendId, invitee, event, eventPic);
+						Invite invite = new Invite(attendId, invitee, event, bitmap);
 							
 						//Adding invites to list of invites to display
 						invitationList.add(invite);
@@ -131,6 +153,13 @@ public class Invites extends Activity{
 			}
 			Log.d("HERE", ""+countOfInvites);
 			return null;
+		}
+		
+		private String parseDir(String dir){
+			String ret = "", delim = "/";
+			String[] folders = dir.split(delim);
+			ret += folders[3]+"/"+folders[4]+"/"+folders[5]+"/"+folders[6];
+			return ret; 
 		}
 			
 		@Override

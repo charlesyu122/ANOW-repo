@@ -1,15 +1,17 @@
 package com.alslimsibqueryu.anow;
 
+import android.graphics.Bitmap;
+
 public class Invite {
 	
 	public String status; // confirmed or invite
 	public String attendId;
 	public String inviteeName;
 	public String invitedEvent;
-	public int invitedEventPic;
+	public Bitmap invitedEventPic;
 	
 	//constructor
-	public Invite(String attendId, String name, String event, int pic){
+	public Invite(String attendId, String name, String event, Bitmap pic){
 		this.status = "invite";
 		this.attendId = attendId;
 		this.inviteeName = name;

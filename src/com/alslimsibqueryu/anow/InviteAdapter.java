@@ -50,7 +50,7 @@ public class InviteAdapter extends ArrayAdapter<Invite>{
 		TextView tvInviteEvent = (TextView)rowView.findViewById(R.id.tvInviteEventName);
 		final Button btnAttend = (Button)rowView.findViewById(R.id.btnAttendInvite);
 		
-		ivPic.setImageResource(values[position].invitedEventPic);
+		ivPic.setImageBitmap(values[position].invitedEventPic);
 		tvInviteeName.setText(values[position].inviteeName+ " invited you to");
 		tvInviteEvent.setText(values[position].invitedEvent);
 		if(values[position].status.equals("invite"))

@@ -21,7 +21,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -57,7 +56,6 @@ public class EventChanges extends Activity{
 		eventIds = i.getStringArrayListExtra("eventIds");
 		eventsWithChanges = new ArrayList<EventWithImage>();
 		
-		Log.d("HERE", ""+eventIds.size());
 		new LoadEvents().execute();
 	}
 	
@@ -141,18 +139,19 @@ public class EventChanges extends Activity{
 						String type = c.getString("type");
 						String imgDir = c.getString("image");
 						
-						// Retrieve image from directory
-						try {
-					        URL urlImage = new URL(server + parseDir(imgDir));
-					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
-					        InputStream inputStream = connection.getInputStream();
-					        bitmap = BitmapFactory.decodeStream(inputStream);
-					    } catch (MalformedURLException e) {
-					        e.printStackTrace();
-					    } catch (IOException e) {
-					        e.printStackTrace();
-					    }
-
+						if(!imgDir.equals("null")){
+							// Retrieve image from directory
+							try {
+						        URL urlImage = new URL(server + parseDir(imgDir));
+						        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+						        InputStream inputStream = connection.getInputStream();
+						        bitmap = BitmapFactory.decodeStream(inputStream);
+						    } catch (MalformedURLException e) {
+						        e.printStackTrace();
+						    } catch (IOException e) {
+						        e.printStackTrace();
+						    }
+						}
 						// Create new Event object
 						EventWithImage e = new EventWithImage(id, name, tStart, dStart, dEnd, loc, desc, type, bitmap);
 
