@@ -1,5 +1,11 @@
 package com.alslimsibqueryu.anow;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -20,6 +26,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +44,9 @@ public class Settings extends Activity implements OnClickListener {
 	String username, new_username, new_password, password, picturePath;
 	ApplicationController AP;
 	Intent i;
+	
+	// Upload image attribute
+	int serverResponseCode = 0;
 	
 	// Header views
 	TextView tvTitle;
@@ -95,7 +105,9 @@ public class Settings extends Activity implements OnClickListener {
             picturePath = cursor.getString(columnIndex);
             cursor.close();
             
-            new EditPicture().execute();
+            //new EditPicture().execute();
+            // Upload picture to localhost
+            startUpload(picturePath);
         }
 	}
 
@@ -210,11 +222,8 @@ public class Settings extends Activity implements OnClickListener {
 			updateSuccess = 0;
 			AP = (ApplicationController)getApplicationContext();
 			username = AP.getUsername();
-			Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, 
-					android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+			Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 			
-			//photoPickerIntent.setType("image/*");
-			//startActivityForResult(photoPickerIntent, 1);
 			startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
 			break;
 		case R.id.btnLogout:
@@ -275,7 +284,6 @@ public class Settings extends Activity implements OnClickListener {
 			{
 				if(json.getInt(TAG_SUCCESS) == 1)
 					updateSuccess = 1;
-				
 			} 
 			catch(JSONException e){
 				e.printStackTrace();
@@ -380,10 +388,8 @@ public class Settings extends Activity implements OnClickListener {
 			try
 			{
 				int success = json.getInt(TAG_SUCCESS);
-				
 				if(success == 1)
 					updateSuccess = 1;
-				
 			} 
 			catch(JSONException e){
 				e.printStackTrace();
@@ -404,4 +410,104 @@ public class Settings extends Activity implements OnClickListener {
 		}
 		
 	}	
+
+	private void startUpload(final String imgPath){
+		pDialog = ProgressDialog.show(Settings.this, "Image Upload", "Uploading image...", true);
+		new Thread(new Runnable(){
+
+			public void run() {
+				// TODO Auto-generated method stub
+				int response = uploadFile(imgPath);
+				Log.d("RES: ", ""+response);
+			}
+		}).start();
+	}
+	
+	public int uploadFile(String sourceFileUri) {
+        String upLoadServerUri = "http://10.0.2.2/ANowPhp/upload_image.php";
+        String fileName = sourceFileUri;
+
+        HttpURLConnection conn = null;
+        DataOutputStream dos = null;  
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        int bytesRead, bytesAvailable, bufferSize;
+        byte[] buffer;
+        int maxBufferSize = 1 * 1024 * 1024; 
+        File sourceFile = new File(sourceFileUri); 
+        if (!sourceFile.isFile()) {
+         Log.e("uploadFile", "Source File Does not exist");
+         pDialog.dismiss();
+         return 0;
+        }
+            try { // open a URL connection to the Servlet
+             FileInputStream fileInputStream = new FileInputStream(sourceFile);
+             URL url = new URL(upLoadServerUri);
+             conn = (HttpURLConnection) url.openConnection(); // Open a HTTP  connection to  the URL
+             conn.setDoInput(true); // Allow Inputs
+             conn.setDoOutput(true); // Allow Outputs
+             conn.setUseCaches(false); // Don't use a Cached Copy
+             conn.setRequestMethod("POST");
+             conn.setRequestProperty("Connection", "Keep-Alive");
+             conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+             conn.setRequestProperty("uploaded_file", fileName); 
+             dos = new DataOutputStream(conn.getOutputStream());
+   
+             dos.writeBytes(twoHyphens + boundary + lineEnd); 
+             dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""+ fileName + "\"" + lineEnd);
+             dos.writeBytes(lineEnd);
+   
+             bytesAvailable = fileInputStream.available(); // create a buffer of  maximum size
+   
+             bufferSize = Math.min(bytesAvailable, maxBufferSize);
+             buffer = new byte[bufferSize];
+   
+             // read file and write it into form...
+             bytesRead = fileInputStream.read(buffer, 0, bufferSize);  
+               
+             while (bytesRead > 0) {
+               dos.write(buffer, 0, bufferSize);
+               bytesAvailable = fileInputStream.available();
+               bufferSize = Math.min(bytesAvailable, maxBufferSize);
+               bytesRead = fileInputStream.read(buffer, 0, bufferSize);               
+              }
+   
+             // send multipart form data necesssary after file data...
+             dos.writeBytes(lineEnd);
+             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+   
+             // Responses from the server (code and message)
+             serverResponseCode = conn.getResponseCode();
+             String serverResponseMessage = conn.getResponseMessage();
+              
+             Log.i("uploadFile", "HTTP Response is : " + serverResponseMessage + ": " + serverResponseCode);
+             if(serverResponseCode == 200){
+                 runOnUiThread(new Runnable() {
+                      public void run() {
+                          Toast.makeText(Settings.this, "File Upload Complete.", Toast.LENGTH_SHORT).show();
+                      }
+                  });                
+             }    
+             
+             //close the streams //
+             fileInputStream.close();
+             dos.flush();
+             dos.close();
+              
+        } catch (MalformedURLException ex) {  
+            pDialog.dismiss();  
+            ex.printStackTrace();
+            Toast.makeText(Settings.this, "MalformedURLException", Toast.LENGTH_SHORT).show();
+            Log.e("Upload file to server", "error: " + ex.getMessage(), ex);  
+        } catch (Exception e) {
+        	pDialog.dismiss();  
+            e.printStackTrace();
+            Toast.makeText(Settings.this, "Exception : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("Upload file to server Exception", "Exception : " + e.getMessage(), e);  
+        }
+        pDialog.dismiss();       
+        return serverResponseCode;  
+       } 
 }
