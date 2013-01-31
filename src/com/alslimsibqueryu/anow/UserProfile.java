@@ -128,7 +128,7 @@ public class UserProfile extends Activity {
 		btnSettings = (Button) findViewById(R.id.btnHeader);
 		btnSave = (Button) findViewById(R.id.btnHeader2);
 		if(type.equals("user")){
-			btnSettings.setText("Settings");
+			btnSettings.setText("Back");
 			headerTitle.setText("My Profile");
 		}else{ 
 			btnSettings.setText("Back");
@@ -139,10 +139,18 @@ public class UserProfile extends Activity {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if(type.equals("user"))
-					startActivity(new Intent(UserProfile.this, Settings.class));
-				else
+				if(type.equals("user")){
+					Intent i = getIntent();
+					if(needToReload == true)
+						i.putExtra("reloadHome", true);
+					setResult(RESULT_OK, i);
 					finish();
+				}else if(type.equals("friend")){
+					Intent i = new Intent(UserProfile.this, UserCalendar.class);
+					i.putExtra("username", username);
+					i.putExtra("name", name);
+					startActivityForResult(i, 1);
+				}
 			}
 		});
 

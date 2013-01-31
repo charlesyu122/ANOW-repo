@@ -137,6 +137,8 @@ public class Invites extends Activity{
 						    } catch (IOException e) {
 						        e.printStackTrace();
 						    }
+						} else{
+							bitmap = null;
 						}
 						// Create new invite object
 						Invite invite = new Invite(attendId, invitee, event, bitmap);
