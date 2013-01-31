@@ -3,6 +3,7 @@ package com.alslimsibqueryu.anow;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -42,6 +43,7 @@ public class Settings extends Activity implements OnClickListener {
 	View textEntryViewU, textEntryViewP;
 	int updateSuccess;
 	String username, new_username, new_password, password, picturePath;
+	String newPicPath = "http://localhost/CI/images/profile_images/";
 	ApplicationController AP;
 	Intent i;
 	
@@ -105,7 +107,6 @@ public class Settings extends Activity implements OnClickListener {
             picturePath = cursor.getString(columnIndex);
             cursor.close();
             
-            //new EditPicture().execute();
             // Upload picture to localhost
             startUpload(picturePath);
         }
@@ -227,8 +228,7 @@ public class Settings extends Activity implements OnClickListener {
 			startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
 			break;
 		case R.id.btnLogout:
-			AlertDialog.Builder alertOut = new AlertDialog.Builder(
-					Settings.this);
+			AlertDialog.Builder alertOut = new AlertDialog.Builder(Settings.this);
 			alertOut.setTitle("Log out");
 			alertOut.setMessage("Are you sure you want to log-out?");
 			alertOut.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -377,7 +377,7 @@ public class Settings extends Activity implements OnClickListener {
 		protected String doInBackground(String... args) {
 			// TODO Auto-generated method stub
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("picturePath", picturePath));
+			params.add(new BasicNameValuePair("picturePath", newPicPath));
 			params.add(new BasicNameValuePair("password", password));
 			params.add(new BasicNameValuePair("username", username));
 			
@@ -404,7 +404,7 @@ public class Settings extends Activity implements OnClickListener {
 			pDialog.dismiss();
 			
 			if(updateSuccess == 1)
-				Toast.makeText(Settings.this, "Picture successfully uploaded! Path is "+picturePath, Toast.LENGTH_LONG).show();
+				Toast.makeText(Settings.this, "Profile picture successfully uploaded!", Toast.LENGTH_LONG).show();
 			else
 				Toast.makeText(Settings.this, "Cannot upload your photo. Path is "+picturePath, Toast.LENGTH_LONG).show();
 		}
@@ -413,14 +413,32 @@ public class Settings extends Activity implements OnClickListener {
 
 	private void startUpload(final String imgPath){
 		pDialog = ProgressDialog.show(Settings.this, "Image Upload", "Uploading image...", true);
-		new Thread(new Runnable(){
+		Thread t = new Thread(new Runnable(){
 
 			public void run() {
 				// TODO Auto-generated method stub
 				int response = uploadFile(imgPath);
 				Log.d("RES: ", ""+response);
+				if(response == 200){
+					// Parse filename
+					String delim = "/";
+					String[] files = imgPath.split(delim);
+					newPicPath += files[files.length-1];
+				}
 			}
-		}).start();
+		});
+		t.start();
+		// Wait for thread to finish
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(!newPicPath.equals("http://localhost/CI/images/profile_images/")){
+			// Edit profile picture in database
+			new EditPicture().execute();
+		}
 	}
 	
 	public int uploadFile(String sourceFileUri) {
@@ -458,7 +476,7 @@ public class Settings extends Activity implements OnClickListener {
              dos.writeBytes(twoHyphens + boundary + lineEnd); 
              dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""+ fileName + "\"" + lineEnd);
              dos.writeBytes(lineEnd);
-   
+
              bytesAvailable = fileInputStream.available(); // create a buffer of  maximum size
    
              bufferSize = Math.min(bytesAvailable, maxBufferSize);
@@ -486,15 +504,26 @@ public class Settings extends Activity implements OnClickListener {
              if(serverResponseCode == 200){
                  runOnUiThread(new Runnable() {
                       public void run() {
-                          Toast.makeText(Settings.this, "File Upload Complete.", Toast.LENGTH_SHORT).show();
+                          //Toast.makeText(Settings.this, "File Upload Complete.", Toast.LENGTH_SHORT).show();
                       }
                   });                
              }    
              
-             //close the streams //
+             //close the streams
              fileInputStream.close();
              dos.flush();
              dos.close();
+             
+             InputStream is = conn.getInputStream();
+
+             // retrieve the response from server
+             int ch;
+             StringBuffer b = new StringBuffer();
+             while ((ch = is.read()) != -1) {
+            	 b.append((char) ch);
+             }
+             String serverResponse = b.toString().trim();
+             Log.i("Response Upload Image", serverResponse);
               
         } catch (MalformedURLException ex) {  
             pDialog.dismiss();  
