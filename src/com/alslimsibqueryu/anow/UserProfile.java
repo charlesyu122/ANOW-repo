@@ -325,15 +325,15 @@ public class UserProfile extends Activity {
 						
 						// Retrieve image from directory
 						try {
-					        URL urlImage = new URL(server + parseDir(imgDir));
-					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
-					        InputStream inputStream = connection.getInputStream();
-					        bitmap = BitmapFactory.decodeStream(inputStream);
-					    } catch (MalformedURLException e) {
-					        e.printStackTrace();
-					    } catch (IOException e) {
-					        e.printStackTrace();
-					    }
+							URL urlImage = new URL(server + parseDir(imgDir));
+						    HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
+						    InputStream inputStream = connection.getInputStream();
+						    bitmap = BitmapFactory.decodeStream(inputStream);
+						} catch (MalformedURLException e) {
+						    e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}catch(JSONException e){
