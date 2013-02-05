@@ -97,6 +97,8 @@ public class MainActivity extends Activity {
     // Background Async Task to Login User
     class LoginUser extends AsyncTask<String, String, String>{
 
+    	String userId;
+    	
     	@Override
     	protected void onPreExecute() {
     		// TODO Auto-generated method stub
@@ -131,6 +133,7 @@ public class MainActivity extends Activity {
 				if(success == 1){
 					// account successfully logged in
 					successIn = 1;
+					userId = json.getString("user_id");
 				}else{
 					// fail to login
 					successIn = 0;
@@ -149,9 +152,9 @@ public class MainActivity extends Activity {
 				Toast.makeText(MainActivity.this, "Invalid username/password", Toast.LENGTH_SHORT).show();
 			else{
 				Intent i = new Intent(MainActivity.this, Home.class);
-				// Store username in App Controller
+				// Store user id in App Controller
 				ApplicationController AP = (ApplicationController)getApplicationContext();
-				AP.setUsername(etUsername.getText().toString());			
+				AP.setUserId(userId);		
 				startActivity(i);
 			}
 		}

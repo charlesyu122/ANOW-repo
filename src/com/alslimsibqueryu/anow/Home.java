@@ -66,7 +66,7 @@ public class Home extends TabActivity implements OnClickListener {
 
 	// Attributes
 	TabHost tabHost;
-	String username;
+	String userId;
 	Boolean firstLoad = true;
 	private String server = "http://10.0.2.2/";
 
@@ -123,9 +123,9 @@ public class Home extends TabActivity implements OnClickListener {
 		eventIdsWithChanges = new ArrayList<String>();
 		attendsListForMonth = new ArrayList<String>();
 
-		// Get username from Application Controller
+		// Get user id from Application Controller
 		ApplicationController AP = (ApplicationController)getApplicationContext();
-		this.username = AP.getUsername();
+		this.userId = AP.getUserId();
 		
 		this.setup();
 		// Check if their are changes in event dates
@@ -337,7 +337,7 @@ public class Home extends TabActivity implements OnClickListener {
 			break;
 		case R.id.btnHeaderAddActivity:
 			Intent iAdd = new Intent(Home.this, ActivityRegistration.class);
-			iAdd.putExtra("username", username);
+			iAdd.putExtra("user_id", userId);
 			startActivityForResult(iAdd, 1);
 			break;
 		case R.id.btnHeaderSetting:
@@ -546,7 +546,7 @@ public class Home extends TabActivity implements OnClickListener {
 			// Building parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("today", todayDate));
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 
 			// Getting JSONString from url
 			JSONObject json = jParser.makeHttpRequest(url_all_events, params);
@@ -869,7 +869,7 @@ public class Home extends TabActivity implements OnClickListener {
 				// TODO Auto-generated method stub
 				// Build parameters
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
-				params.add(new BasicNameValuePair("username", username));
+				params.add(new BasicNameValuePair("user_id", userId));
 				params.add(new BasicNameValuePair("event_id", Integer.toString(selectedEventId)));
 				params.add(new BasicNameValuePair("private", privateOption));
 				params.add(new BasicNameValuePair("attend_date", selectedYear+"-"+selectedMonthInt+"-"+selectedDate));
@@ -937,7 +937,7 @@ public class Home extends TabActivity implements OnClickListener {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("begin_date", beginDate));
 			params.add(new BasicNameValuePair("end_date", endDate));
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 
 			// Getting JSONString from url
 			JSONObject json = jParser.makeHttpRequest(url_attended_events, params);
@@ -1033,7 +1033,7 @@ public class Home extends TabActivity implements OnClickListener {
 			// Building parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("today", todayDate));
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 
 			// Getting JSONString from url
 			JSONObject json = jParser.makeHttpRequest(url_event_changes, params);

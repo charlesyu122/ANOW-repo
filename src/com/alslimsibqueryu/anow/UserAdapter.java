@@ -22,7 +22,7 @@ import android.widget.TextView;
 public class UserAdapter extends ArrayAdapter<User> {
 
 	private Context context;
-	private String loggedInUsername;
+	private String loggedInUserId;
 	User[] values = null;
 	char type; // F for friends list P for participants list
 	
@@ -37,7 +37,7 @@ public class UserAdapter extends ArrayAdapter<User> {
 		this.context = context;
 		this.values = objects.toArray(new User[objects.size()]);
 		this.type = type;
-		this.loggedInUsername = loggedIn;
+		this.loggedInUserId = loggedIn;
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class UserAdapter extends ArrayAdapter<User> {
 				
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					new ConnectUser(values[position].username).execute();
+					new ConnectUser(values[position].userId).execute();
 					values[position].connectUser();
 					connect.setText("Connected");
 					connect.setEnabled(false);
@@ -82,10 +82,10 @@ public class UserAdapter extends ArrayAdapter<User> {
 	
 	public class ConnectUser extends AsyncTask<String, String, String>{
 
-		private String connectToUser;
+		private String connectToUserId;
 		
-		public ConnectUser(String user){
-			this.connectToUser = user;
+		public ConnectUser(String userId){
+			this.connectToUserId = userId;
 		}
 		
 		@Override
@@ -93,7 +93,7 @@ public class UserAdapter extends ArrayAdapter<User> {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
 			pDialog = new ProgressDialog(context);
-			pDialog.setMessage("Connecting to "+ connectToUser+"...");
+			pDialog.setMessage("Connecting to user...");
     		pDialog.setIndeterminate(false);
     		pDialog.setCancelable(false);
     		pDialog.show();
@@ -103,8 +103,8 @@ public class UserAdapter extends ArrayAdapter<User> {
 		protected String doInBackground(String... args) {
 			// TODO Auto-generated method stub
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("logged_in", loggedInUsername));
-			params.add(new BasicNameValuePair("username", connectToUser));
+			params.add(new BasicNameValuePair("logged_in", loggedInUserId));
+			params.add(new BasicNameValuePair("user_id", connectToUserId));
 			
 			// Get JSON object
 			JSONObject json = jParser.makeHttpRequest(url_connect_users, params);

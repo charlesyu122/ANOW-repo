@@ -4,7 +4,7 @@ import android.app.Application;
 
 public class ApplicationController extends Application{
 
-	String username;
+	String userId;
 	
 	@Override
 	public void onCreate() {
@@ -13,12 +13,12 @@ public class ApplicationController extends Application{
 	}
 	
 	//setter getters
-	public void setUsername(String uname){
-		this.username = uname;
+	public void setUserId(String uid){
+		this.userId = uid;
 	}
 	
-	public String getUsername(){
-		return username;
+	public String getUserId(){
+		return this.userId;
 	}
 	
 }

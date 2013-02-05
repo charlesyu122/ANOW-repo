@@ -21,7 +21,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -41,8 +40,8 @@ public class Friends extends Activity{
 	Button btnBack;
 	
 	// Database Connectivity attributes
-	private String username;
-	private String loggedInUsername; // for type friend
+	private String userId;
+	private String loggedInUserId; // for type friend
 	ArrayList<User> friendsList;
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
@@ -60,9 +59,9 @@ public class Friends extends Activity{
 		this.type = i.getStringExtra("type");
 		if(type.equals("user")){
 			ApplicationController AC = (ApplicationController)getApplicationContext();
-			this.username = AC.getUsername();
+			this.userId = AC.getUserId();
 		} else if(type.equals("friend")){
-			this.username = i.getStringExtra("friend_username");
+			this.userId = i.getStringExtra("friend_user_id");
 		}
 		
 		tvNoFriends = (TextView)findViewById(R.id.tvNoFriends);
@@ -97,9 +96,9 @@ public class Friends extends Activity{
 		//Set-up views
 		lvFriends = (ListView) findViewById(R.id.lvFriends);
 		if(type.equals("user"))
-			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'F', username));
+			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'F', userId));
 		else
-			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'L', loggedInUsername));
+			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'L', loggedInUserId));
 		lvFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View v,int arg2, long arg3) {
@@ -108,7 +107,7 @@ public class Friends extends Activity{
 					User friend = (User)v.getTag();
 					Intent i = new Intent(Friends.this, UserProfile.class);
 					i.putExtra("type", "friend");
-					i.putExtra("username", friend.username);
+					i.putExtra("user_id", friend.userId);
 					startActivityForResult(i, 1);
 				}
 			}
@@ -136,13 +135,12 @@ public class Friends extends Activity{
 			// TODO Auto-generated method stub
 			// Build parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("username", username));
-			Log.d("HERE", username);
+			params.add(new BasicNameValuePair("user_id", userId));
+
 			if(type.equals("friend")){
 				ApplicationController AC = (ApplicationController)getApplicationContext();
-				loggedInUsername = AC.getUsername();
-				params.add(new BasicNameValuePair("loggedInUsername", loggedInUsername));
-				Log.d("HERE", loggedInUsername);
+				loggedInUserId = AC.getUserId();
+				params.add(new BasicNameValuePair("loggedInUserId", loggedInUserId));
 			}
 
 			// Getting JSON object
@@ -163,6 +161,7 @@ public class Friends extends Activity{
 						JSONObject c  = users.getJSONObject(i);
 						
 						//Storing each json item in variable
+						String userId = c.getString("user_id");
 						String username = c.getString("username");
 						String name = c.getString("name");
 						String birthday = c.getString("birthday");
@@ -187,7 +186,7 @@ public class Friends extends Activity{
 					    }
 						
 						// Create new user object
-						User friend = new User(username, name, birthday, hobbies, eventCount, bitmap, status);
+						User friend = new User(userId, username, name, birthday, hobbies, eventCount, bitmap, status);
 						
 						//Adding friends to list of friends to display
 						friendsList.add(friend);

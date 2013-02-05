@@ -36,6 +36,8 @@ public class UserProfile extends Activity {
 	private String type; // user or friend
 	private Boolean needToReload = false;
 	private String server = "http://10.0.2.2/";
+	String userId;
+	int updateSuccess; 
 	
 	// Header Views
 	Button btnSettings, btnSave;
@@ -47,8 +49,6 @@ public class UserProfile extends Activity {
 	TextView tvProfName, tvProfBday, tvProfInterest, tvUsername, tvEventCount;
 	EditText etProfName, etProfBday, etProfInterest;
 	Button btnCalendar, btnFriends, btnInvites;
-	String username;
-	int updateSuccess; 
 	
 	// Progress Dialog
 	private ProgressDialog pDialog;	
@@ -72,7 +72,7 @@ public class UserProfile extends Activity {
 	JSONArray user = null;
 	
 	// Information to display
-	String name, eventCount, birthday, hobbies, imgDir;
+	String name, username, eventCount, birthday, hobbies, imgDir;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,15 +80,15 @@ public class UserProfile extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_profile);
 		
-		// Get type of profile and username
+		// Get type of profile and user id
 		Intent i = getIntent();
 		this.type = i.getStringExtra("type");
 		
 		if(type.equals("user")){
 			ApplicationController AC = (ApplicationController)getApplicationContext();
-			this.username = AC.getUsername();
+			this.userId = AC.getUserId();
 		} else if(type.equals("friend")){
-			this.username = i.getStringExtra("username");
+			this.userId = i.getStringExtra("user_id");
 		}
 
 		// Initialize
@@ -147,7 +147,7 @@ public class UserProfile extends Activity {
 					finish();
 				}else if(type.equals("friend")){
 					Intent i = new Intent(UserProfile.this, UserCalendar.class);
-					i.putExtra("username", username);
+					i.putExtra("user_id", userId);
 					i.putExtra("name", name);
 					startActivityForResult(i, 1);
 				}
@@ -182,7 +182,7 @@ public class UserProfile extends Activity {
 					finish();
 				}else if(type.equals("friend")){
 					Intent i = new Intent(UserProfile.this, UserCalendar.class);
-					i.putExtra("username", username);
+					i.putExtra("user_id", userId);
 					i.putExtra("name", name);
 					startActivityForResult(i, 1);
 				}
@@ -195,7 +195,7 @@ public class UserProfile extends Activity {
 				Intent i = new Intent(UserProfile.this, Friends.class);
 				i.putExtra("type", type);
 				if(type.equals("friend")){
-					i.putExtra("friend_username", username);
+					i.putExtra("friend_user_id", userId);
 				}
 				startActivity(i);
 			}
@@ -297,7 +297,7 @@ public class UserProfile extends Activity {
 			
 			//Building parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 			
 			//Getting JSONObject from url
 			JSONObject json = jParser.makeHttpRequest(url_get_user_profile, params);
@@ -317,6 +317,7 @@ public class UserProfile extends Activity {
 						JSONObject temp = user.getJSONObject(0);
 						// Store each json item in variable
 						name = temp.getString("name");
+						username = temp.getString("username");
 						birthday = temp.getString("birthday");
 						hobbies = temp.getString("hobbies");
 						eventCount = temp.getString("event_count");
@@ -388,7 +389,7 @@ public class UserProfile extends Activity {
 			
 			// Building Parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 			params.add(new BasicNameValuePair("name", name));
 			params.add(new BasicNameValuePair("birthday", birthday));
 			params.add(new BasicNameValuePair("hobbies", hobbies));

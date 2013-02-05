@@ -37,7 +37,7 @@ public class Invites extends Activity{
 	Button btnBack;
 	
 	// Database Connectivity attributes
-	private String username;
+	private String userId;
 	ArrayList<Invite> invitationList;
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
@@ -51,7 +51,7 @@ public class Invites extends Activity{
 		setContentView(R.layout.invites);
 		// Retrieve user name
 		ApplicationController AC = (ApplicationController)getApplicationContext();
-		this.username = AC.getUsername();
+		this.userId = AC.getUserId();
 		//Setup header
 		setupHeader();
 		// Load invites
@@ -100,7 +100,7 @@ public class Invites extends Activity{
 			// TODO Auto-generated method stub
 			// Build parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 
 			// Getting JSON object
 			JSONObject json = jParser.makeHttpRequest(url_get_invites, params);

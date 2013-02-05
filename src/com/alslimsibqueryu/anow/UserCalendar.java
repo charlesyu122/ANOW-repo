@@ -47,7 +47,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class UserCalendar extends Activity {
 
 	// Attributes
-	private String username, name;
+	private String userId, name;
 	Boolean firstLoad = true;
 	private String server = "http://10.0.2.2/";
 
@@ -92,7 +92,7 @@ public class UserCalendar extends Activity {
 		
 		// Retrieve extras
 		Intent i = getIntent();
-		this.username = i.getStringExtra("username");
+		this.userId = i.getStringExtra("user_id");
 		this.name = i.getStringExtra("name");
 
 		// Set-up views
@@ -377,7 +377,7 @@ public class UserCalendar extends Activity {
 			eventsListForMonth.clear();
 			attendsListForMonth.clear();
 			pDialog = new ProgressDialog(UserCalendar.this);
-			pDialog.setMessage("Loading your calendar..");
+			pDialog.setMessage("Loading your calendar...");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(true);
 			pDialog.show();
@@ -389,7 +389,7 @@ public class UserCalendar extends Activity {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("begin_date", beginDate));
 			params.add(new BasicNameValuePair("end_date", endDate));
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 
 			// Getting JSONString from url
 			JSONObject json = jParser.makeHttpRequest(url_user_attended_events, params);

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 
 public class User {
 
+	public String userId;
 	public String status; //friends or strangers or newly-connected
 	public String username;
 	public String name;
@@ -18,7 +19,8 @@ public class User {
 	//constructors
 	public User(){}
 
-	public User(String uname, String name, String bday, String hobbies, String eventCount, Bitmap profPic, String status){
+	public User(String userId, String uname, String name, String bday, String hobbies, String eventCount, Bitmap profPic, String status){
+		this.userId = userId;
 		this.username = uname;
 		this.name = name;
 		this.birthday = bday;

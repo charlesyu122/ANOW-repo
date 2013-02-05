@@ -32,9 +32,8 @@ public class Participants extends Activity {
 	private String server = "http://10.0.2.2/";
 	ListView lvParticipants;
 	TextView tvNoParticipants;
-	User[] participantDummies;
 	String[] namesOfParticipants;
-	String loggedInUser;
+	String loggedInUserId;
 	private int countOfParticipants;
 	// Header views
 	TextView tvTitle;
@@ -59,7 +58,7 @@ public class Participants extends Activity {
 		Intent i = getIntent();
 		this.eventId = i.getStringExtra("event_id");
 		ApplicationController AC = (ApplicationController)getApplicationContext();
-		this.loggedInUser = AC.username;
+		this.loggedInUserId = AC.getUserId();
 		
 		tvNoParticipants = (TextView)findViewById(R.id.tvNoParticipants);
 		// Load participants
@@ -81,7 +80,7 @@ public class Participants extends Activity {
 		});
 		// Set-up views
 		lvParticipants = (ListView) findViewById(R.id.lvParticipants);
-		lvParticipants.setAdapter(new UserAdapter(Participants.this, participantsList, 'P', loggedInUser));
+		lvParticipants.setAdapter(new UserAdapter(Participants.this, participantsList, 'P', loggedInUserId));
 		lvParticipants.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View v,int arg2, long arg3) {
@@ -91,7 +90,7 @@ public class Participants extends Activity {
 		});
 	}
 	
-	// Methods for database query
+		// For database query
 		class LoadAllParticipants extends AsyncTask<String, String, String> {
 			
 			Bitmap bitmap = null;
@@ -113,7 +112,7 @@ public class Participants extends Activity {
 				// Build parameters
 				List<NameValuePair> params = new ArrayList<NameValuePair>();
 				params.add(new BasicNameValuePair("event_id", eventId));
-				params.add(new BasicNameValuePair("username_loggedin", loggedInUser));
+				params.add(new BasicNameValuePair("user_id_loggedin", loggedInUserId));
 
 				// Getting JSON object
 				JSONObject json = jParser.makeHttpRequest(url_get_participants, params);
@@ -133,6 +132,7 @@ public class Participants extends Activity {
 							JSONObject c  = users.getJSONObject(i);
 							
 							//Storing each json item in variable
+							String userId = c.getString("user_id");
 							String username = c.getString("username");
 							String name = c.getString("name");
 							String birthday = c.getString("birthday");
@@ -154,7 +154,7 @@ public class Participants extends Activity {
 						    }
 							
 							// Create new user object
-							User friend = new User(username, name, birthday, hobbies, eventCount, bitmap, status);
+							User friend = new User(userId, username, name, birthday, hobbies, eventCount, bitmap, status);
 							
 							//Adding friends to list of friends to display
 							participantsList.add(friend);

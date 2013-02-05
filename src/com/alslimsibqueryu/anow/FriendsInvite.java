@@ -50,7 +50,7 @@ public class FriendsInvite extends Activity{
 	Button btnBack;
 	
 	// Database Connectivity attributes
-	private String username;
+	private String userId;
 	ArrayList<User> friendsToInviteList;
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
@@ -64,9 +64,9 @@ public class FriendsInvite extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.friends);
 		
-		// Retrieve username and event_id
+		// Retrieve user_id and event_id
 		ApplicationController AC = (ApplicationController)getApplicationContext();
-		this.username = AC.getUsername();
+		this.userId = AC.getUserId();
 		Intent i = getIntent();
 		this.eventId = i.getStringExtra("event_id");
 		
@@ -142,7 +142,7 @@ public class FriendsInvite extends Activity{
 			// TODO Auto-generated method stub
 			// Build parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 
 			// Getting JSON object
 			JSONObject json = jParser.makeHttpRequest(url_get_friends, params);
@@ -162,6 +162,7 @@ public class FriendsInvite extends Activity{
 						JSONObject c  = users.getJSONObject(i);
 							
 						//Storing each json item in variable
+						String userId = c.getString("user_id");
 						String username = c.getString("username");
 						String name = c.getString("name");
 						String birthday = c.getString("birthday");
@@ -182,7 +183,7 @@ public class FriendsInvite extends Activity{
 					    }
 						
 						// Create new user object
-						User friend = new User(username, name, birthday, hobbies, eventCount, bitmap, "friends");
+						User friend = new User(userId, username, name, birthday, hobbies, eventCount, bitmap, "friends");
 							
 						//Adding friends to list of friends to display
 						friendsToInviteList.add(friend);
@@ -247,16 +248,16 @@ public class FriendsInvite extends Activity{
 		protected String doInBackground(String... args) {
 			// TODO Auto-generated method stub
 			// Retrieve friends that are invited
-			ArrayList<String> invitedUsernames = new ArrayList<String>();
+			ArrayList<String> invitedUserIds = new ArrayList<String>();
 			for(int i=0; i < friendsToInviteList.size(); i++){
 				if(friendsToInviteList.get(i).invited == true)
-					invitedUsernames.add(friendsToInviteList.get(i).username);		
+					invitedUserIds.add(friendsToInviteList.get(i).userId);		
 			}
-			JSONArray jsonArr = new JSONArray(invitedUsernames);
+			JSONArray jsonArr = new JSONArray(invitedUserIds);
 			// Build parameters
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("event_id", eventId));
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 			params.add(new BasicNameValuePair("invited", jsonArr.toString()));
 
 			// Getting JSON object

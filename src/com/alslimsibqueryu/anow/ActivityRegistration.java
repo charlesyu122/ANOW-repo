@@ -32,7 +32,7 @@ public class ActivityRegistration extends Activity{
 	Button btnHeaderBackBut;
 	
 	// Activity Views
-	String username;
+	String userId;
 	EditText etActName, etActLoc, etActDesc;
 	DatePicker dpStartDate;
 	TimePicker tpStartTime;
@@ -56,7 +56,7 @@ public class ActivityRegistration extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_registration);
 		Intent i = getIntent();
-		this.username = i.getStringExtra("username");
+		this.userId = i.getStringExtra("user_id");
 		this.setup();
 	}
 	
@@ -207,7 +207,7 @@ public class ActivityRegistration extends Activity{
 			params.add(new BasicNameValuePair("location", location));
 			params.add(new BasicNameValuePair("description", description));
 			params.add(new BasicNameValuePair("private", privateOption));
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 			
 			// Getting JSON Object
 			JSONObject json = jsonParser.makeHttpRequest(url_create_activity, params);

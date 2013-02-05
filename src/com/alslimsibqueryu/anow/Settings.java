@@ -42,7 +42,7 @@ public class Settings extends Activity implements OnClickListener {
 	Button btnChangeUname, btnChangePword, btnChangeProfPic, btnLogout;
 	View textEntryViewU, textEntryViewP;
 	int updateSuccess;
-	String username, new_username, new_password, password, picturePath;
+	String userId, new_username, new_password, password, picturePath;
 	String newPicPath = "http://localhost/CI/images/profile_images/";
 	ApplicationController AP;
 	Intent i;
@@ -163,7 +163,7 @@ public class Settings extends Activity implements OnClickListener {
 							// TODO Auto-generated method stub
 							updateSuccess = 0;
 							AP = (ApplicationController)getApplicationContext();
-							username = AP.getUsername();
+							userId = AP.getUserId();
 							final EditText etNewU = (EditText)textEntryViewU.findViewById(R.id.etChangeUsername);
 							new_username = etNewU.getText().toString();
 							final EditText etP = (EditText)textEntryViewU.findViewById(R.id.etConfirmPasswordU);
@@ -199,7 +199,7 @@ public class Settings extends Activity implements OnClickListener {
 							// TODO Auto-generated method stub
 							updateSuccess = 0;
 							AP = (ApplicationController)getApplicationContext();
-							username = AP.getUsername();
+							userId = AP.getUserId();
 							final EditText etNewP = (EditText)textEntryViewP.findViewById(R.id.etChangePassword);
 							new_password = hashPassword(etNewP.getText().toString());
 							final EditText etP = (EditText)textEntryViewP.findViewById(R.id.etConfirmPasswordP);
@@ -222,7 +222,7 @@ public class Settings extends Activity implements OnClickListener {
 		case R.id.btnChangeProfPic:
 			updateSuccess = 0;
 			AP = (ApplicationController)getApplicationContext();
-			username = AP.getUsername();
+			userId = AP.getUserId();
 			Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 			
 			startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
@@ -274,21 +274,18 @@ public class Settings extends Activity implements OnClickListener {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("new_username", new_username));
 			params.add(new BasicNameValuePair("password", password));
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 			
 			// Send modified data through HTTP request
 			JSONObject json = jsonParser.makeHttpRequest(url_edit_username_password, params);
 						
 			// Check json success tag
-			try
-			{
+			try{
 				if(json.getInt(TAG_SUCCESS) == 1)
 					updateSuccess = 1;
-			} 
-			catch(JSONException e){
+			} catch(JSONException e){
 				e.printStackTrace();
 			}
-			
 			return null;
 		}
 	
@@ -298,10 +295,7 @@ public class Settings extends Activity implements OnClickListener {
 			pDialog.dismiss();
 			
 			if(updateSuccess == 1)
-			{
 				Toast.makeText(Settings.this, "Username successfully edited!", Toast.LENGTH_SHORT).show();
-				AP.setUsername(new_username);
-			}
 			else
 				Toast.makeText(Settings.this, "Confirm password is incorrect!", Toast.LENGTH_SHORT).show();
 		}
@@ -327,24 +321,19 @@ public class Settings extends Activity implements OnClickListener {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("new_password", new_password));
 			params.add(new BasicNameValuePair("password", password));
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 			
 			// Send modified data through HTTP request
 			JSONObject json = jsonParser.makeHttpRequest(url_edit_username_password, params);
 						
 			// Check json success tag
-			try
-			{
+			try{
 				int success = json.getInt(TAG_SUCCESS);
-				
 				if(success == 1)
 					updateSuccess = 1;
-				
-			} 
-			catch(JSONException e){
+			} catch(JSONException e){
 				e.printStackTrace();
 			}
-			
 			return null;
 		}
 	
@@ -379,22 +368,19 @@ public class Settings extends Activity implements OnClickListener {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("picturePath", newPicPath));
 			params.add(new BasicNameValuePair("password", password));
-			params.add(new BasicNameValuePair("username", username));
+			params.add(new BasicNameValuePair("user_id", userId));
 			
 			// Send modified data through HTTP request
 			JSONObject json = jsonParser.makeHttpRequest(url_edit_picture, params);
 			
 			// Check json success tag
-			try
-			{
+			try{
 				int success = json.getInt(TAG_SUCCESS);
 				if(success == 1)
 					updateSuccess = 1;
-			} 
-			catch(JSONException e){
+			} catch(JSONException e){
 				e.printStackTrace();
 			}
-			
 			return null;
 		}
 	
