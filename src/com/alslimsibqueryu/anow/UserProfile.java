@@ -47,7 +47,7 @@ public class UserProfile extends Activity {
 	// Activity Views
 	ImageView ivProfPic;
 	TextView tvProfName, tvProfBday, tvProfInterest, tvUsername, tvEventCount;
-	EditText etProfName, etProfBday, etProfInterest;
+	EditText etProfName, etProfInterest;
 	Button btnCalendar, btnFriends, btnInvites;
 	
 	// Progress Dialog
@@ -161,7 +161,6 @@ public class UserProfile extends Activity {
 		tvProfName = (TextView) findViewById(R.id.tvProfName);
 		etProfName = (EditText) findViewById(R.id.etProfName);
 		tvProfBday = (TextView) findViewById(R.id.tvProfBday);
-		etProfBday = (EditText) findViewById(R.id.etProfBday);
 		tvProfInterest = (TextView) findViewById(R.id.tvProfInterest);
 		etProfInterest = (EditText) findViewById(R.id.etProfInterest);
 		btnCalendar = (Button) findViewById(R.id.btnCalendar);
@@ -216,13 +215,7 @@ public class UserProfile extends Activity {
 				if (((TextView) v).getId() == tvProfName.getId()) {
 					tvProfName.setVisibility(View.GONE);
 					etProfName.setText(tvProfName.getText());
-					etProfName.setVisibility(View.VISIBLE);
-					
-				} else if (((TextView) v).getId() == tvProfBday.getId()) {
-					tvProfBday.setVisibility(View.GONE);
-					etProfBday.setText(tvProfBday.getText());
-					etProfBday.setVisibility(View.VISIBLE);
-					
+					etProfName.setVisibility(View.VISIBLE);	
 				} else if (((TextView) v).getId() == tvProfInterest.getId()) {
 					tvProfInterest.setVisibility(View.GONE);
 					etProfInterest.setText(tvProfInterest.getText());
@@ -246,12 +239,6 @@ public class UserProfile extends Activity {
 					tvProfName.setText(etProfName.getText());
 					etProfName.setVisibility(View.GONE);
 					tvProfName.setVisibility(View.VISIBLE);
-				}
-				if (etProfBday.getVisibility() == View.VISIBLE) {
-					birthday = etProfBday.getText().toString();
-					tvProfBday.setText(etProfBday.getText());
-					etProfBday.setVisibility(View.GONE);
-					tvProfBday.setVisibility(View.VISIBLE);
 				}
 				if (etProfInterest.getVisibility() == View.VISIBLE) {
 					hobbies = etProfInterest.getText().toString();
@@ -391,7 +378,6 @@ public class UserProfile extends Activity {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("user_id", userId));
 			params.add(new BasicNameValuePair("name", name));
-			params.add(new BasicNameValuePair("birthday", birthday));
 			params.add(new BasicNameValuePair("hobbies", hobbies));
 			
 			// Send modified data through HTTP request
