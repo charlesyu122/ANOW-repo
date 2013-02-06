@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.views;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,6 +9,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.alslimsibqueryu.anow.JSONParser;
+import com.alslimsibqueryu.anow.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

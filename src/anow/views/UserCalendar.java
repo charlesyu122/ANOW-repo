@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.views;
 
 
 import java.io.IOException;
@@ -20,6 +20,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.alslimsibqueryu.anow.JSONParser;
+import com.alslimsibqueryu.anow.R;
 
 
 import android.annotation.SuppressLint;
@@ -43,6 +46,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import anow.adapters.EventActivityAdapter;
+import anow.datamodels.EventWithImage;
 
 public class UserCalendar extends Activity {
 

@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.views;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.alslimsibqueryu.anow.JSONParser;
+import com.alslimsibqueryu.anow.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import anow.datamodels.Event;
 
 public class ActivityProfile extends Activity{
 

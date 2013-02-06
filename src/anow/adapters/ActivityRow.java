@@ -1,9 +1,15 @@
-package com.alslimsibqueryu.anow;
+package anow.adapters;
+
+import com.alslimsibqueryu.anow.R;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import anow.datamodels.Event;
+import anow.datamodels.EventWithImage;
+import anow.datamodels.Row;
+import anow.datamodels.RowType;
 
 public class ActivityRow implements Row{
 	private final Event activity;
@@ -45,10 +51,10 @@ public class ActivityRow implements Row{
 	}
 	
 	public static class AViewHolder {
-        final TextView activityName;
-        final TextView activityTime;
-        final TextView activityLocation;
-        Event activityObj;
+        public final TextView activityName;
+        public final TextView activityTime;
+        public final TextView activityLocation;
+        public Event activityObj;
 
         private AViewHolder(TextView aName, TextView aTime, TextView aLoc) {
             this.activityName = aName;

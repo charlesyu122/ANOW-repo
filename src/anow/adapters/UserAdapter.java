@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.adapters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.alslimsibqueryu.anow.JSONParser;
+import com.alslimsibqueryu.anow.R;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -18,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import anow.datamodels.User;
 
 public class UserAdapter extends ArrayAdapter<User> {
 

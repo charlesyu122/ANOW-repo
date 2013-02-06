@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.views;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +20,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.alslimsibqueryu.anow.ActivityRow.AViewHolder;
-import com.alslimsibqueryu.anow.EventRow.EViewHolder;
+import com.alslimsibqueryu.anow.ApplicationController;
+import com.alslimsibqueryu.anow.JSONParser;
+import com.alslimsibqueryu.anow.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -60,6 +61,12 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
+import anow.adapters.EventActivityAdapter;
+import anow.adapters.EventAdapter;
+import anow.adapters.ActivityRow.AViewHolder;
+import anow.adapters.EventRow.EViewHolder;
+import anow.datamodels.Event;
+import anow.datamodels.EventWithImage;
 
 @SuppressWarnings("deprecation")
 public class Home extends TabActivity implements OnClickListener {

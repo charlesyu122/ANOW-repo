@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.views;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +13,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.alslimsibqueryu.anow.ApplicationController;
+import com.alslimsibqueryu.anow.JSONParser;
+import com.alslimsibqueryu.anow.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -34,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import anow.datamodels.User;
 
 public class FriendsInvite extends Activity{
 	

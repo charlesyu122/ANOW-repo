@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.adapters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import anow.datamodels.EventWithImage;
+import anow.datamodels.Row;
+import anow.datamodels.RowType;
 
 public class EventActivityAdapter extends BaseAdapter{
 	

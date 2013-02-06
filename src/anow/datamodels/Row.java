@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.datamodels;
 
 import android.view.View;
 

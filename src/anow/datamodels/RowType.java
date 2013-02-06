@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.datamodels;
 
 public enum RowType {
 	EVENT_ROW,

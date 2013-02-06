@@ -1,4 +1,4 @@
-package com.alslimsibqueryu.anow;
+package anow.datamodels;
 
 import java.util.Comparator;
 

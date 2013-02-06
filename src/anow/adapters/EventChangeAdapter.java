@@ -1,6 +1,8 @@
-package com.alslimsibqueryu.anow;
+package anow.adapters;
 
 import java.util.ArrayList;
+
+import com.alslimsibqueryu.anow.R;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import anow.datamodels.EventWithImage;
 
 public class EventChangeAdapter extends ArrayAdapter<EventWithImage>{
 	

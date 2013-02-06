@@ -1,10 +1,16 @@
-package com.alslimsibqueryu.anow;
+package anow.adapters;
+
+import com.alslimsibqueryu.anow.R;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import anow.datamodels.Event;
+import anow.datamodels.EventWithImage;
+import anow.datamodels.Row;
+import anow.datamodels.RowType;
 
 public class EventRow implements Row{
 	private final EventWithImage event;
@@ -46,10 +52,10 @@ public class EventRow implements Row{
 	}
 	
 	public static class EViewHolder {
-        final TextView eventName;
-        final TextView eventDate;
-        final ImageView eventPic;
-        Event eventObj;
+        public final TextView eventName;
+        public final TextView eventDate;
+        public final ImageView eventPic;
+        public Event eventObj;
 
         private EViewHolder(TextView eName, TextView eDate, ImageView ePic) {
             this.eventName = eName;
