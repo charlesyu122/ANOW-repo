@@ -34,9 +34,10 @@ public class MainActivity extends Activity {
 	private ProgressDialog pDialog;
 	JSONParser jsonParser = new JSONParser();
 	int successIn; // to check if user successfully logged in for notifications
+	ApplicationController AC;
 	
 	// url to log in user
-	private static String url_login_user = "http://10.0.2.2/ANowPhp/login_user.php";
+	private static String url_login_user = "http://atnow.net84.net/ANowPhp/login_user.php";
 	
 	// JSON tags
 	private static final String TAG_SUCCESS = "success";
@@ -45,6 +46,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.AC = (ApplicationController)getApplicationContext();
         this.setup();
     }
 
@@ -65,8 +67,12 @@ public class MainActivity extends Activity {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				successIn = 0;
-				new LoginUser().execute();
+				if(AC.isOnline(MainActivity.this)){
+					successIn = 0;
+					new LoginUser().execute();
+				} else{
+					Toast.makeText(MainActivity.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 		

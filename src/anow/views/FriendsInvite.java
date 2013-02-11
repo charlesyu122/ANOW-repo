@@ -42,7 +42,7 @@ import anow.datamodels.User;
 
 public class FriendsInvite extends Activity{
 	
-	private String server = "http://10.0.2.2/";
+	private String server = "http://atnow.net84.net/";
 	ListView lvFriendsToInvite;
 	CheckBox cbSelectAll;
 	Button btnInvite;
@@ -59,8 +59,8 @@ public class FriendsInvite extends Activity{
 	ArrayList<User> friendsToInviteList;
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
-	private static String url_get_friends = "http://10.0.2.2/ANowPhp/get_friends.php";
-	private static String url_invite_friends = "http://10.0.2.2/ANowPhp/invite_friends.php";
+	private static String url_get_friends = "http://atnow.net84.net/ANowPhp/get_friends.php";
+	private static String url_invite_friends = "http://atnow.net84.net/ANowPhp/invite_friends.php";
 	JSONArray users = null;
 
 	@Override

@@ -33,7 +33,7 @@ public class UserAdapter extends ArrayAdapter<User> {
 	// Attributes for Database Interaction
 	private ProgressDialog pDialog;
 	private JSONParser jParser = new JSONParser();
-	private static String url_connect_users = "http://10.0.2.2/ANowPhp/connect_users.php";
+	private static String url_connect_users = "http://atnow.net84.net/ANowPhp/connect_users.php";
 
 	public UserAdapter(Context context, ArrayList<User> objects, char type, String loggedIn) {
 		super(context, R.layout.single_user, objects);

@@ -54,7 +54,7 @@ public class UserCalendar extends Activity {
 	// Attributes
 	private String userId, name;
 	Boolean firstLoad = true;
-	private String server = "http://10.0.2.2/";
+	private String server = "http://atnow.net84.net/";
 
 	// Header Views
 	TextView tvTitle;
@@ -82,7 +82,7 @@ public class UserCalendar extends Activity {
 	JSONParser jParser = new JSONParser();
 	ArrayList<EventWithImage> eventsListForMonth;
 	ArrayList<String> attendsListForMonth;
-	private static String url_user_attended_events = "http://10.0.2.2/ANowPhp/get_user_attended_events.php";
+	private static String url_user_attended_events = "http://atnow.net84.net/ANowPhp/get_user_attended_events.php";
 	JSONArray events = null;
 	JSONArray attends = null;
 

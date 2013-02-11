@@ -47,7 +47,7 @@ public class Settings extends Activity implements OnClickListener {
 	View textEntryViewU, textEntryViewP;
 	int updateSuccess;
 	String userId, new_username, new_password, password, picturePath;
-	String newPicPath = "http://localhost/CI/images/profile_images/";
+	String newPicPath = "http://atnow.net84.net/CI/images/profile_images/";
 	ApplicationController AP;
 	Intent i;
 	
@@ -61,8 +61,8 @@ public class Settings extends Activity implements OnClickListener {
 	JSONParser jsonParser = new JSONParser();
 	
 	// url to create a new account for user
-	private static String url_edit_username_password = "http://10.0.2.2/ANowPhp/edit_username_password.php";
-	private static String url_edit_picture = "http://10.0.2.2/ANowPhp/edit_picture.php";
+	private static String url_edit_username_password = "http://atnow.net84.net/ANowPhp/edit_username_password.php";
+	private static String url_edit_picture = "http://atnow.net84.net/ANowPhp/edit_picture.php";
 	
 	//JSON Node names
 	private static final String TAG_SUCCESS = "success";
@@ -432,7 +432,7 @@ public class Settings extends Activity implements OnClickListener {
 	}
 	
 	public int uploadFile(String sourceFileUri) {
-        String upLoadServerUri = "http://10.0.2.2/ANowPhp/upload_image.php";
+        String upLoadServerUri = "http://atnow.net84.net/ANowPhp/upload_image.php";
         String fileName = sourceFileUri;
 
         HttpURLConnection conn = null;

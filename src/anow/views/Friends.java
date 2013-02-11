@@ -35,7 +35,7 @@ import anow.datamodels.User;
 
 public class Friends extends Activity{
 
-	private String server = "http://10.0.2.2/";
+	private String server = "http://atnow.net84.net/";
 	ListView lvFriends;
 	TextView tvNoFriends;
 	private String type; // user or friend
@@ -51,7 +51,7 @@ public class Friends extends Activity{
 	ArrayList<User> friendsList;
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
-	private static String url_get_friends = "http://10.0.2.2/ANowPhp/get_friends.php";
+	private static String url_get_friends = "http://atnow.net84.net/ANowPhp/get_friends.php";
 	JSONArray users = null;
 	
 	@Override

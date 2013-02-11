@@ -10,6 +10,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.alslimsibqueryu.anow.ApplicationController;
 import com.alslimsibqueryu.anow.JSONParser;
 import com.alslimsibqueryu.anow.R;
 
@@ -39,9 +40,10 @@ public class Registration extends Activity{
 	private ProgressDialog pDialog;
 	JSONParser jsonParser = new JSONParser();
 	int successLog; // checks if the user successfully logs in
+	ApplicationController AC;
 	
 	// url to create a new account for user
-	private static String url_create_user = "http://10.0.2.2/ANowPhp/create_user.php";
+	private static String url_create_user = "http://atnow.net84.net/ANowPhp/create_user.php";
 	
 	// JSON tags
 	private static final String TAG_SUCCESS = "success";
@@ -51,6 +53,7 @@ public class Registration extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.registration);
+		this.AC = (ApplicationController)getApplicationContext();
 		this.setup();
 	}
 	
@@ -65,6 +68,7 @@ public class Registration extends Activity{
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				finish();
 				startActivity(new Intent(Registration.this, MainActivity.class));
 			}
 		});
@@ -86,7 +90,11 @@ public class Registration extends Activity{
 				successLog = 0;
 				int check = checkFields();
 				if(check == 1){
-					new CreateNewUser().execute();
+					if(AC.isOnline(Registration.this)){
+						new CreateNewUser().execute();
+					}else{
+						Toast.makeText(Registration.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
+					}
 				} else if(check ==0){
 					Toast.makeText(Registration.this, "Please fill up missing fields", Toast.LENGTH_SHORT).show();
 				}	

@@ -34,7 +34,7 @@ import anow.datamodels.Invite;
 
 public class Invites extends Activity{
 
-	private String server = "http://10.0.2.2/";
+	private String server = "http://atnow.net84.net/";
 	ListView lvInvites;
 	TextView tvNoInvites;
 	private int countOfInvites;
@@ -47,7 +47,7 @@ public class Invites extends Activity{
 	ArrayList<Invite> invitationList;
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
-	private static String url_get_invites = "http://10.0.2.2/ANowPhp/get_invites.php";
+	private static String url_get_invites = "http://atnow.net84.net/ANowPhp/get_invites.php";
 	JSONArray invites = null;
 	
 	@Override

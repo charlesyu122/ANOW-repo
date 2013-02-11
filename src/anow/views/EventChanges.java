@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -37,7 +38,7 @@ public class EventChanges extends Activity{
 	ArrayList<String> eventIds;
 	ArrayList<EventWithImage> eventsWithChanges;
 	Intent i;
-	private String server = "http://10.0.2.2/";
+	private String server = "http://atnow.net84.net/";
 	// Header views
 	TextView tvTitle;
 	Button btnBack;
@@ -47,7 +48,7 @@ public class EventChanges extends Activity{
 	// Attributes for Database manipulation
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
-	private static String url_get_events = "http://10.0.2.2/ANowPhp/get_events.php";
+	private static String url_get_events = "http://atnow.net84.net/ANowPhp/get_events.php";
 	JSONArray events = null;
 	
 	@Override
@@ -60,7 +61,7 @@ public class EventChanges extends Activity{
 		i = getIntent();
 		eventIds = i.getStringArrayListExtra("eventIds");
 		eventsWithChanges = new ArrayList<EventWithImage>();
-		
+		Log.d("RECEIVED", eventIds.get(0));
 		new LoadEvents().execute();
 	}
 	
@@ -184,6 +185,7 @@ public class EventChanges extends Activity{
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
 			pDialog.dismiss();
+			Log.d("HERE", ""+eventsWithChanges.size());
 			setup();
 		}
 

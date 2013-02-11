@@ -49,8 +49,8 @@ public class ActivityProfile extends Activity{
 	private ProgressDialog pDialog;
 	
 	//URLs to php files (retrieve and update)
-	private static String url_edit_activity = "http://10.0.2.2/ANowPhp/edit_activity.php";
-	private static String url_delete_activity = "http://10.0.2.2/ANowPhp/delete_activity.php";
+	private static String url_edit_activity = "http://atnow.net84.net/ANowPhp/edit_activity.php";
+	private static String url_delete_activity = "http://atnow.net84.net/ANowPhp/delete_activity.php";
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -35,7 +35,7 @@ import anow.datamodels.User;
 
 public class Participants extends Activity {
 
-	private String server = "http://10.0.2.2/";
+	private String server = "http://atnow.net84.net/";
 	ListView lvParticipants;
 	TextView tvNoParticipants;
 	String[] namesOfParticipants;
@@ -50,7 +50,7 @@ public class Participants extends Activity {
 	ArrayList<User> participantsList;
 	private ProgressDialog pDialog;
 	JSONParser jParser = new JSONParser();
-	private static String url_get_participants = "http://10.0.2.2/ANowPhp/get_participants.php";
+	private static String url_get_participants = "http://atnow.net84.net/ANowPhp/get_participants.php";
 	JSONArray users = null;
 
 

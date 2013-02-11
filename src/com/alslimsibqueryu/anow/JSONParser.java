@@ -34,6 +34,7 @@ public class JSONParser {
 		
 		// make http request
 		try{
+			// POST
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpPost httpPost = new HttpPost(url);
 			httpPost.setEntity(new UrlEncodedFormEntity(params));
@@ -41,6 +42,17 @@ public class JSONParser {
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity httpEntity = httpResponse.getEntity();
 			is = httpEntity.getContent();
+			
+			/* request method is GET
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            String paramString = URLEncodedUtils.format(params, "utf-8");
+            url += "?" + paramString;
+            HttpGet httpGet = new HttpGet(url);
+
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            HttpEntity httpEntity = httpResponse.getEntity();
+            is = httpEntity.getContent();
+            */
 		}catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }catch (ClientProtocolException e) {

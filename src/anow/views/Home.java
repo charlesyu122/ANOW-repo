@@ -75,7 +75,7 @@ public class Home extends TabActivity implements OnClickListener {
 	TabHost tabHost;
 	String userId;
 	Boolean firstLoad = true;
-	private String server = "http://10.0.2.2/";
+	private String server = "http://atnow.net84.net/";
 
 	// Calendar
 	GridView calendar;
@@ -111,9 +111,9 @@ public class Home extends TabActivity implements OnClickListener {
 	ArrayList<String> attendsListForMonth;
 
 	// URLS
-	private static String url_all_events = "http://10.0.2.2/ANowPhp/get_recent_events.php";
-	private static String url_attended_events = "http://10.0.2.2/ANowPhp/get_attended_events.php";
-	private static String url_event_changes = "http://10.0.2.2/ANowPhp/get_events_with_changes.php";
+	private static String url_all_events = "http://atnow.net84.net/ANowPhp/get_recent_events.php";
+	private static String url_attended_events = "http://atnow.net84.net/ANowPhp/get_attended_events.php";
+	private static String url_event_changes = "http://atnow.net84.net/ANowPhp/get_events_with_changes.php";
 
 	// products JSONArray
 	JSONArray events = null;
@@ -160,7 +160,7 @@ public class Home extends TabActivity implements OnClickListener {
 		this.todayDate = yrMonthDateFormat.format(today.getTime());
 		tvCurMonth.setText(monthYrFormat.format(curDate.getTime()));
 		// Load Events on the Calendar
-		loadEventsOnCalendar(1);
+		loadEventsOnCalendar(1, true);
 
 		btnNext.setOnClickListener(this);
 		btnPrev.setOnClickListener(this);
@@ -267,7 +267,7 @@ public class Home extends TabActivity implements OnClickListener {
 
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				loadEventsOnCalendar(1);
+				loadEventsOnCalendar(1, false);
 			}
 		});
 		alertEventChanges.show();
@@ -359,9 +359,9 @@ public class Home extends TabActivity implements OnClickListener {
 			firstLoad = false;
 
 			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
-				loadEventsOnCalendar(1);
+				loadEventsOnCalendar(1, false);
 			else
-				loadEventsOnCalendar(0);
+				loadEventsOnCalendar(0, false);
 			monthYr = tvCurMonth.getText().toString();
 			tvDate.setText( "1" + " " + monthYr);
 			break;
@@ -373,9 +373,9 @@ public class Home extends TabActivity implements OnClickListener {
 			firstLoad = false;
 
 			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
-				loadEventsOnCalendar(1);
+				loadEventsOnCalendar(1, false);
 			else
-				loadEventsOnCalendar(0);
+				loadEventsOnCalendar(0, false);
 			monthYr = tvCurMonth.getText().toString();
 			tvDate.setText( "1" + " " + monthYr);
 			break;
@@ -396,7 +396,7 @@ public class Home extends TabActivity implements OnClickListener {
 		}
 		if(data.getExtras().containsKey("reloadHome")){
 			if(data.getBooleanExtra("reloadHome", false) == true) {
-				loadEventsOnCalendar(1);
+				loadEventsOnCalendar(1, false);
 				// set current tab to events
 				tabHost.setCurrentTab(0);
 			}
@@ -458,12 +458,12 @@ public class Home extends TabActivity implements OnClickListener {
 		return check;
 	}
 
-	private void loadEventsOnCalendar(int current){
+	private void loadEventsOnCalendar(int current, boolean loadEvents){
 		DateFormat yrMonthFormat = new SimpleDateFormat("yyyy-MM");
 		String selectectedMonthYr = yrMonthFormat.format(curDate.getTime());
 		String firstDate = selectectedMonthYr+"-01";
 		String lastDate = selectectedMonthYr+"-31";
-		new LoadEventsForCalendar(firstDate, lastDate, current).execute();
+		new LoadEventsForCalendar(firstDate, lastDate, current, loadEvents).execute();
 	}
 	
 	private void updateDatesDisplayed(int current) {
@@ -698,7 +698,7 @@ public class Home extends TabActivity implements OnClickListener {
 		// Attributes for Database Interaction
 		JSONParser jsonParser = new JSONParser();
 		// urls
-		private String url_attend_event = "http://10.0.2.2/ANowPhp/attend_event.php";
+		private String url_attend_event = "http://atnow.net84.net/ANowPhp/attend_event.php";
 		// JSON Node names
 		private static final String TAG_SUCCESS = "success";
 		
@@ -809,15 +809,18 @@ public class Home extends TabActivity implements OnClickListener {
 								// Set item background with event
 								Drawable withEventBg = Home.this.getResources().getDrawable(R.drawable.witheventcell);
 								((TextView) v.findViewById(R.id.tvDateCell)).setBackgroundDrawable(withEventBg);
+								// Update list of events
+								updateEventList(selectedEventId);
 							}
 							else{
 								Toast.makeText(Home.this, "Unable to attend event on chosen date. Please re-check the date of chosen event.", Toast.LENGTH_LONG).show();
 								((TextView) v.findViewById(R.id.tvDateCell)).setBackgroundColor(Color.BLACK);
 							}
-							// Refresh Home page
+							/* Refresh Home page
 							Intent i = new Intent((Activity)Home.this, Home.class);
 							Home.this.startActivity(i);
 							((Activity)Home.this).finish();
+							*/
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -842,6 +845,21 @@ public class Home extends TabActivity implements OnClickListener {
 
 			}
 		}
+		
+		private void updateEventList(int eventId){
+			for(int i = 0, check = 0; check ==0 && i < eventsList.size(); i++){
+				if(eventsList.get(i).eventId == eventId){
+					eventsList.remove(i);
+					check = 1;
+				}
+			}
+			// Refresh events listview
+			lvEvents.setAdapter(new EventAdapter(Home.this, eventsList));
+			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
+				loadEventsOnCalendar(1, false);
+			else
+				loadEventsOnCalendar(0, false);
+		}
 
 		private int getIdOfEvent(String eventName) {
 			int id = -1;
@@ -860,8 +878,6 @@ public class Home extends TabActivity implements OnClickListener {
 			}
 			return dates;
 		}
-
-		
 		
 		class AddAttendance extends AsyncTask<String, String, String> {
 
@@ -916,11 +932,13 @@ public class Home extends TabActivity implements OnClickListener {
 		String beginDate, endDate;
 		int current;
 		Bitmap bitmap;
+		boolean loadEvents;
 		
-		public LoadEventsForCalendar(String begin, String end, int current){
+		public LoadEventsForCalendar(String begin, String end, int current, boolean loadEvents){
 			this.beginDate = begin;
 			this.endDate = end;
 			this.current = current;
+			this.loadEvents = loadEvents;
 		}
 		
 		@Override
@@ -1016,7 +1034,7 @@ public class Home extends TabActivity implements OnClickListener {
 			lvActivities.setAdapter(new EventActivityAdapter(Home.this, activities));
 			// Retrieve events for calendar
 			updateDatesDisplayed(current);
-			if(firstLoad == true)
+			if(firstLoad == true && loadEvents == true)
 				new LoadAllEvents().execute();
 		}
 	}

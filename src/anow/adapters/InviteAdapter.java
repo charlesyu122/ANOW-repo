@@ -32,7 +32,7 @@ public class InviteAdapter extends ArrayAdapter<Invite>{
 	// Attributes for Database Interaction
 	private ProgressDialog pDialog;
 	private JSONParser jParser = new JSONParser();
-	private static String url_accept_invite = "http://10.0.2.2/ANowPhp/accept_invite.php";
+	private static String url_accept_invite = "http://atnow.net84.net/ANowPhp/accept_invite.php";
 	
 	public InviteAdapter(Context context, Invite[] values) {
 		super(context, R.layout.single_invite, values);

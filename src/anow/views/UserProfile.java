@@ -40,7 +40,7 @@ public class UserProfile extends Activity {
 	// Attributes
 	private String type; // user or friend
 	private Boolean needToReload = false;
-	private String server = "http://10.0.2.2/";
+	private String server = "http://atnow.net84.net/";
 	String userId;
 	int updateSuccess; 
 	
@@ -66,8 +66,8 @@ public class UserProfile extends Activity {
 	ArrayList<HashMap<String, String>> userMatched;
 
 	//URLs to php files (retrieve and update)
-	private static String url_get_user_profile = "http://10.0.2.2/ANowPhp/get_user_profile.php";
-	private static String url_edit_user_profile = "http://10.0.2.2/ANowPhp/edit_profile.php";
+	private static String url_get_user_profile = "http://atnow.net84.net/ANowPhp/get_user_profile.php";
+	private static String url_edit_user_profile = "http://atnow.net84.net/ANowPhp/edit_profile.php";
 	
 	//JSON Node names
 	private static final String TAG_SUCCESS = "success";

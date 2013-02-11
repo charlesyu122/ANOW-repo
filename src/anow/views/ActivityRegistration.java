@@ -49,7 +49,7 @@ public class ActivityRegistration extends Activity{
 	SimpleDateFormat yearMonthDate = new SimpleDateFormat("yyyy-MM-dd");
 	
 	// url to create a new account for user
-	private static String url_create_activity = "http://10.0.2.2/ANowPhp/create_activity.php";
+	private static String url_create_activity = "http://atnow.net84.net/ANowPhp/create_activity.php";
 		
 	// JSON tags
 	private static final String TAG_SUCCESS = "success";
