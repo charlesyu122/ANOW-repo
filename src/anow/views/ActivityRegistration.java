@@ -11,6 +11,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.alslimsibqueryu.anow.ApplicationController;
 import com.alslimsibqueryu.anow.JSONParser;
 import com.alslimsibqueryu.anow.R;
 
@@ -31,6 +32,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class ActivityRegistration extends Activity{
+	
+	//Attributes
+	ApplicationController AC;
+	
 	// Header Views
 	TextView tvHeaderTitle;
 	Button btnHeaderBackBut;
@@ -59,6 +64,7 @@ public class ActivityRegistration extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_registration);
+		AC = (ApplicationController)getApplicationContext();
 		Intent i = getIntent();
 		this.userId = i.getStringExtra("user_id");
 		this.setup();
@@ -114,13 +120,16 @@ public class ActivityRegistration extends Activity{
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				successLog = 0;
-				int check = checkFields();
-				if(check == 1)
-					new CreateNewActivity().execute();
-				else if(check == 0){
-					Toast.makeText(ActivityRegistration.this, "Please fill up missing fields", Toast.LENGTH_SHORT).show();
-				}
+				if(AC.isOnline(ActivityRegistration.this)){
+					successLog = 0;
+					int check = checkFields();
+					if(check == 1)
+						new CreateNewActivity().execute();
+					else if(check == 0){
+						Toast.makeText(ActivityRegistration.this, "Please fill up missing fields", Toast.LENGTH_SHORT).show();
+					}
+				} else
+					Toast.makeText(ActivityRegistration.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			}
 		});
 		

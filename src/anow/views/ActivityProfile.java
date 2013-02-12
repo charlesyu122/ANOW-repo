@@ -8,6 +8,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.alslimsibqueryu.anow.ApplicationController;
 import com.alslimsibqueryu.anow.JSONParser;
 import com.alslimsibqueryu.anow.R;
 
@@ -34,6 +35,7 @@ public class ActivityProfile extends Activity{
 	EditText etActName, etActLoc, etActDesc;
 	int updateSuccess;
 	String newName, newLoc, newDesc;
+	ApplicationController AC;
 	
 	//Header Views
 	TextView tvTitle;
@@ -57,6 +59,7 @@ public class ActivityProfile extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
+		this.AC = (ApplicationController)getApplicationContext();
 		this.receiveData();
 		this.setup();
 	}
@@ -106,46 +109,53 @@ public class ActivityProfile extends Activity{
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent i = new Intent(ActivityProfile.this, Participants.class);
-				i.putExtra("event_id", activityId);
-				startActivity(i);
+				if(AC.isOnline(ActivityProfile.this)){
+					Intent i = new Intent(ActivityProfile.this, Participants.class);
+					i.putExtra("event_id", activityId);
+					startActivity(i);
+				} else
+					Toast.makeText(ActivityProfile.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			}
 		});
 		btnInvite.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent i = new Intent(ActivityProfile.this, FriendsInvite.class);
-				i.putExtra("event_id", activityId);
-				startActivity(i);
+				if(AC.isOnline(ActivityProfile.this)){
+					Intent i = new Intent(ActivityProfile.this, FriendsInvite.class);
+					i.putExtra("event_id", activityId);
+					startActivity(i);
+				} else
+					Toast.makeText(ActivityProfile.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			}
 		});
 		btnEdit.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
-				
 				// TODO Auto-generated method stub
-				
-				btnDelete.setVisibility(View.VISIBLE);
-				
-				//Activity name
-				tvActName.setVisibility(View.GONE);
-				etActName.setVisibility(View.VISIBLE);
-				etActName.setText(tvActName.getText());
-				
-				//Activity location
-				tvActLoc.setVisibility(View.GONE);
-				etActLoc.setVisibility(View.VISIBLE);
-				etActLoc.setText(tvActLoc.getText());
-				
-				//Activity description
-				tvActDesc.setVisibility(View.GONE);
-				etActDesc.setVisibility(View.VISIBLE);
-				etActDesc.setText(tvActDesc.getText());
-				
-				//Header buttons
-				btnBack.setVisibility(View.GONE);
-				btnSave.setVisibility(View.VISIBLE);
+				if(AC.isOnline(ActivityProfile.this)){
+					btnDelete.setVisibility(View.VISIBLE);
+					
+					//Activity name
+					tvActName.setVisibility(View.GONE);
+					etActName.setVisibility(View.VISIBLE);
+					etActName.setText(tvActName.getText());
+					
+					//Activity location
+					tvActLoc.setVisibility(View.GONE);
+					etActLoc.setVisibility(View.VISIBLE);
+					etActLoc.setText(tvActLoc.getText());
+					
+					//Activity description
+					tvActDesc.setVisibility(View.GONE);
+					etActDesc.setVisibility(View.VISIBLE);
+					etActDesc.setText(tvActDesc.getText());
+					
+					//Header buttons
+					btnBack.setVisibility(View.GONE);
+					btnSave.setVisibility(View.VISIBLE);
+				} else
+					Toast.makeText(ActivityProfile.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			}
 		});
 		btnDelete.setOnClickListener(new View.OnClickListener() {

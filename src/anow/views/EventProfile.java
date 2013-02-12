@@ -1,5 +1,6 @@
 package anow.views;
 
+import com.alslimsibqueryu.anow.ApplicationController;
 import com.alslimsibqueryu.anow.R;
 
 import android.app.Activity;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import anow.datamodels.Event;
 
 public class EventProfile extends Activity{
@@ -20,6 +22,7 @@ public class EventProfile extends Activity{
 	ImageView ivEpic;
 	TextView tvEname, tvEdate, tvEloc, tvEtime, tvEdesc;
 	Button btnParticipants, btnInvite;
+	ApplicationController AC;
 	//Header views
 	TextView tvTitle;
 	Button btnBack;
@@ -33,6 +36,7 @@ public class EventProfile extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_profile);
+		AC = (ApplicationController)getApplicationContext();
 		this.receiveData();
 		this.setup();
 	}
@@ -64,26 +68,32 @@ public class EventProfile extends Activity{
 		btnParticipants = (Button)findViewById(R.id.btnParticipants);
 		btnInvite = (Button)findViewById(R.id.btnEInvite);
 		if(type.equals(TYPE_ADVERTISED))
-			btnInvite.setText("Check Calendar");
+			btnInvite.setText("My Calendar");
 		btnParticipants.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent i = new Intent(EventProfile.this, Participants.class);
-				i.putExtra("event_id", eventId);
-				startActivity(i);
+				if(AC.isOnline(EventProfile.this)){
+					Intent i = new Intent(EventProfile.this, Participants.class);
+					i.putExtra("event_id", eventId);
+					startActivity(i);
+				} else
+					Toast.makeText(EventProfile.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			}
 		});
 		btnInvite.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if(type.equals(TYPE_ATTENDED)){
-					Intent i = new Intent(EventProfile.this, FriendsInvite.class);
-					i.putExtra("event_id", eventId);
-					startActivity(i);
-				}else 
-					finish();
+				if(AC.isOnline(EventProfile.this)){
+					if(type.equals(TYPE_ATTENDED)){
+						Intent i = new Intent(EventProfile.this, FriendsInvite.class);
+						i.putExtra("event_id", eventId);
+						startActivity(i);
+					}else 
+						finish();
+				} else
+					Toast.makeText(EventProfile.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			}
 		});
 		//Set-up header views

@@ -48,7 +48,7 @@ public class Settings extends Activity implements OnClickListener {
 	int updateSuccess;
 	String userId, new_username, new_password, password, picturePath;
 	String newPicPath = "http://atnow.net84.net/CI/images/profile_images/";
-	ApplicationController AP;
+	ApplicationController AC;
 	Intent i;
 	
 	// Upload image attribute
@@ -93,6 +93,7 @@ public class Settings extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		i = getIntent();
 		setContentView(R.layout.settings);
+		AC = (ApplicationController)getApplicationContext();
 		this.setup();
 	}
 	
@@ -155,81 +156,87 @@ public class Settings extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.btnChangeUname:
-			LayoutInflater factoryU = LayoutInflater.from(Settings.this);
-			textEntryViewU = factoryU.inflate(R.layout.change_username, null);
-			AlertDialog.Builder alertU = new AlertDialog.Builder(Settings.this);
-			alertU.setTitle("Change email address:");
-			alertU.setView(textEntryViewU);
-			
-			alertU.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-							updateSuccess = 0;
-							AP = (ApplicationController)getApplicationContext();
-							userId = AP.getUserId();
-							final EditText etNewU = (EditText)textEntryViewU.findViewById(R.id.etChangeUsername);
-							new_username = etNewU.getText().toString();
-							final EditText etP = (EditText)textEntryViewU.findViewById(R.id.etConfirmPasswordU);
-							password = hashPassword(etP.getText().toString());
-							
-							// email validation
-							if((new_username.length() == 0 || etP.getText().toString().length() == 0))
-								Toast.makeText(Settings.this, "Required field(s) is missing!", Toast.LENGTH_SHORT).show();
-							else if(isNotEmailValid(new_username)){
-								Toast.makeText(Settings.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
-							}else 
-								new EditUsername().execute();
-						}
-					});
-			alertU.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-						}
-					});
-			alertU.show();
+			if(AC.isOnline(Settings.this)){
+				LayoutInflater factoryU = LayoutInflater.from(Settings.this);
+				textEntryViewU = factoryU.inflate(R.layout.change_username, null);
+				AlertDialog.Builder alertU = new AlertDialog.Builder(Settings.this);
+				alertU.setTitle("Change email address:");
+				alertU.setView(textEntryViewU);
+				
+				alertU.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+	
+							public void onClick(DialogInterface dialog, int which) {
+								// TODO Auto-generated method stub
+								updateSuccess = 0;
+								AC = (ApplicationController)getApplicationContext();
+								userId = AC.getUserId();
+								final EditText etNewU = (EditText)textEntryViewU.findViewById(R.id.etChangeUsername);
+								new_username = etNewU.getText().toString();
+								final EditText etP = (EditText)textEntryViewU.findViewById(R.id.etConfirmPasswordU);
+								password = hashPassword(etP.getText().toString());
+								
+								// email validation
+								if((new_username.length() == 0 || etP.getText().toString().length() == 0))
+									Toast.makeText(Settings.this, "Required field(s) is missing!", Toast.LENGTH_SHORT).show();
+								else if(isNotEmailValid(new_username)){
+									Toast.makeText(Settings.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+								}else 
+									new EditUsername().execute();
+							}
+						});
+				alertU.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	
+							public void onClick(DialogInterface dialog, int which) {
+								// TODO Auto-generated method stub
+							}
+						});
+				alertU.show();
+			} else
+				Toast.makeText(Settings.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.btnChangePassword:
-			LayoutInflater factoryP = LayoutInflater.from(Settings.this);
-			textEntryViewP = factoryP.inflate(R.layout.change_password, null);
-			AlertDialog.Builder alertP = new AlertDialog.Builder(Settings.this);
-			alertP.setTitle("Change password:");
-			alertP.setView(textEntryViewP);
-			
-			alertP.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-							updateSuccess = 0;
-							AP = (ApplicationController)getApplicationContext();
-							userId = AP.getUserId();
-							final EditText etNewP = (EditText)textEntryViewP.findViewById(R.id.etChangePassword);
-							new_password = hashPassword(etNewP.getText().toString());
-							final EditText etP = (EditText)textEntryViewP.findViewById(R.id.etConfirmPasswordP);
-							password = hashPassword(etP.getText().toString());
-							
-							if((new_password.length() == 0 || etP.getText().toString().length() == 0))
-								Toast.makeText(Settings.this, "Required field(s) is missing!", Toast.LENGTH_SHORT).show();
-							else
-								new EditPassword().execute();
-						}
-					});
-			alertP.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-						}
-					});
-			alertP.show();
+			if(AC.isOnline(Settings.this)){
+				LayoutInflater factoryP = LayoutInflater.from(Settings.this);
+				textEntryViewP = factoryP.inflate(R.layout.change_password, null);
+				AlertDialog.Builder alertP = new AlertDialog.Builder(Settings.this);
+				alertP.setTitle("Change password:");
+				alertP.setView(textEntryViewP);
+				
+				alertP.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+	
+							public void onClick(DialogInterface dialog, int which) {
+								// TODO Auto-generated method stub
+								updateSuccess = 0;
+								userId = AC.getUserId();
+								final EditText etNewP = (EditText)textEntryViewP.findViewById(R.id.etChangePassword);
+								new_password = hashPassword(etNewP.getText().toString());
+								final EditText etP = (EditText)textEntryViewP.findViewById(R.id.etConfirmPasswordP);
+								password = hashPassword(etP.getText().toString());
+								
+								if((new_password.length() == 0 || etP.getText().toString().length() == 0))
+									Toast.makeText(Settings.this, "Required field(s) is missing!", Toast.LENGTH_SHORT).show();
+								else
+									new EditPassword().execute();
+							}
+						});
+				alertP.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	
+							public void onClick(DialogInterface dialog, int which) {
+								// TODO Auto-generated method stub
+							}
+						});
+				alertP.show();
+			} else
+				Toast.makeText(Settings.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.btnChangeProfPic:
-			updateSuccess = 0;
-			AP = (ApplicationController)getApplicationContext();
-			userId = AP.getUserId();
-			Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-			
-			startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
+			if(AC.isOnline(Settings.this)){
+				updateSuccess = 0;
+				userId = AC.getUserId();
+				Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				startActivityForResult(photoPickerIntent, RESULT_LOAD_IMAGE);
+			} else
+				Toast.makeText(Settings.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.btnLogout:
 			AlertDialog.Builder alertOut = new AlertDialog.Builder(Settings.this);

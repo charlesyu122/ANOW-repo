@@ -74,8 +74,8 @@ public class Home extends TabActivity implements OnClickListener {
 	// Attributes
 	TabHost tabHost;
 	String userId;
-	Boolean firstLoad = true;
 	private String server = "http://atnow.net84.net/";
+	ApplicationController AC;
 
 	// Calendar
 	GridView calendar;
@@ -96,7 +96,7 @@ public class Home extends TabActivity implements OnClickListener {
 	TextView tvDate, tvNoEvent;
 	// Header Views
 	TextView tvHTitle;
-	Button btnProfile, btnSettings, btnAddActivity;
+	Button btnProfile, btnSettings, btnAddActivity, btnRefresh;
 
 	// Attributes for Database manipulation
 	// Progress Dialog
@@ -131,23 +131,25 @@ public class Home extends TabActivity implements OnClickListener {
 		attendsListForMonth = new ArrayList<String>();
 
 		// Get user id from Application Controller
-		ApplicationController AP = (ApplicationController)getApplicationContext();
-		this.userId = AP.getUserId();
+		AC = (ApplicationController)getApplicationContext();
+		this.userId = AC.getUserId();
 		
 		this.setup();
 		// Check if their are changes in event dates
 		new LoadEventsWithChanges().execute();
 	}
-
+	
 	private void setup() {
 		// Setup Header
 		tvHTitle = (TextView) findViewById(R.id.tvTitle);
 		btnProfile = (Button) findViewById(R.id.btnHeaderProfile);
 		btnSettings = (Button) findViewById(R.id.btnHeaderSetting);
 		btnAddActivity = (Button) findViewById(R.id.btnHeaderAddActivity);
+		btnRefresh = (Button) findViewById(R.id.btnHeaderRefresh);
 		btnProfile.setOnClickListener(this);
 		btnAddActivity.setOnClickListener(this);
 		btnSettings.setOnClickListener(this);
+		btnRefresh.setOnClickListener(this);
 
 		// Setup calendar
 		calendar = (GridView) findViewById(R.id.gridViewCurDates);
@@ -338,9 +340,12 @@ public class Home extends TabActivity implements OnClickListener {
 		String monthYr;
 		switch (v.getId()) {
 		case R.id.btnHeaderProfile:
-			Intent iProfile = new Intent(Home.this, UserProfile.class);
-			iProfile.putExtra("type", "user");
-			startActivityForResult(iProfile, 1);
+			if(AC.isOnline(Home.this)){
+				Intent iProfile = new Intent(Home.this, UserProfile.class);
+				iProfile.putExtra("type", "user");
+				startActivityForResult(iProfile, 1);
+			} else
+				Toast.makeText(Home.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.btnHeaderAddActivity:
 			Intent iAdd = new Intent(Home.this, ActivityRegistration.class);
@@ -351,33 +356,44 @@ public class Home extends TabActivity implements OnClickListener {
 			Intent iSettings = new Intent(Home.this, Settings.class);
 			startActivityForResult(iSettings, 1);
 			break;
+		case R.id.btnHeaderRefresh:
+			if(AC.isOnline(Home.this)){
+				eventsList.clear();
+				new LoadAllEvents().execute();
+			} else
+				Toast.makeText(Home.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
+			break;
 		case R.id.btnPrev:
-			Calendar prevMonth = (Calendar) curDate.clone();
-			prevMonth.add(Calendar.MONTH, -1);
-			tvCurMonth.setText(monthYrFormat.format(prevMonth.getTime()));
-			curDate = prevMonth;
-			firstLoad = false;
-
-			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
-				loadEventsOnCalendar(1, false);
-			else
-				loadEventsOnCalendar(0, false);
-			monthYr = tvCurMonth.getText().toString();
-			tvDate.setText( "1" + " " + monthYr);
+			if(AC.isOnline(Home.this)){
+				Calendar prevMonth = (Calendar) curDate.clone();
+				prevMonth.add(Calendar.MONTH, -1);
+				tvCurMonth.setText(monthYrFormat.format(prevMonth.getTime()));
+				curDate = prevMonth;
+	
+				if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
+					loadEventsOnCalendar(1, false);
+				else
+					loadEventsOnCalendar(0, false);
+				monthYr = tvCurMonth.getText().toString();
+				tvDate.setText( "1" + " " + monthYr);
+			} else
+				Toast.makeText(Home.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.btnNext:
-			Calendar nextMonth = (Calendar) curDate.clone();
-			nextMonth.add(Calendar.MONTH, 1);
-			tvCurMonth.setText(monthYrFormat.format(nextMonth.getTime()));
-			curDate = nextMonth;
-			firstLoad = false;
-
-			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
-				loadEventsOnCalendar(1, false);
-			else
-				loadEventsOnCalendar(0, false);
-			monthYr = tvCurMonth.getText().toString();
-			tvDate.setText( "1" + " " + monthYr);
+			if(AC.isOnline(Home.this)){
+				Calendar nextMonth = (Calendar) curDate.clone();
+				nextMonth.add(Calendar.MONTH, 1);
+				tvCurMonth.setText(monthYrFormat.format(nextMonth.getTime()));
+				curDate = nextMonth;
+	
+				if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
+					loadEventsOnCalendar(1, false);
+				else
+					loadEventsOnCalendar(0, false);
+				monthYr = tvCurMonth.getText().toString();
+				tvDate.setText( "1" + " " + monthYr);
+			} else
+				Toast.makeText(Home.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
 			break;
 		}
 	}
@@ -395,7 +411,7 @@ public class Home extends TabActivity implements OnClickListener {
 				Toast.makeText(Home.this, "Activity has been added to your calendar!", Toast.LENGTH_SHORT).show();
 		}
 		if(data.getExtras().containsKey("reloadHome")){
-			if(data.getBooleanExtra("reloadHome", false) == true) {
+			if(data.getBooleanExtra("reloadHome", false) == true && AC.isOnline(Home.this)) {
 				loadEventsOnCalendar(1, false);
 				// set current tab to events
 				tabHost.setCurrentTab(0);
@@ -542,7 +558,7 @@ public class Home extends TabActivity implements OnClickListener {
 			pDialog = new ProgressDialog(Home.this);
 			pDialog.setMessage("Loading Upcoming Events. Please wait...");
 			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(false);
+			pDialog.setCancelable(true);
 			pDialog.show();
 			super.onPreExecute();
 		}
@@ -554,6 +570,12 @@ public class Home extends TabActivity implements OnClickListener {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair("today", todayDate));
 			params.add(new BasicNameValuePair("user_id", userId));
+			String[] infos = todayDate.split("-");
+			int month = Integer.parseInt(infos[1]);
+			if(month!=12)
+				month = (month+2)%12;
+			String untilDate = infos[0]+"-"+String.valueOf(month)+"-"+infos[2];
+			params.add(new BasicNameValuePair("until", untilDate));
 
 			// Getting JSONString from url
 			JSONObject json = jParser.makeHttpRequest(url_all_events, params);
@@ -754,88 +776,90 @@ public class Home extends TabActivity implements OnClickListener {
 				int eventIdDragged = this.getIdOfEvent(eventNameDragged);
 				this.selectedEventId = eventIdDragged;
 				
-				// Confirm attendance
-				LayoutInflater factory = LayoutInflater.from(Home.this);
-				View confirmView = factory.inflate(R.layout.alert_attend, null);
-				AlertDialog.Builder alertEventConfirm = new AlertDialog.Builder(Home.this);
-				alertEventConfirm.setTitle("Please Check Event Details:");
-				alertEventConfirm.setView(confirmView);
-
-				// Set-up view for alert view
-				TextView tvAlertEventName = (TextView) confirmView.findViewById(R.id.tvAlertEventName);
-				TextView tvAlertEventDate = (TextView) confirmView.findViewById(R.id.tvAlertEventDate);
-				TextView tvAlertSelectedDate = (TextView) confirmView.findViewById(R.id.tvAlertSelectedDate);
-				CheckBox cbAlertPrivacy = (CheckBox) confirmView.findViewById(R.id.cbAlertPrivacy);
-
-				// Set-up privacy check box for alert
-				cbAlertPrivacy.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-					public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-						// TODO Auto-generated method stub
-						if (isChecked) 
-							privateOption = "Y";
-					}
-				});
-				
-				// Parse start and end dates
-				String delim = "[*]+";
-				final String[] eventDates = this.getEventDates(eventNameDragged).split(delim);
-				String dateToDisplay= "";
-				if(eventDates[0].matches(eventDates[1]))
-					dateToDisplay = eventDates[0];
-				else 
-					dateToDisplay = eventDates[0] + " to " + eventDates[1];
-				
-				tvAlertEventName.setText("Attend " + eventNameDragged);
-				tvAlertEventDate.setText("("+dateToDisplay+")");
-				tvAlertSelectedDate.setText("on " + selectedDate + " of "+ this.selectedMonthName + " " + this.selectedYear);
-
-				alertEventConfirm.setPositiveButton("Confirm",new DialogInterface.OnClickListener() {
-
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						
-						// Check validity of dates
-						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-						try {
-							Date selectedDateF = format.parse(selectedYear+"-"+selectedMonthInt+"-"+selectedDate);
-							Date startDateF = format.parse(eventDates[0]);
-							Date endDateF = format.parse(eventDates[1]);	
-							if(selectedDateF.compareTo(startDateF) >= 0 && selectedDateF.compareTo(endDateF) <= 0){
-								// Add Attendance to chosen event
-								new AddAttendance().execute();
-								// Toast confirm
-								Toast.makeText(Home.this,"Event successfully added to your calendar",Toast.LENGTH_SHORT).show();
-								// Set item background with event
-								Drawable withEventBg = Home.this.getResources().getDrawable(R.drawable.witheventcell);
-								((TextView) v.findViewById(R.id.tvDateCell)).setBackgroundDrawable(withEventBg);
-								// Update list of events
-								updateEventList(selectedEventId);
-							}
-							else{
-								Toast.makeText(Home.this, "Unable to attend event on chosen date. Please re-check the date of chosen event.", Toast.LENGTH_LONG).show();
-								((TextView) v.findViewById(R.id.tvDateCell)).setBackgroundColor(Color.BLACK);
-							}
-							/* Refresh Home page
-							Intent i = new Intent((Activity)Home.this, Home.class);
-							Home.this.startActivity(i);
-							((Activity)Home.this).finish();
-							*/
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+				if(AC.isOnline(Home.this)){
+					// Confirm attendance
+					LayoutInflater factory = LayoutInflater.from(Home.this);
+					View confirmView = factory.inflate(R.layout.alert_attend, null);
+					AlertDialog.Builder alertEventConfirm = new AlertDialog.Builder(Home.this);
+					alertEventConfirm.setTitle("Please Check Event Details:");
+					alertEventConfirm.setView(confirmView);
+	
+					// Set-up view for alert view
+					TextView tvAlertEventName = (TextView) confirmView.findViewById(R.id.tvAlertEventName);
+					TextView tvAlertEventDate = (TextView) confirmView.findViewById(R.id.tvAlertEventDate);
+					TextView tvAlertSelectedDate = (TextView) confirmView.findViewById(R.id.tvAlertSelectedDate);
+					CheckBox cbAlertPrivacy = (CheckBox) confirmView.findViewById(R.id.cbAlertPrivacy);
+	
+					// Set-up privacy check box for alert
+					cbAlertPrivacy.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+	
+						public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+							// TODO Auto-generated method stub
+							if (isChecked) 
+								privateOption = "Y";
 						}
-					}
-				});
-				alertEventConfirm.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								((TextView) v.findViewById(R.id.tvDateCell)).setBackgroundColor(Color.BLACK);
+					});
+					
+					// Parse start and end dates
+					String delim = "[*]+";
+					final String[] eventDates = this.getEventDates(eventNameDragged).split(delim);
+					String dateToDisplay= "";
+					if(eventDates[0].matches(eventDates[1]))
+						dateToDisplay = eventDates[0];
+					else 
+						dateToDisplay = eventDates[0] + " to " + eventDates[1];
+					
+					tvAlertEventName.setText("Attend " + eventNameDragged);
+					tvAlertEventDate.setText("("+dateToDisplay+")");
+					tvAlertSelectedDate.setText("on " + selectedDate + " of "+ this.selectedMonthName + " " + this.selectedYear);
+	
+					alertEventConfirm.setPositiveButton("Confirm",new DialogInterface.OnClickListener() {
+	
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							
+							// Check validity of dates
+							SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+							try {
+								Date selectedDateF = format.parse(selectedYear+"-"+selectedMonthInt+"-"+selectedDate);
+								Date startDateF = format.parse(eventDates[0]);
+								Date endDateF = format.parse(eventDates[1]);	
+								if(selectedDateF.compareTo(startDateF) >= 0 && selectedDateF.compareTo(endDateF) <= 0){
+									// Add Attendance to chosen event
+									new AddAttendance().execute();
+									// Toast confirm
+									Toast.makeText(Home.this,"Event successfully added to your calendar",Toast.LENGTH_SHORT).show();
+									// Set item background with event
+									Drawable withEventBg = Home.this.getResources().getDrawable(R.drawable.witheventcell);
+									((TextView) v.findViewById(R.id.tvDateCell)).setBackgroundDrawable(withEventBg);
+									// Update list of events
+									updateEventList(selectedEventId);
+								}
+								else{
+									Toast.makeText(Home.this, "Unable to attend event on chosen date. Please re-check the date of chosen event.", Toast.LENGTH_LONG).show();
+									((TextView) v.findViewById(R.id.tvDateCell)).setBackgroundColor(Color.BLACK);
+								}
+								/* Refresh Home page
+								Intent i = new Intent((Activity)Home.this, Home.class);
+								Home.this.startActivity(i);
+								((Activity)Home.this).finish();
+								*/
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-						});
-				alertEventConfirm.show();
-
+						}
+					});
+					alertEventConfirm.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	
+								public void onClick(DialogInterface dialog, int which) {
+									// TODO Auto-generated method stub
+									((TextView) v.findViewById(R.id.tvDateCell)).setBackgroundColor(Color.BLACK);
+								}
+							});
+					alertEventConfirm.show();
+				} else
+					Toast.makeText(Home.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
 				return true;
 
 			case DragEvent.ACTION_DRAG_ENDED:
@@ -1034,7 +1058,7 @@ public class Home extends TabActivity implements OnClickListener {
 			lvActivities.setAdapter(new EventActivityAdapter(Home.this, activities));
 			// Retrieve events for calendar
 			updateDatesDisplayed(current);
-			if(firstLoad == true && loadEvents == true)
+			if(loadEvents == true)
 				new LoadAllEvents().execute();
 		}
 	}

@@ -30,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import anow.adapters.UserAdapter;
 import anow.datamodels.User;
 
@@ -40,6 +41,7 @@ public class Friends extends Activity{
 	TextView tvNoFriends;
 	private String type; // user or friend
 	private int countOfFriends;
+	ApplicationController AC;
 	
 	//Header views
 	TextView tvTitle;
@@ -59,7 +61,7 @@ public class Friends extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.friends);
-		
+		AC = (ApplicationController)getApplicationContext();
 		// Retrieve type
 		Intent i = getIntent();
 		this.type = i.getStringExtra("type");
@@ -110,11 +112,14 @@ public class Friends extends Activity{
 			public void onItemClick(AdapterView<?> arg0, View v,int arg2, long arg3) {
 				// TODO Auto-generated method stub
 				if(type.equals("user")){
-					User friend = (User)v.getTag();
-					Intent i = new Intent(Friends.this, UserProfile.class);
-					i.putExtra("type", "friend");
-					i.putExtra("user_id", friend.userId);
-					startActivityForResult(i, 1);
+					if(AC.isOnline(Friends.this)){
+						User friend = (User)v.getTag();
+						Intent i = new Intent(Friends.this, UserProfile.class);
+						i.putExtra("type", "friend");
+						i.putExtra("user_id", friend.userId);
+						startActivityForResult(i, 1);
+					} else
+						Toast.makeText(Friends.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});

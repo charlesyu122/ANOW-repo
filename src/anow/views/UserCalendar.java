@@ -382,7 +382,7 @@ public class UserCalendar extends Activity {
 			eventsListForMonth.clear();
 			attendsListForMonth.clear();
 			pDialog = new ProgressDialog(UserCalendar.this);
-			pDialog.setMessage("Loading your calendar...");
+			pDialog.setMessage("Loading his/her calendar...");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(true);
 			pDialog.show();

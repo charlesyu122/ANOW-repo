@@ -49,6 +49,7 @@ public class FriendsInvite extends Activity{
 	TextView tvNoFriends;
 	private int countOfFriends;
 	private String eventId; 
+	ApplicationController AC;
 	
 	//Header views
 	TextView tvTitle;
@@ -70,7 +71,7 @@ public class FriendsInvite extends Activity{
 		setContentView(R.layout.friends);
 		
 		// Retrieve user_id and event_id
-		ApplicationController AC = (ApplicationController)getApplicationContext();
+		AC = (ApplicationController)getApplicationContext();
 		this.userId = AC.getUserId();
 		Intent i = getIntent();
 		this.eventId = i.getStringExtra("event_id");
@@ -106,8 +107,11 @@ public class FriendsInvite extends Activity{
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				new SendInvite().execute();
-				Toast.makeText(FriendsInvite.this, "Successfully invited selected connections!", Toast.LENGTH_SHORT).show();
+				if(AC.isOnline(FriendsInvite.this)){
+					new SendInvite().execute();
+					Toast.makeText(FriendsInvite.this, "Successfully invited selected connections!", Toast.LENGTH_SHORT).show();
+				} else
+					Toast.makeText(FriendsInvite.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			}
 		});
 

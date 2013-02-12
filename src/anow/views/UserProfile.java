@@ -42,7 +42,8 @@ public class UserProfile extends Activity {
 	private Boolean needToReload = false;
 	private String server = "http://atnow.net84.net/";
 	String userId;
-	int updateSuccess; 
+	int updateSuccess;
+	ApplicationController AC;
 	
 	// Header Views
 	Button btnSettings, btnSave;
@@ -84,6 +85,7 @@ public class UserProfile extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_profile);
+		AC = (ApplicationController)getApplicationContext();
 		
 		// Get type of profile and user id
 		Intent i = getIntent();
@@ -171,8 +173,10 @@ public class UserProfile extends Activity {
 		btnCalendar = (Button) findViewById(R.id.btnCalendar);
 		btnFriends = (Button) findViewById(R.id.btnFriends);
 		btnInvites = (Button) findViewById(R.id.btnInvites);
-		if(type.equals("friend"))
+		if(type.equals("friend")){
 			btnInvites.setVisibility(View.GONE);
+			btnCalendar.setText("View Calendar");
+		}
 		
 		btnCalendar.setOnClickListener(new View.OnClickListener() {
 
@@ -196,20 +200,26 @@ public class UserProfile extends Activity {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent i = new Intent(UserProfile.this, Friends.class);
-				i.putExtra("type", type);
-				if(type.equals("friend")){
-					i.putExtra("friend_user_id", userId);
-				}
-				startActivity(i);
+				if(AC.isOnline(UserProfile.this)){
+					Intent i = new Intent(UserProfile.this, Friends.class);
+					i.putExtra("type", type);
+					if(type.equals("friend")){
+						i.putExtra("friend_user_id", userId);
+					}
+					startActivity(i);
+				} else
+					Toast.makeText(UserProfile.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
 			}
 		});
 		btnInvites.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				needToReload = true;
-				startActivity(new Intent(UserProfile.this, Invites.class));
+				if(AC.isOnline(UserProfile.this)){
+					needToReload = true;
+					startActivity(new Intent(UserProfile.this, Invites.class));
+				} else 
+					Toast.makeText(UserProfile.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
 			}
 		});
 
@@ -217,19 +227,22 @@ public class UserProfile extends Activity {
 
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-				if (((TextView) v).getId() == tvProfName.getId()) {
-					tvProfName.setVisibility(View.GONE);
-					etProfName.setText(tvProfName.getText());
-					etProfName.setVisibility(View.VISIBLE);	
-				} else if (((TextView) v).getId() == tvProfInterest.getId()) {
-					tvProfInterest.setVisibility(View.GONE);
-					etProfInterest.setText(tvProfInterest.getText());
-					etProfInterest.setVisibility(View.VISIBLE);
-				}
-				if(btnSave.getVisibility() == View.GONE){
-					btnSave.setVisibility(View.VISIBLE);
-					btnSettings.setVisibility(View.GONE);
-				}
+				if(AC.isOnline(UserProfile.this)){
+					if (((TextView) v).getId() == tvProfName.getId()) {
+						tvProfName.setVisibility(View.GONE);
+						etProfName.setText(tvProfName.getText());
+						etProfName.setVisibility(View.VISIBLE);	
+					} else if (((TextView) v).getId() == tvProfInterest.getId()) {
+						tvProfInterest.setVisibility(View.GONE);
+						etProfInterest.setText(tvProfInterest.getText());
+						etProfInterest.setVisibility(View.VISIBLE);
+					}
+					if(btnSave.getVisibility() == View.GONE){
+						btnSave.setVisibility(View.VISIBLE);
+						btnSettings.setVisibility(View.GONE);
+					}
+				} else
+					Toast.makeText(UserProfile.this, "Please connect to the internet", Toast.LENGTH_SHORT).show();
 				return false;
 			}
 		};
