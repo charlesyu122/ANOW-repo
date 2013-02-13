@@ -13,6 +13,8 @@ import com.alslimsibqueryu.anow.R;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +43,13 @@ public class InviteAdapter extends ArrayAdapter<Invite>{
 		this.values = values;
 	}
 	
+	public boolean isOnline() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+	    boolean isConnectedToNetwork = (networkInfo != null && networkInfo.isConnected());
+	    return isConnectedToNetwork;
+	    //return true;
+	}
 	
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
@@ -68,10 +77,13 @@ public class InviteAdapter extends ArrayAdapter<Invite>{
 				
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				new AcceptInvite(values[position].attendId).execute();
-				values[position].confirmInvite();
-				btnAttend.setText("Confirmed");
-				btnAttend.setEnabled(false);
+				if(isOnline()){
+					new AcceptInvite(values[position].attendId).execute();
+					values[position].confirmInvite();
+					btnAttend.setText("Confirmed");
+					btnAttend.setEnabled(false);
+				} else
+					Toast.makeText(context, "Please connect to the internet", Toast.LENGTH_SHORT).show();
 			}
 		});
 		

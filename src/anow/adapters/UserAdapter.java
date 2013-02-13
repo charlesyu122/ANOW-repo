@@ -13,6 +13,8 @@ import com.alslimsibqueryu.anow.R;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import anow.datamodels.User;
 
 public class UserAdapter extends ArrayAdapter<User> {
@@ -42,6 +45,14 @@ public class UserAdapter extends ArrayAdapter<User> {
 		this.values = objects.toArray(new User[objects.size()]);
 		this.type = type;
 		this.loggedInUserId = loggedIn;
+	}
+	
+	public boolean isOnline() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+	    boolean isConnectedToNetwork = (networkInfo != null && networkInfo.isConnected());
+	    return isConnectedToNetwork;
+	    //return true;
 	}
 
 	@Override
@@ -65,10 +76,13 @@ public class UserAdapter extends ArrayAdapter<User> {
 				
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					new ConnectUser(values[position].userId).execute();
-					values[position].connectUser();
-					connect.setText("Connected");
-					connect.setEnabled(false);
+					if(isOnline()){
+						new ConnectUser(values[position].userId).execute();
+						values[position].connectUser();
+						connect.setText("Connected");
+						connect.setEnabled(false);
+					} else
+						Toast.makeText(context, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 				}
 			});
 		} else if(values[position].status.equals("newly-connected")){ // Newly-connected user
