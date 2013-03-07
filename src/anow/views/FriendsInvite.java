@@ -104,7 +104,6 @@ public class FriendsInvite extends Activity{
 				// TODO Auto-generated method stub
 				if(AC.isOnline(FriendsInvite.this)){
 					new SendInvite().execute();
-					Toast.makeText(FriendsInvite.this, "Successfully invited selected connections!", Toast.LENGTH_SHORT).show();
 				} else
 					Toast.makeText(FriendsInvite.this, "Please connect to the internet.", Toast.LENGTH_SHORT).show();
 			}
@@ -276,6 +275,7 @@ public class FriendsInvite extends Activity{
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			pDialog.dismiss();
+			Toast.makeText(FriendsInvite.this, "Successfully invited selected connections!", Toast.LENGTH_SHORT).show();
 			FriendsInvite.this.finish();
 		}
 	}
