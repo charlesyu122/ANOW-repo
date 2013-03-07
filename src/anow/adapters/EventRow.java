@@ -2,6 +2,7 @@ package anow.adapters;
 
 import com.alslimsibqueryu.anow.R;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +37,10 @@ public class EventRow implements Row{
         	rowView = convertView;
             holder = (EViewHolder)convertView.getTag();
         }
-
+        Log.d("EVENTROW", ""+event.getImage());
         holder.eventName.setText(event.getEventName());
         holder.eventDate.setText(event.getEventTimeStart());
+        holder.eventPic.setVisibility(View.VISIBLE);
         holder.eventPic.setImageBitmap(event.getImage());
         holder.eventObj = new Event(event.eventId, event.eventName, event.eventTimeStart, event.eventDateStart, event.eventDateEnd, event.eventLocation, event.eventDescription, event.type);
         

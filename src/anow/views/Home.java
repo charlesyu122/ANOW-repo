@@ -135,7 +135,7 @@ public class Home extends TabActivity implements OnClickListener {
 		this.userId = AC.getUserId();
 		
 		this.setup();
-		// Check if their are changes in event dates
+		// Check if there are changes in event dates
 		new LoadEventsWithChanges().execute();
 	}
 	
@@ -282,7 +282,7 @@ public class Home extends TabActivity implements OnClickListener {
 			for(int ctr=0, check =0; check ==0 && ctr < eventsList.size(); ctr++){
 				if(eventsList.get(ctr).eventId == eventObj.eventId){
 					check = 1;
-					eventImage = eventsList.get(ctr).eventImage;
+					eventImage = eventsList.get(ctr).getImage();
 				}
 			}
 		} else if(type.equals("attends")){
@@ -550,8 +550,6 @@ public class Home extends TabActivity implements OnClickListener {
 	 * */
 	class LoadAllEvents extends AsyncTask<String, String, String> {
 		
-		Bitmap bitmap = null;
-		
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
@@ -601,21 +599,10 @@ public class Home extends TabActivity implements OnClickListener {
 						String loc = c.getString("location");
 						String desc = c.getString("description");
 						String imgDir = c.getString("image");
-						
-						// Retrieve image from directory
-						try {
-					        URL urlImage = new URL(server + parseDir(imgDir));
-					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
-					        InputStream inputStream = connection.getInputStream();
-					        bitmap = BitmapFactory.decodeStream(inputStream);
-					    } catch (MalformedURLException e) {
-					        e.printStackTrace();
-					    } catch (IOException e) {
-					        e.printStackTrace();
-					    }
+						imgDir = server + parseDir(imgDir);
 
 						// Create new Event object
-						EventWithImage e = new EventWithImage(id, name, tStart, dStart, dEnd, loc, desc, "E", bitmap);
+						EventWithImage e = new EventWithImage(id, name, tStart, dStart, dEnd, loc, desc, "E", imgDir);
 
 						// Add event to arraylist of events
 						eventsList.add(e);
@@ -639,7 +626,12 @@ public class Home extends TabActivity implements OnClickListener {
 
 				public void run() {
 					// TODO Auto-generated method stub
-					lvEvents.setAdapter(new EventAdapter(Home.this, eventsList));
+					EventAdapter eventAdapt = new EventAdapter(Home.this, eventsList); 
+					lvEvents.setAdapter(eventAdapt);
+					// Start laoding images
+			        for(EventWithImage e : eventsList){
+			        	e.loadImage(eventAdapt);
+			        }
 				}
 			});
 		}
@@ -878,7 +870,12 @@ public class Home extends TabActivity implements OnClickListener {
 				}
 			}
 			// Refresh events listview
-			lvEvents.setAdapter(new EventAdapter(Home.this, eventsList));
+			EventAdapter eventAdapt = new EventAdapter(Home.this, eventsList); 
+			lvEvents.setAdapter(eventAdapt);
+			// Start laoding images
+	        for(EventWithImage e : eventsList){
+	        	e.loadImage(eventAdapt);
+	        }
 			if (monthYrFormat.format(curDate.getTime()).equals(monthYrFormat.format(Calendar.getInstance().getTime())))
 				loadEventsOnCalendar(1, false);
 			else

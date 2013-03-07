@@ -155,10 +155,7 @@ public class UserProfile extends Activity {
 					setResult(RESULT_OK, i);
 					finish();
 				} else if (type.equals("friend")) {
-					Intent i = new Intent(UserProfile.this, UserCalendar.class);
-					i.putExtra("user_id", userId);
-					i.putExtra("name", name);
-					startActivityForResult(i, 1);
+					finish();
 				}
 			}
 		});

@@ -10,12 +10,27 @@
         android:orientation="horizontal"
         android:weightSum="5" >
 
-        <ImageView
-            android:id="@+id/ivEPic"
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="4"
-            android:src="@drawable/ic_launcher" />
+            android:layout_weight="4" >
+
+            <ImageView
+                android:id="@+id/ivEPic"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:src="@drawable/ic_launcher"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/pbEventPicLoading"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"
