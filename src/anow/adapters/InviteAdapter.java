@@ -47,8 +47,8 @@ public class InviteAdapter extends ArrayAdapter<Invite>{
 		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 	    boolean isConnectedToNetwork = (networkInfo != null && networkInfo.isConnected());
-	    return isConnectedToNetwork;
-	    //return true;
+	    //return isConnectedToNetwork;
+	    return true;
 	}
 	
 	@Override

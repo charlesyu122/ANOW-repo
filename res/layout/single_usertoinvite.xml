@@ -3,22 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp" >
-    
-    <CheckBox 
+
+    <CheckBox
         android:id="@+id/cbInviteUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp" />
 
-    <ImageView
-        android:id="@+id/ivListProfPic"
+    <RelativeLayout
+        android:id="@+id/lyListProfPic"
         android:layout_width="45dp"
         android:layout_height="45dp"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        android:scaleType="fitCenter"
-        android:layout_alignParentRight="true" />
+        android:layout_marginRight="10dp" >
 
+        <ImageView
+            android:id="@+id/ivListProfPic"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scaleType="fitCenter" />
+
+        <ProgressBar
+            android:id="@+id/pbSingleInvitePicLoading"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+    </RelativeLayout>
 
 </RelativeLayout>

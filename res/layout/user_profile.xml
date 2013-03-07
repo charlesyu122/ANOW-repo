@@ -21,29 +21,45 @@
                 android:layout_height="110dp"
                 android:background="@drawable/greycoverbg" >
 
-                <ImageView
-                    android:id="@+id/ivProfPic"
+                <RelativeLayout
+                    android:id="@+id/lyProfPic"
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="10dp"
-                    android:layout_marginTop="0dp"
-                    android:background="@drawable/whiteborder"
-                    android:scaleType="fitXY" />
+                    android:layout_marginTop="0dp" >
+
+                    <ImageView
+                        android:id="@+id/ivProfPic"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:background="@drawable/whiteborder"
+                        android:scaleType="fitXY"
+                        android:visibility="gone" />
+
+                    <ProgressBar
+                        android:id="@+id/pbProfPicLoading"
+                        style="?android:attr/progressBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="gone" />
+                </RelativeLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@id/ivProfPic"
+                    android:layout_toLeftOf="@id/lyProfPic"
                     android:orientation="vertical" >
 
                     <TextView
                         android:id="@+id/tvProfName"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:gravity="right"
                         android:textColor="#FFFFFF"
                         android:textSize="18dip"
@@ -51,7 +67,7 @@
 
                     <EditText
                         android:id="@+id/etProfName"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="text"
                         android:visibility="gone" />
@@ -68,6 +84,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="right"
                         android:orientation="horizontal" >
 
                         <TextView
@@ -156,7 +173,6 @@
                             android:gravity="center"
                             android:textColor="#FFFFFF"
                             android:textSize="18sp" />
-
                     </LinearLayout>
 
                     <TextView

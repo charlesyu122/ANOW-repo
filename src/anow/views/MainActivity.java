@@ -116,7 +116,7 @@ public class MainActivity extends Activity {
     		pDialog = new ProgressDialog(MainActivity.this);
     		pDialog.setMessage("Logging in...");
     		pDialog.setIndeterminate(false);
-    		pDialog.setCancelable(false);
+    		pDialog.setCancelable(true);
     		pDialog.show();
     	}
     	

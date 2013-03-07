@@ -1,10 +1,5 @@
 package anow.views;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +17,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -103,10 +97,12 @@ public class Friends extends Activity{
 		});
 		//Set-up views
 		lvFriends = (ListView) findViewById(R.id.lvFriends);
+		UserAdapter userAdpt;
 		if(type.equals("user"))
-			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'F', userId));
+			userAdpt = new UserAdapter(Friends.this, friendsList, 'F', userId);
 		else
-			lvFriends.setAdapter(new UserAdapter(Friends.this, friendsList, 'L', loggedInUserId));
+			userAdpt = new UserAdapter(Friends.this, friendsList, 'L', loggedInUserId);
+		lvFriends.setAdapter(userAdpt);
 		lvFriends.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View v,int arg2, long arg3) {
@@ -123,6 +119,11 @@ public class Friends extends Activity{
 				}
 			}
 		});
+		
+        // Start loading images
+        for(User u : friendsList){
+        	u.loadImage(userAdpt);
+        }
 	}
 	
 	// Methods for database query
@@ -179,25 +180,14 @@ public class Friends extends Activity{
 						String hobbies = c.getString("hobbies");
 						String eventCount = c.getString("event_count");
 						String imgDir = c.getString("profile_image");
+						imgDir = server + parseDir(imgDir);
 						String status = "friends";
 						if(type.equals("friend")){
 							status = c.getString("status");
 						}
 						
-						// Retrieve image from directory
-						try {
-					        URL urlImage = new URL(server + parseDir(imgDir));
-					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
-					        InputStream inputStream = connection.getInputStream();
-					        bitmap = BitmapFactory.decodeStream(inputStream);
-					    } catch (MalformedURLException e) {
-					        e.printStackTrace();
-					    } catch (IOException e) {
-					        e.printStackTrace();
-					    }
-						
 						// Create new user object
-						User friend = new User(userId, username, name, birthday, hobbies, eventCount, bitmap, status);
+						User friend = new User(userId, username, name, birthday, hobbies, eventCount, imgDir, status);
 						
 						//Adding friends to list of friends to display
 						friendsList.add(friend);

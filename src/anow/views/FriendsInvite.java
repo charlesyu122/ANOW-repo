@@ -1,10 +1,5 @@
 package anow.views;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +17,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -100,7 +94,8 @@ public class FriendsInvite extends Activity{
 		lvFriendsToInvite = (ListView) findViewById(R.id.lvFriends);
 		View headerView =  ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.invitelist_header, null, false);
         lvFriendsToInvite.addHeaderView(headerView);
-		lvFriendsToInvite.setAdapter(new UserInviteAdapter(FriendsInvite.this, friendsToInviteList));
+        UserInviteAdapter userInvAdp = new UserInviteAdapter(FriendsInvite.this, friendsToInviteList); 
+		lvFriendsToInvite.setAdapter(userInvAdp);
 		btnInvite = (Button)findViewById(R.id.btnInviteFriends);
 		
 		btnInvite.setOnClickListener(new View.OnClickListener() {
@@ -127,13 +122,14 @@ public class FriendsInvite extends Activity{
 			}
 		});
 		
-		
+        // Start loading images
+        for(User u : friendsToInviteList){
+        	u.loadImageForInvite(userInvAdp);
+        }
 	}
 	
 	// Classes for database query
 	class LoadAllFriendsForInvite extends AsyncTask<String, String, String> {
-			
-		Bitmap bitmap = null;
 		
 		@Override
 		protected void onPreExecute() {
@@ -178,21 +174,10 @@ public class FriendsInvite extends Activity{
 						String hobbies = c.getString("hobbies");
 						String eventCount = c.getString("event_count");
 						String imgDir = c.getString("profile_image");
-							
-						// Retrieve image from directory
-						try {
-					        URL urlImage = new URL(server + parseDir(imgDir));
-					        HttpURLConnection connection = (HttpURLConnection) urlImage.openConnection();
-					        InputStream inputStream = connection.getInputStream();
-					        bitmap = BitmapFactory.decodeStream(inputStream);
-					    } catch (MalformedURLException e) {
-					        e.printStackTrace();
-					    } catch (IOException e) {
-					        e.printStackTrace();
-					    }
+						imgDir = server + parseDir(imgDir);
 						
 						// Create new user object
-						User friend = new User(userId, username, name, birthday, hobbies, eventCount, bitmap, "friends");
+						User friend = new User(userId, username, name, birthday, hobbies, eventCount, imgDir, "friends");
 							
 						//Adding friends to list of friends to display
 						friendsToInviteList.add(friend);
@@ -301,6 +286,7 @@ public class FriendsInvite extends Activity{
 		@SuppressWarnings("unused")
 		public User user;
 		public ImageView ivUserProfPic;
+		public ProgressBar pbLoading;
 	}
 	
 	
@@ -320,6 +306,7 @@ public class FriendsInvite extends Activity{
 		public View getView(final int position, View v, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			final UserCBViewHolder holder;
+			User u = values.get(position);
 
 			if(v == null){
 				LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -328,6 +315,7 @@ public class FriendsInvite extends Activity{
 				holder = new UserCBViewHolder();
 				holder.ivUserProfPic = (ImageView) v.findViewById(R.id.ivListProfPic);
 				holder.cbInviteUser = (CheckBox) v.findViewById(R.id.cbInviteUser);
+				holder.pbLoading = (ProgressBar) v.findViewById(R.id.pbSingleInvitePicLoading);
 				holder.user = values.get(position);
 				holder.cbInviteUser.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					
@@ -342,9 +330,18 @@ public class FriendsInvite extends Activity{
 				holder = (UserCBViewHolder) v.getTag();
 			}
 			
-			holder.ivUserProfPic.setImageBitmap(values.get(position).profPic);
 			holder.cbInviteUser.setText(values.get(position).name);
-
+			// For lazy loading of images
+			if(u.profPic != null){
+				// Display Image
+				holder.ivUserProfPic.setVisibility(View.VISIBLE);
+				holder.ivUserProfPic.setImageBitmap(u.profPic);
+				holder.pbLoading.setVisibility(View.GONE);
+			} else{
+				// Loading
+				holder.ivUserProfPic.setVisibility(View.GONE);
+				holder.pbLoading.setVisibility(View.VISIBLE);
+			}
 			return v;
 		}
 

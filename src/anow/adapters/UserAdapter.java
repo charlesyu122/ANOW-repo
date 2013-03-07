@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import anow.datamodels.User;
@@ -51,13 +52,14 @@ public class UserAdapter extends ArrayAdapter<User> {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 	    boolean isConnectedToNetwork = (networkInfo != null && networkInfo.isConnected());
-	    return isConnectedToNetwork;
-	    //return true;
+	    //return isConnectedToNetwork;
+	    return true;
 	}
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
+		User u = values[position];
 		
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(R.layout.single_user, parent, false);
@@ -66,9 +68,10 @@ public class UserAdapter extends ArrayAdapter<User> {
 		TextView userName = (TextView) rowView.findViewById(R.id.tvUserName);
 		final Button connect = (Button) rowView.findViewById(R.id.btnConnect);
 		ImageView ivInfo = (ImageView) rowView.findViewById(R.id.ivUInfo);
-		userProfPic.setImageBitmap(values[position].profPic);
+		ProgressBar pbLoading = (ProgressBar)rowView.findViewById(R.id.pbSinglePicLoading);
 		userName.setText(values[position].name);
 		
+		// For Connect button
 		if(values[position].status.equals("strangers")){
 			connect.setText("Connect");
 			connect.setVisibility(View.VISIBLE);
@@ -94,6 +97,17 @@ public class UserAdapter extends ArrayAdapter<User> {
 		if(type == 'L' || type == 'P')
 			ivInfo.setVisibility(View.INVISIBLE);
 	
+		// For lazy loading of images
+		if(u.profPic != null){
+			// Display Image
+			userProfPic.setVisibility(View.VISIBLE);
+			userProfPic.setImageBitmap(u.profPic);
+			pbLoading.setVisibility(View.GONE);
+		} else{
+			// Loading
+			userProfPic.setVisibility(View.GONE);
+			pbLoading.setVisibility(View.VISIBLE);
+		}
 		rowView.setTag(values[position]);
 		return rowView;
 	}
