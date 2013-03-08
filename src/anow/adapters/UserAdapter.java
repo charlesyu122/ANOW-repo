@@ -50,7 +50,7 @@ public class UserAdapter extends ArrayAdapter<User> {
 	
 	public boolean isOnline() {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+	    NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 	    boolean isConnectedToNetwork = (networkInfo != null && networkInfo.isConnected());
 	    return isConnectedToNetwork;
 	    //return true;

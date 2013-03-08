@@ -199,7 +199,7 @@ public class Registration extends Activity{
 			params.add(new BasicNameValuePair("name", name));
 			params.add(new BasicNameValuePair("birthday", birthday));
 			params.add(new BasicNameValuePair("hobbies", hobbies));
-			params.add(new BasicNameValuePair("image", "http://localhost/CI/images/profile_images/ic_launcher.png"));
+			params.add(new BasicNameValuePair("image", "http://atnow.net84.net/CI/images/profile_images/ic_launcher.png"));
 			
 			// Getting JSON Object
 			JSONObject json = jsonParser.makeHttpRequest(url_create_user, params);

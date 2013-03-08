@@ -26,7 +26,7 @@ public class ApplicationController extends Application {
 
 	public boolean isOnline(Context context) {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+	    NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 	    boolean isConnectedToNetwork = (networkInfo != null && networkInfo.isConnected());
 	    return isConnectedToNetwork;
 	    //return true;
