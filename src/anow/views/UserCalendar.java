@@ -58,7 +58,7 @@ public class UserCalendar extends Activity {
 
 	// Header Views
 	TextView tvTitle;
-	Button btnProfile, btnBack;
+	Button btnBack;
 
 	// Calendar
 	GridView calendar;
@@ -107,17 +107,8 @@ public class UserCalendar extends Activity {
 	private void setup() {
 		// Set-up header views
 		tvTitle = (TextView) findViewById(R.id.tvUserTitle);
-		btnProfile = (Button) findViewById(R.id.btnHeaderProfile);
 		btnBack = (Button) findViewById(R.id.btnHeaderBack);
 		tvTitle.setText(name + "'s Calendar");
-		btnProfile.setOnClickListener(new View.OnClickListener() {
-
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setResult(2);
-				finish();
-			}
-		});
 		btnBack.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {

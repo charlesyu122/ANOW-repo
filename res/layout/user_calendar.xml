@@ -40,13 +40,6 @@
             android:text="Back"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btnHeaderProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_toLeftOf="@id/btnHeaderBack"
-            android:background="@drawable/custom_profhbutton" />
     </RelativeLayout>
 
     <!-- End of Header -->
